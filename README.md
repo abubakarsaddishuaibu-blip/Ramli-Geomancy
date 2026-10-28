@@ -88,6 +88,42 @@ npm run test:integration   # REAL test – needs live Supabase + Paystack keys
   **not** unlock the account. Without credentials it prints `SKIPPED` and exits
   0.
 
+### Where the "Connect to Supabase" button actually is
+
+**The button is not in Settings and not in the Project page.** It is rendered
+*inside this chat*, as a card attached to the agent's message, whenever the
+agent calls the Supabase integration suggestion. Look for a **"Connect to
+Supabase"** button immediately under the agent's reply in the conversation —
+scroll the chat down if you do not see it. Tapping it opens the Supabase
+authorisation page, where you pick/create a project; once you approve, the
+platform binds that project to **this** repository automatically (URL, anon key
+and service-role key are stored for you). No new repository is created and the
+Ramli-Geomancy code is not touched.
+
+There is **no separate Supabase screen under Settings or Project**, and
+nothing has to be connected through GitHub. GitHub is only the source of this
+repository's code.
+
+### You do not actually need the button — manual keys work identically
+
+This project talks to Supabase over plain HTTPS REST (`lib/supabase.js`), so it
+does **not** depend on the platform's Supabase integration. Connecting the
+button is a convenience that fills the environment variables for you. The
+supported, fully equivalent path is to enter the same values yourself in
+**Settings → Environment Variables**:
+
+* `SUPABASE_URL`
+* `SUPABASE_ANON_KEY`
+* `SUPABASE_SERVICE_ROLE_KEY`
+* `PAYSTACK_SECRET_KEY`
+* `SESSION_SECRET`
+* `APP_BASE_URL`
+
+If you use the button, the platform writes the three `SUPABASE_*` values for
+you and you only add `PAYSTACK_SECRET_KEY`, `SESSION_SECRET` and
+`APP_BASE_URL`. Either way the app behaves the same, and the secrets never
+reach the browser.
+
 ### Setting up Supabase from an Android phone
 
 1. Open Chrome and go to **https://supabase.com/dashboard** → sign in (or
