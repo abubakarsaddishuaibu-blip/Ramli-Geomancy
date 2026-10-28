@@ -600,6 +600,16 @@ Raba amsar taka gida 4 cikin Harshen HAUSA:
             try {
                 const resultText = await callGeminiAPI(systemPrompt, spreadSummary);
                 document.getElementById('analysisResult').innerHTML = formatMarkdownToHTML(resultText);
+                // Save to private history (per-user, server-side, RLS protected)
+                if (window.ramliAuth) {
+                    window.ramliAuth.saveHistory({
+                        kind: 'ramli',
+                        question: question,
+                        figures: geomancySpread.map(f => Array.isArray(f) ? f.slice() : f),
+                        interpretation: resultText,
+                        total_points: totalPoints
+                    });
+                }
             } catch (err) {
                 document.getElementById('analysisResult').innerHTML = `
                     <div class="p-3 bg-red-50 text-red-700 rounded text-xs">
