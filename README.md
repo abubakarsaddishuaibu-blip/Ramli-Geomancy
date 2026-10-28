@@ -124,6 +124,21 @@ you and you only add `PAYSTACK_SECRET_KEY`, `SESSION_SECRET` and
 `APP_BASE_URL`. Either way the app behaves the same, and the secrets never
 reach the browser.
 
+### Mobile troubleshooting (Android)
+
+* The connect card and the Environment Variables screen are part of the
+  **AppJet dashboard web app**, so use Chrome. If a tab looks cut off, tap the
+  **⋮** menu → **Desktop site** → rotate the phone to landscape; the
+  Environment Variables form has more room in landscape.
+* The chat thread is where integration cards render — open the conversation
+  with this agent and scroll to the **latest** message; cards are attached to
+  the newest reply, not to the top of the thread.
+* If the card still does not appear, do not block on it: the manual
+  Environment Variables path in the section above produces the identical app.
+* The API health check is `https://<your-app-domain>/api/config`. If it returns
+  an nginx 404 the deployed image is older than this code — redeploy from the
+  `appjet` branch after the environment variables are set.
+
 ### Setting up Supabase from an Android phone
 
 1. Open Chrome and go to **https://supabase.com/dashboard** → sign in (or
