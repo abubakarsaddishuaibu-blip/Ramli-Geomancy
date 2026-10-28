@@ -173,8 +173,8 @@ const paystack = http.createServer(async (req, res) => {
 
 /* --------------------------------- runner --------------------------------- */
 
-await new Promise((r) => supabase.listen(8791, '127.0.0.1', r));
-await new Promise((r) => paystack.listen(8792, '127.0.0.1', r));
+await new Promise((r) => supabase.listen(8791, '0.0.0.0', r));
+await new Promise((r) => paystack.listen(8792, '0.0.0.0', r));
 
 const { server } = await import('../server.js');
 await new Promise((r) => server.once('listening', r));
