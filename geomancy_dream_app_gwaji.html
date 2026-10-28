@@ -641,6 +641,16 @@ Yi bayani cikin harshen HAUSA daki-daki:
             try {
                 const resultText = await callGeminiAPI(systemPrompt, `Na yi mafarki kamar haka: "${dreamText}". Don Allah fassara min shi.`);
                 document.getElementById('dreamResult').innerHTML = formatMarkdownToHTML(resultText);
+                // Save to private history (per-user, server-side, RLS protected)
+                if (window.ramliAuth) {
+                    window.ramliAuth.saveHistory({
+                        kind: 'dream',
+                        question: dreamText,
+                        figures: null,
+                        interpretation: resultText,
+                        total_points: null
+                    });
+                }
             } catch (err) {
                 document.getElementById('dreamResult').innerHTML = `
                     <div class="p-3 bg-red-50 text-red-700 rounded text-xs">
