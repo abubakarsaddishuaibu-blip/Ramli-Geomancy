@@ -144,7 +144,7 @@ test('Row Level Security is enabled on every private table', () => {
 });
 
 test('every RLS policy is restricted to the authenticated role', () => {
-  const policies = [...sql.matchAll(/create\s+policy\s+"?([a-z_]+)"?\s+on\s+(?:public\.)?([a-z_]+)\s+for\s+([a-z]+)\s+to\s+([a-z, ]+)/gi)];
+  const policies = [...sql.matchAll(/create\s+policy\s+"?([a-z_]+)"?\s+on\s+(?:public\.)?([a-z_]+)\s+for\s+([a-z]+)\s+to\s+([a-z]+(?:\s*,\s*[a-z]+)*)/gi)];
   assert.ok(policies.length >= 7, `expected several policies, found ${policies.length}`);
   for (const p of policies) {
     const roles = p[4].split(',').map((r) => r.trim().toLowerCase());
