@@ -132,9 +132,10 @@ reach the browser.
    strong database password and **store it in the phone's password manager**
    (the app never needs this password) → pick the region closest to Nigeria
    (e.g. Frankfurt / South Africa) → **Create new project**. Wait ~1 minute.
-3. In the AppJet dashboard tap the **Connect to Supabase** button that was
-   shown above. Once connected, the platform stores the URL and keys for you —
-   you do not have to copy any key by hand.
+3. Connect Supabase to this repository — either tap the **Connect to Supabase**
+   button in this chat (see the section above for where it lives), or skip it
+   and copy the three keys by hand into **Settings → Environment Variables**
+   (step 6). Both routes end in the same environment variables.
 4. Apply the schema: in the Supabase dashboard tap **SQL Editor** → **New
    query** → open `db/schema.sql` from this repository (the file is in the
    repository root under `db/`), copy its whole content into the editor and tap
