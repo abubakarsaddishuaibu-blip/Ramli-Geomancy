@@ -1,0 +1,15 @@
+{
+  "name": "ramli-geomancy",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Ramli Geomancy app with Supabase Auth, one-time Paystack registration fee and private per-user history.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/api.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
