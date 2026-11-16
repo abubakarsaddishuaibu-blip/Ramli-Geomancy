@@ -314,6 +314,7 @@
   <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[80] w-[90%] max-w-sm bg-slate-800 text-white px-4 py-3 rounded-2xl shadow-2xl text-xs font-semibold"></div>
 </div>
 
+<script src="book.js" onerror="window.__noBook=1"></script>
 <script>
 // ================= CONFIG =================
 const SUPABASE_URL = 'https://vpssdlkzymucwzvhudps.supabase.co';
@@ -347,7 +348,7 @@ const catOf = h => h <= 4 ? 'mother' : h <= 8 ? 'daughter' : h <= 12 ? 'niece' :
 const T = {
  ha: { namePh:"RUBUTA SUNA ANAN", questionPh:"RUBUTA TAMBAYA ANAN (ZABI)", tapHint:"Taɓa digo don canza 1 (•) ko 2 (••)", reset:"Sakewa", auto:"Zuba da Kanka", cast:"HAIFAR DA ƘASA", guide:"YADDA AKE ZUBA ƘASA",
   subject:"Sunan Bincike", daughters:"← 'Ya'ya (8 - 5)", mothersH:"Iyaye (4 - 1) →", nieces:"Jikoki (12 - 9)", witnesses:"Shaidu (14 & 13)", judge:"Alƙali (15)", reconciler:"Mai Sulhu (16)", totalDots:"JIMLAR DIGO:", tapHouse:"Taɓa kowane gida don ganin yadda aka lissafa shi", interpret:"NEMI FASSARA",
-  chatTitle:"Tattaunawa da AI", chatPh:"Yi tambaya a kan wannan zane...", send:"Aika", thinking:"AI yana tunani...", you:"Kai", ai:"AI",
+  chatTitle:"Tattaunawa da AI", chatPh:"Yi tambaya a kan wannan zane...", send:"Aika", thinking:"AI yana duba littafin yana tunani...", you:"Kai", ai:"AI",
   histTitle:"Tarihin Bincike", histEmpty:"Babu bincike da aka adana tukuna.", histSearch:"Nemi suna ko tambaya...", open:"Buɗe", del:"Goge", delQ:"A goge wannan bincike?", back:"← Komawa", dictTitle:"Taurari 16 na Ramli",
   navCast:"Zuba Ƙasa", navHistory:"Tarihin Bincike", navDict:"Taurari 16", navKey:"Gemini API Key", navGuide:"Yadda Ake Zuba Ƙasa", theme:"Haske/Duhu", logout:"Fita",
   keyTitle:"Gemini API Key (kyauta)", keyDesc:"Don fassarar AI da tattaunawa, kana buƙatar Gemini API Key naka na kyauta. Ɗauko shi, sannan ka liƙa a nan.", keyGet:"Buɗe Google AI Studio don ɗauko key", keyNote:"Key ɗin yana a wayarka kawai.", save:"Adana", keyNeeded:"Ka fara saka Gemini API Key naka (maɓallin 🔑).",
@@ -363,12 +364,13 @@ const T = {
   imgSaved:"An ajiye hoton zane!",
   navAdmin:"Sashen Admin", adReports:"Rahotanni", adUsers:"Masu Amfani", adSearch:"Nemi suna...", adStUsers:"Masu amfani", adStMsgs:"Saƙonni", adStVoice:"Murya", adStOpen:"Rahotanni a buɗe", adStBans:"An hana", adBan:"Hana shi", adUnban:"Cire hani", adBanned:"An hana shi", adResolve:"Rufe rahoto", adDelMsg:"Goge saƙo", adPurge:"Goge saƙonnin ƙungiyarsa", adPurgeQ:"A goge duk saƙonnin da wannan mutumin ya aika a ƙungiyar Kowa?", adBanQ:"A hana wannan mutumin aika saƙo a manhajar?", adReasonQ:"Dalili (zaɓi):", adNone:"Babu komai a nan.", adGone:"(an riga an goge saƙon)", adFrom:"Mai rahoto", adAbout:"Wanda aka kai rahoton", adDone:"An yi.", adSetup:"Ba a kammala saita admin ba. Gudanar da supabase-admin-setup.sql.", fcBanned:"An hana ka aika saƙo a manhajar.",
   chTabD:"RANA", chTabN:"DARE", lgEx:"Mai Kyau Ƙwarai", lgGood:"Mai Kyau", lgNorm:"Matsakaici", lgBad:"Maras Kyau",
+  bookSrc:"Tushen littafi", bookMissing:"Ba a samo fayil ɗin book.js ba, don haka AI zai amsa ba tare da littafin ba. Ka sa book.js a wuri ɗaya da manhajar.",
   mother:"Uwa", lang:"ha",
   guideBody:"<b>1.</b> Rubuta suna (da tambaya idan kana so).<br><b>2.</b> Zuba Iyaye 4 (Uwa 1 a dama): taɓa kowane layi don 1 ko 2 digo, ko 'Zuba da Kanka'.<br><b>3.</b> Latsa HAIFAR DA ƘASA don ganin gidaje 16.<br><b>4.</b> Latsa NEMI FASSARA don tattaunawa da AI a kan zanenka. Za ka buƙaci Gemini key naka (🔑).",
   aiLang:"Hausa", sysIntro:"Kai gwanin masanin ilmin Ramli ne. Ka yi amfani da sunayen taurari 16 kamar yadda littafin «الفلك المشحون» ya rubuta su." },
  en: { namePh:"ENTER NAME HERE", questionPh:"ENTER QUESTION HERE (OPTIONAL)", tapHint:"Tap dots to switch 1 (•) or 2 (••)", reset:"Reset", auto:"Auto-cast", cast:"CAST THE CHART", guide:"HOW TO CAST",
   subject:"Reading Subject", daughters:"← Daughters (8 - 5)", mothersH:"Mothers (4 - 1) →", nieces:"Nieces (12 - 9)", witnesses:"Witnesses (14 & 13)", judge:"Judge (15)", reconciler:"Reconciler (16)", totalDots:"TOTAL DOTS:", tapHouse:"Tap any house to see how it was derived", interpret:"INTERPRET",
-  chatTitle:"Chat with AI", chatPh:"Ask about this chart...", send:"Send", thinking:"AI is thinking...", you:"You", ai:"AI",
+  chatTitle:"Chat with AI", chatPh:"Ask about this chart...", send:"Send", thinking:"AI is consulting the book...", you:"You", ai:"AI",
   histTitle:"Reading History", histEmpty:"No saved readings yet.", histSearch:"Search name or question...", open:"Open", del:"Delete", delQ:"Delete this reading?", back:"← Back", dictTitle:"The 16 Figures",
   navCast:"Cast Chart", navHistory:"Reading History", navDict:"16 Figures", navKey:"Gemini API Key", navGuide:"How to Cast", theme:"Light/Dark", logout:"Log out",
   keyTitle:"Gemini API Key (free)", keyDesc:"For AI interpretation and chat you need your own free Gemini API key. Get it, then paste it here.", keyGet:"Open Google AI Studio to get a key", keyNote:"The key stays on your phone only.", save:"Save", keyNeeded:"Please set your Gemini API key first (🔑 button).",
@@ -384,12 +386,13 @@ const T = {
   imgSaved:"Chart image saved!",
   navAdmin:"Admin Panel", adReports:"Reports", adUsers:"Users", adSearch:"Search name...", adStUsers:"Users", adStMsgs:"Messages", adStVoice:"Voice", adStOpen:"Open reports", adStBans:"Banned", adBan:"Ban", adUnban:"Unban", adBanned:"Banned", adResolve:"Resolve", adDelMsg:"Delete message", adPurge:"Delete his group messages", adPurgeQ:"Delete all group messages this person sent?", adBanQ:"Ban this person from sending messages?", adReasonQ:"Reason (optional):", adNone:"Nothing here.", adGone:"(message already deleted)", adFrom:"Reporter", adAbout:"Reported", adDone:"Done.", adSetup:"Admin is not set up yet. Run supabase-admin-setup.sql.", fcBanned:"You are banned from sending messages.",
   chTabD:"DAY", chTabN:"NIGHT", lgEx:"Excellent", lgGood:"Good", lgNorm:"Normal", lgBad:"Unfavourable",
+  bookSrc:"Book sources", bookMissing:"book.js was not found, so the AI will answer without the book. Put book.js next to the app.",
   mother:"Mother", lang:"en",
   guideBody:"<b>1.</b> Enter a name (and a question if you like).<br><b>2.</b> Cast the 4 Mothers (Mother 1 on the right): tap each row for 1 or 2 dots, or 'Auto-cast'.<br><b>3.</b> Tap CAST THE CHART to see the 16 houses.<br><b>4.</b> Tap INTERPRET to chat with the AI about your chart. You need your own Gemini key (🔑).",
   aiLang:"English", sysIntro:"You are an expert in the science of Raml (geomancy). Use the names of the 16 figures exactly as written in the book «الفلك المشحون»." },
  ar: { namePh:"اكتب الاسم هنا", questionPh:"اكتب السؤال هنا (اختياري)", tapHint:"المس النقاط للتبديل بين 1 (•) أو 2 (••)", reset:"إعادة", auto:"عشوائي", cast:"اضرب الرمل", guide:"طريقة الضرب",
   subject:"اسم القراءة", daughters:"← البنات (8 - 5)", mothersH:"الأمهات (4 - 1) →", nieces:"بنات البنات (12 - 9)", witnesses:"الشاهدان (14 و 13)", judge:"القاضي (15)", reconciler:"المصلح (16)", totalDots:"مجموع النقاط:", tapHouse:"المس أي بيت لترى كيف استُخرج", interpret:"فسّر",
-  chatTitle:"محادثة مع الذكاء الاصطناعي", chatPh:"اسأل عن هذا الشكل...", send:"إرسال", thinking:"الذكاء الاصطناعي يفكر...", you:"أنت", ai:"الذكاء",
+  chatTitle:"محادثة مع الذكاء الاصطناعي", chatPh:"اسأل عن هذا الشكل...", send:"إرسال", thinking:"الذكاء الاصطناعي يراجع الكتاب...", you:"أنت", ai:"الذكاء",
   histTitle:"سجل القراءات", histEmpty:"لا توجد قراءات محفوظة بعد.", histSearch:"ابحث بالاسم أو السؤال...", open:"فتح", del:"حذف", delQ:"هل تريد حذف هذه القراءة؟", back:"→ رجوع", dictTitle:"الأشكال الستة عشر",
   navCast:"اضرب الرمل", navHistory:"سجل القراءات", navDict:"الأشكال الستة عشر", navKey:"مفتاح Gemini API", navGuide:"طريقة الضرب", theme:"فاتح/داكن", logout:"خروج",
   keyTitle:"مفتاح Gemini API (مجاني)", keyDesc:"للتفسير والمحادثة تحتاج إلى مفتاح Gemini API مجاني خاص بك. احصل عليه ثم الصقه هنا.", keyGet:"افتح Google AI Studio للحصول على مفتاح", keyNote:"يبقى المفتاح على هاتفك فقط.", save:"حفظ", keyNeeded:"أدخل مفتاح Gemini API أولاً (زر 🔑).",
@@ -405,6 +408,7 @@ const T = {
   imgSaved:"تم حفظ صورة الشكل!",
   navAdmin:"لوحة الإدارة", adReports:"البلاغات", adUsers:"المستخدمون", adSearch:"ابحث بالاسم...", adStUsers:"المستخدمون", adStMsgs:"الرسائل", adStVoice:"صوتية", adStOpen:"بلاغات مفتوحة", adStBans:"محظورون", adBan:"منع", adUnban:"رفع المنع", adBanned:"ممنوع", adResolve:"إغلاق البلاغ", adDelMsg:"حذف الرسالة", adPurge:"حذف رسائله في المجموعة", adPurgeQ:"حذف كل رسائل هذا الشخص في المجموعة؟", adBanQ:"منع هذا الشخص من إرسال الرسائل؟", adReasonQ:"السبب (اختياري):", adNone:"لا شيء هنا.", adGone:"(الرسالة محذوفة)", adFrom:"المُبلِّغ", adAbout:"المُبلَّغ عنه", adDone:"تم.", adSetup:"لم يتم إعداد الإدارة. شغّل supabase-admin-setup.sql.", fcBanned:"أنت ممنوع من إرسال الرسائل.",
   chTabD:"النهار", chTabN:"الليل", lgEx:"ممتاز", lgGood:"جيد", lgNorm:"عادي", lgBad:"غير موات",
+  bookSrc:"المصدر من الكتاب", bookMissing:"لم يُعثر على book.js، لذا سيجيب الذكاء دون الكتاب. ضع book.js بجانب التطبيق.",
   mother:"أم", lang:"ar",
   guideBody:"<b>1.</b> اكتب الاسم (والسؤال إن شئت).<br><b>2.</b> اضرب الأمهات الأربع (الأم 1 على اليمين): المس كل سطر لنقطة أو نقطتين، أو 'عشوائي'.<br><b>3.</b> اضغط اضرب الرمل لترى البيوت الستة عشر.<br><b>4.</b> اضغط فسّر للمحادثة مع الذكاء الاصطناعي. تحتاج إلى مفتاح Gemini الخاص بك (🔑).",
   aiLang:"Arabic (العربية)", sysIntro:"أنت خبير في علم الرمل. استخدم أسماء الأشكال الستة عشر كما وردت في كتاب «الفلك المشحون»." }
@@ -415,7 +419,7 @@ const fname = f => f[LANG] || f.ha;
 
 // ================= STATE =================
 let mothers = { 1: [1,1,1,1], 2: [1,1,1,1], 3: [1,1,1,1], 4: [1,1,1,1] };
-let chart = null, chatHist = [], chatBusy = false, historyItems = [], authMode = 'login', view = 'home';
+let bookWarned = false, chart = null, chatHist = [], chatBusy = false, historyItems = [], authMode = 'login', view = 'home';
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -574,20 +578,108 @@ function openKey() { $('keyIn').value = getKey(); openModal('keyModal'); }
 function saveKey() { try { localStorage.setItem('gemini_api_key', $('keyIn').value.trim()); } catch (e) {} updateKeyDot(); closeModal('keyModal'); toast(t('saved')); }
 function toggleKeyVis() { const i = $('keyIn'); i.type = i.type === 'password' ? 'text' : 'password'; }
 
+// ================= BOOK «الفلك المشحون» — RETRIEVAL (AI answers from the book) =================
+const bookReady = () => !!(window.BOOK && window.BOOK.chunks && window.BOOK.chunks.length);
+const AR_NORM = s => String(s).replace(/[ً-ٰٟـ]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/[^ء-ي\s]/g, ' ');
+const arTok = s => AR_NORM(s).split(/\s+/).map(w => (w.length > 3 && w.startsWith('ال')) ? w.slice(2) : w).filter(w => w.length >= 3);
+let BIDX = null;
+function buildIdx() {
+  if (BIDX) return BIDX; const df = {}; BIDX = { tf: [], df, N: window.BOOK.chunks.length };
+  window.BOOK.chunks.forEach(c => { const m = {}, tt = {}; arTok(c.t + ' ' + c.x).forEach(w => m[w] = (m[w] || 0) + 1); arTok(c.t).forEach(w => tt[w] = 1); BIDX.tf.push({ m, tt }); Object.keys(m).forEach(w => df[w] = (df[w] || 0) + 1); });
+  return BIDX;
+}
+function localSearch(tokens, n) {
+  const I = buildIdx(), sc = [], seen = new Set(tokens);
+  window.BOOK.chunks.forEach((c, i) => { let s = 0; const { m, tt } = I.tf[i];
+    seen.forEach(w => { if (m[w]) s += (1 + Math.log(m[w])) * Math.log(1 + I.N / (I.df[w] || 1)); if (tt[w]) s += 6; });
+    if (s > 0) sc.push([s, i]); });
+  sc.sort((a, b) => b[0] - a[0]); return sc.slice(0, n).map(x => x[1]);
+}
+// Topic words (Hausa / English / Arabic) → Arabic words used in the book + the house that rules the topic. Used when the planner call fails and to strengthen it.
+const TOPICS = [
+  { k: /\baur|amarya|ango|zawara|\bmata\b|matata|matar|\bmiji|mijina|marr|wife|husband|زواج|زوج|امرأة|مرأة|طلاق|saki/i, ar: 'الزواج المراة الزوجة النكاح الزوج الطلاق', h: 7 },
+  { k: /ciki|mai ciki|juna biyu|haihu|pregnan|حمل|حامل/i, ar: 'الحمل الحامل الولد الذكر الانثى', h: 5 },
+  { k: /\bɗa\b|'ya'ya|ya'ya|\byara\b|\byaro|zuri'?a|child|baby|son\b|daughter|ولد|ذرية|مولود/i, ar: 'الذرية الولد الاولاد', h: 5 },
+  { k: /bashi|lamuni|debt|loan|مديون|دين|ديون/i, ar: 'الدين المديون الديون', h: 8 },
+  { k: /sata|sace|sacewa|ɓarawo|barawo|ɓarayi|theft|thief|steal|سارق|سرقة/i, ar: 'السارق السرقة الفاعل', h: 7 },
+  { k: /tafiya|balaguro|safar|travel|trip|journey|مسافر|سفر|ƙasar waje|kasar waje/i, ar: 'المسافر السفر الغائب', h: 9 },
+  { k: /lafiya|rashin lafiya|cuta|ciwo|ciwon|asibiti|sick|ill\b|disease|health|مرض|مريض|شفاء/i, ar: 'المرض المريض البرء', h: 6 },
+  { k: /kasuwanci|kasuwa|ciniki|kuɗi|kudi|arziki|riba|dukiya|talauci|business|money|trade|shop|rich|poor|تجارة|مال|رزق|بيع|شراء/i, ar: 'التجارة المال البيع الشراء الرزق', h: 2 },
+  { k: /aiki|aikin|albashi|mukami|ofis|office|job|work|employ|sarki|shugaba|shugabanci|mulki|gwamna|zaɓe|zabe|minista|politic|عمل|خدمة|وظيفة|سلطان|والي|حاكم|منصب/i, ar: 'الخدمة السلطان الوالي الحاكم المناصب', h: 10 },
+  { k: /ɓatacce|ɓata\b|batacce|bata\b|lost|missing|gudu|ɓoye|ya gudu|abscond|ضائع|ضالة|هارب|آبق|ابق/i, ar: 'الضالة الهارب الاباق', h: 4 },
+  { k: /abokin gaba|maƙiyi|makiyi|ƙiyayya|kiyayya|enemy|hate|عدو|اعداء|أعداء/i, ar: 'الاعداء العدو', h: 12 },
+  { k: /soyayya|ƙauna|kauna|budurwa|saurayi|masoyi|love|lover|عشق|محبة|معشوق/i, ar: 'المعشوق المحبة العاشق المراة', h: 7 },
+  { k: /mutuwa|rasuwa|mutu|death|die\b|dead|rayuwa|shekara|عمر|موت|وفاة/i, ar: 'الموت العمر', h: 8 },
+  { k: /nasara|yaƙi|yaki|gasa|win\b|war\b|kotu|shari'?a|lawsuit|court|غالب|مغلوب|حرب|عسكر|خصم/i, ar: 'الغالب المغلوب الحرب العسكر', h: 7 },
+  { k: /gida|fili|ƙasa|gini|mota|gado|house|land|property|car\b|دار|ارض|أرض|عقار|بناء/i, ar: 'الدار الارض العقار', h: 4 },
+  { k: /ruwan sama|damina|noma|gona|farm|rain|harvest|rahusa|tsada|farashi|price|مطر|رخاء|اسعار|أسعار/i, ar: 'المطر الرخاء الاسعار', h: 2 },
+  { k: /mafarki|dream|رؤيا|منام/i, ar: 'الرؤيا المنام' },
+  { k: /aboki|abokai|friend|صاحب|صديق/i, ar: 'الصاحب الخير', h: 11 },
+  { k: /ɓoyayye|boyayye|kaya|gwal|zinariya|treasure|buried|كنز|دفين|خبيئة|دفائن/i, ar: 'الكنوز الدفائن الخبيئة' },
+  { k: /sunan|suna|name\b|اسم/i, ar: 'اخراج الاسم' },
+  { k: /yaushe|lokacin|ranar|mudda|when|how long|مدة|متى|عدد/i, ar: 'العدد المدة' },
+  { k: /buri|bukata|nema|wish|hope|need|حاجة|مطلوب|يتم|تقضى/i, ar: 'الحاجة تقضى الامر يتم' },
+  { k: /sihiri|asiri|aljani|aljan|magani|tsafi|magic|jinn|sorcery|سحر|جن|عين/i, ar: 'السحر الجن تحليف' },
+  { k: /ilimi|karatu|makaranta|exam|jarabawa|study|school|علم|تعلم|دراسة/i, ar: 'العلم الامتحان' }
+];
+function bookCleanJson(txt) {
+  try { return JSON.parse(txt); } catch (e) {}
+  const m = String(txt).match(/\{[\s\S]*\}/); if (m) { try { return JSON.parse(m[0]); } catch (e) {} } return null;
+}
+async function planBook(q) {                                   // 1st (small) AI call: pick chapters from the table of contents
+  const key = getKey(); if (!key) return null;
+  const toc = window.BOOK.chunks.map(c => c.i + '|' + c.t).join('\n');
+  const prompt = `You choose which parts of the Arabic book «الفلك المشحون في علم الرمل المصون» are needed to answer a question about a geomancy (Raml) chart.\nUSER QUESTION (any language): ${q}\n\nCHART:\n${chartSummary()}\n\nBOOK TABLE OF CONTENTS (id|title):\n${toc}\n\nReturn ONLY JSON: {"chunks":[up to 8 ids from the table of contents most useful to answer THIS question, the best topic chapters first],"houses":[up to 3 house numbers 1-16 that rule the question topic],"keywords":[up to 8 Arabic keywords exactly as they would appear in the book]}`;
+  for (const model of MODELS) {
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0 } }) });
+      if (!r.ok) { if (r.status === 429) return null; continue; }
+      const d = await r.json(), txt = d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts[0].text, j = txt && bookCleanJson(txt);
+      if (j) return j;
+    } catch (e) {}
+  }
+  return null;
+}
+async function buildBookCtx(userText) {
+  if (!bookReady() || !chart) return null;
+  const B = window.BOOK.chunks, pr = new Map(); let used = 0; const CAP = 62000;
+  const q = [chart.question, userText].filter((x, i, a) => x && a.indexOf(x) === i).join(' | ');
+  let plan = null; try { plan = await planBook(q); } catch (e) {}
+  const hits = TOPICS.filter(tp => tp.k.test(q));
+  const houses = new Set(((plan && plan.houses) || []).map(Number).filter(h => h >= 1 && h <= 16)); hits.forEach(tp => tp.h && houses.add(tp.h));
+  const ids = [];                                              // priority order: core → planner → keyword → figure sections
+  const add = (id, why) => { id = Number(id); if (!isFinite(id) || !B[id] || pr.has(id)) return; pr.set(id, why); ids.push(id); };
+  window.BOOK.core.forEach(id => add(id, 'core'));
+  ((plan && plan.chunks) || []).slice(0, 8).forEach(id => add(id, 'plan'));
+  const kw = [...((plan && plan.keywords) || []), ...hits.map(tp => tp.ar), /[؀-ۿ]/.test(q) ? q : ''].join(' ');
+  localSearch(arTok(kw), plan ? 3 : 7).forEach(id => add(id, 'kw'));
+  const keyH = new Set([1, 15, 16, 13, 14]); houses.forEach(h => keyH.add(h));
+  const figs = new Set(); keyH.forEach(h => { if (chart.H[h]) figs.add(chart.H[h].p.join('')); });
+  B.forEach(c => { if (c.f && figs.has(c.f)) add(c.i, 'fig'); });
+  const keep = []; ids.forEach(id => { const len = B[id].x.length + 120; if (used + len <= CAP) { keep.push(id); used += len; } });
+  keep.sort((a, b) => a - b);
+  const text = keep.map(id => { const c = B[id], fg = c.f && FIG[c.f] ? ` | هذا الشكل في تخت المستفتي يسمى: ${FIG[c.f].ar} [${c.f}]` : ''; return `[#${id} | ${c.t} | ص ${c.p}${fg}]\n${c.x}`; }).join('\n\n');
+  const sources = keep.filter(id => pr.get(id) === 'plan' || pr.get(id) === 'kw').slice(0, 4).map(id => B[id].t.replace(/\s*\(جزء.*\)$/, '') + ' (ص ' + B[id].p + ')');
+  return { text, sources: [...new Set(sources)], planned: !!plan };
+}
+
 // ================= AI + CHAT =================
-function systemPrompt() {
-  return `${t('sysIntro')}\nThe 16 figures: ${Object.values(FIG).map(f => f.ha + ' (' + f.ar + ')').join(', ')}.\n` +
+function systemPrompt(bk) {
+  const base = `${t('sysIntro')}\nThe 16 figures: ${Object.values(FIG).map(f => f.ha + ' (' + f.ar + ')').join(', ')}.\n` +
     `ALWAYS answer in ${t('aiLang')}. Be clear and concise. If something is not known, say so; never invent facts.\n` +
     `For the first interpretation, use 4 parts: 1. **Direct Answer**, 2. **Houses Analysis** (the Judge, the two Witnesses, the Querent house 1, the Reconciler), 3. **Identified Issue**, 4. **Remedies** (supplications and dhikr only; no medical claims). ` +
     `For follow-up questions answer only the question, using the chart below.\n\nCHART:\n${chartSummary()}`;
+  if (!bk || !bk.text) return base;
+  return base + `\n\nBOOK RULES (very important): Below are excerpts from the book «الفلك المشحون في علم الرمل المصون» (OCR text, so small spelling errors are possible). Base EVERY judgement on these excerpts only, never on outside knowledge of geomancy. The book names the 16 figures with older names: each excerpt header that says "هذا الشكل في تخت المستفتي يسمى ..." links the book's figure to the figure in the chart. If the excerpts do not contain the rule needed to answer the question, say clearly that the parts of the book provided do not answer it, and do not invent anything. After each main point, name the chapter and page you used, like (باب … ص 123). You may quote short Arabic phrases from the book, but explain everything in ${t('aiLang')}.\n\nBOOK EXCERPTS:\n${bk.text}\n`;
 }
-async function callGemini(contents) {
+async function callGemini(contents, sys) {
   const key = getKey(); let last = 'GEN';
   for (const model of MODELS) {
     try {
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: systemPrompt() }] } }) });
+        body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: sys || systemPrompt() }] } }) });
       if (r.ok) { const d = await r.json(); const txt = d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts[0].text; if (txt) return txt; last = 'GEN'; continue; }
       if (r.status === 400 || r.status === 403 || r.status === 401) throw Object.assign(new Error('KEY'), { code: 'KEY' });
       last = r.status === 429 ? 'LIMIT' : (r.status >= 500 ? 'BUSY' : 'GEN');
@@ -616,7 +708,9 @@ async function ask(userText, hidden) {
   const wait = addBubble('model', t('thinking'));
   try {
     const contents = chatHist.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }));
-    const ans = await callGemini(contents);
+    const bk = await buildBookCtx(userText);
+    if (!bk && !bookReady() && !bookWarned) { bookWarned = true; toast(t('bookMissing')); }
+    const ans = (await callGemini(contents, systemPrompt(bk))) + (bk && bk.sources.length ? `\n\n📖 ${t('bookSrc')}: ${bk.sources.join(' • ')}` : '');
     chatHist.push({ role: 'model', text: ans }); wait.remove(); addBubble('model', ans);
   } catch (e) { chatHist.pop(); wait.remove(); addBubble('model', '⚠️ ' + errMsg(e.code)); }
   finally { chatBusy = false; $('sendBtn').disabled = false; }
