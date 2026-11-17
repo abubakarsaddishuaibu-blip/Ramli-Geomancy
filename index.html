@@ -72,6 +72,10 @@
       <div class="px-4 py-2 flex justify-between text-[11px] text-slate-300"><span id="chRise"></span><span id="chSet"></span></div>
       <p id="chNote" class="text-[10px] text-slate-400 pb-3 text-center"></p>
     </div>
+    <button onclick="openCredits()" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-[#0B132B]/85 border border-[#D4A017]/60 text-white shadow">
+      <span class="font-extrabold text-sm">🪙 <span data-t="credTitle"></span>: <span class="credBal text-[#F5D26B]">–</span></span>
+      <span class="px-3 py-1 rounded-lg bg-[#D4A017] text-[#0B132B] text-xs font-black" data-t="credBuy"></span>
+    </button>
     <button onclick="go('cast')" data-t="homeEnter" class="w-full py-4 rounded-2xl bg-[#1F6B43] hover:bg-[#175434] text-white font-extrabold shadow-lg"></button>
   </main>
 
@@ -118,7 +122,7 @@
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#151E3F] border border-slate-700 text-xs font-extrabold"><span data-t="totalDots"></span><span id="rDots" class="text-[#5DB887] text-sm"></span></div>
         <p data-t="tapHouse" class="text-[11px] text-slate-400"></p>
       </div>
-      <button onclick="startChat()" class="w-full py-3.5 rounded-xl bg-[#1F6B43] hover:bg-[#175434] text-white font-extrabold text-sm uppercase">💬 <span data-t="interpret"></span></button>
+      <button onclick="startChat()" class="w-full py-3.5 rounded-xl bg-[#1F6B43] hover:bg-[#175434] text-white font-extrabold text-sm uppercase">💬 <span data-t="interpret"></span> <span class="ms-1 px-2 py-0.5 rounded-full bg-black/25 text-[11px] normal-case">🪙 <span class="costFirst">3</span></span></button>
     </div>
   </section>
 
@@ -127,6 +131,7 @@
     <div class="flex items-center justify-between px-3 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
       <div class="min-w-0"><div data-t="chatTitle" class="font-extrabold text-sm"></div><div id="cSubject" class="text-[11px] text-[#1F6B43] truncate"></div></div>
       <div class="flex gap-1.5 shrink-0 text-xs font-bold">
+        <button onclick="openCredits()" class="px-2.5 py-1.5 rounded-lg bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B]">🪙 <span class="credBal">–</span></button>
         <button onclick="saveChat()" class="px-2.5 py-1.5 rounded-lg bg-[#DCEFE3] dark:bg-[#0F2E1E] text-[#1F6B43] dark:text-[#7FCBA0]">💾</button>
         <button onclick="copyChat()" class="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800">📋</button>
         <button onclick="shareChat()" class="px-2.5 py-1.5 rounded-lg bg-[#1F6B43] text-white">WhatsApp</button>
@@ -136,7 +141,7 @@
     <div id="chatLog" class="flex-1 overflow-y-auto p-3 space-y-3" style="min-height:50vh"></div>
     <div class="sticky bottom-0 p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex gap-2">
       <input id="chatIn" data-ph="chatPh" onkeydown="if(event.key==='Enter')sendChat()" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm">
-      <button id="sendBtn" onclick="sendChat()" class="px-4 rounded-xl bg-[#1F6B43] text-white font-bold" data-t="send"></button>
+      <button id="sendBtn" onclick="sendChat()" class="px-4 rounded-xl bg-[#1F6B43] text-white font-bold leading-tight"><span data-t="send"></span><span class="block text-[10px] font-semibold opacity-80">🪙 <span class="costNext">1</span></span></button>
     </div>
   </section>
 
@@ -154,6 +159,21 @@
   </section>
 
   <!-- ADMIN -->
+  <section id="v-credits" class="hidden flex-1 p-4 space-y-3 bg-white/70 dark:bg-slate-950/70">
+    <div class="flex items-center justify-between"><h2 class="text-lg font-extrabold">🪙 <span data-t="credTitle"></span></h2><button onclick="closeCredits()" class="px-3 py-2 rounded-xl bg-[#1F6B43] text-white text-xs font-bold" data-t="back"></button></div>
+    <div class="rounded-3xl p-5 text-center bg-gradient-to-br from-[#0F2E1E] to-[#1F6B43] text-white border border-[#D4A017]/60 shadow">
+      <div class="text-xs opacity-80" data-t="credBal"></div>
+      <div class="credBal text-5xl font-black text-[#F5D26B] my-1">–</div>
+      <div class="text-[11px] opacity-90" id="credCostInfo"></div>
+    </div>
+    <div id="credMsg" class="hidden rounded-xl p-3 text-sm font-bold text-center"></div>
+    <h3 class="font-extrabold text-sm pt-1" data-t="credPkgs"></h3>
+    <div id="credPkgs" class="grid gap-2"></div>
+    <p class="text-[11px] text-slate-500 text-center" data-t="credSecure"></p>
+    <h3 class="font-extrabold text-sm pt-2" data-t="credHist"></h3>
+    <div id="credHist" class="space-y-1.5"></div>
+  </section>
+
   <section id="v-admin" class="hidden flex-1 p-3 space-y-3 bg-white/70 dark:bg-slate-950/70">
     <div class="flex items-center justify-between"><h2 class="text-lg font-extrabold">🛡️ <span data-t="navAdmin"></span></h2><button onclick="go('home')" class="px-3 py-2 rounded-xl bg-[#1F6B43] text-white text-xs font-bold" data-t="back"></button></div>
     <div id="aStats" class="grid grid-cols-3 gap-2"></div>
@@ -236,6 +256,7 @@
         <button onclick="go('history');closeDrawer()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">📜 <span data-t="navHistory"></span></button>
         <button onclick="go('dict');closeDrawer()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">✨ <span data-t="navDict"></span></button>
         <button onclick="closeDrawer();openKey()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">🔑 <span data-t="navKey"></span></button>
+        <button onclick="openCredits();closeDrawer()" class="w-full flex justify-between text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"><span>🪙 <span data-t="credTitle"></span></span><b class="credBal text-[#8a6a05] dark:text-[#F5D26B]">–</b></button>
         <button onclick="closeDrawer();openModal('guideModal')" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">📘 <span data-t="navGuide"></span></button>
       </nav>
     </div>
@@ -365,6 +386,13 @@ const T = {
   navAdmin:"Sashen Admin", adReports:"Rahotanni", adUsers:"Masu Amfani", adSearch:"Nemi suna...", adStUsers:"Masu amfani", adStMsgs:"Saƙonni", adStVoice:"Murya", adStOpen:"Rahotanni a buɗe", adStBans:"An hana", adBan:"Hana shi", adUnban:"Cire hani", adBanned:"An hana shi", adResolve:"Rufe rahoto", adDelMsg:"Goge saƙo", adPurge:"Goge saƙonnin ƙungiyarsa", adPurgeQ:"A goge duk saƙonnin da wannan mutumin ya aika a ƙungiyar Kowa?", adBanQ:"A hana wannan mutumin aika saƙo a manhajar?", adReasonQ:"Dalili (zaɓi):", adNone:"Babu komai a nan.", adGone:"(an riga an goge saƙon)", adFrom:"Mai rahoto", adAbout:"Wanda aka kai rahoton", adDone:"An yi.", adSetup:"Ba a kammala saita admin ba. Gudanar da supabase-admin-setup.sql.", fcBanned:"An hana ka aika saƙo a manhajar.",
   chTabD:"RANA", chTabN:"DARE", lgEx:"Mai Kyau Ƙwarai", lgGood:"Mai Kyau", lgNorm:"Matsakaici", lgBad:"Maras Kyau",
   bookSrc:"Tushen littafi", bookMissing:"Ba a samo fayil ɗin book.js ba, don haka AI zai amsa ba tare da littafin ba. Ka sa book.js a wuri ɗaya da manhajar.",
+  credTitle:"Kiredit", credBuy:"Saya", credBal:"Kiredit ɗinka", credPkgs:"Zaɓi fakitin kiredit", credHist:"Tarihin kiredit", credNone:"Babu tarihi tukuna.",
+  credCostInfo:"Fassarar tambaya = 🪙3 • kowane saƙo a chat = 🪙1", credSecure:"Ana biya ta Paystack (kati, banki ko USSD). Kiredit yana shigowa nan take bayan biya.",
+  credOne:"kiredit ɗaya", credCredits:"kiredit", credBestVal:"Mafi riba", credBuying:"Ana buɗe biyan kuɗi…", credChecking:"Ana tabbatar da biyanka…",
+  credAdded:"An ƙara kiredit", credAlready:"An riga an ƙara wannan biya.", credNotPaid:"Ba a kammala biyan ba. Idan an cire maka kuɗi, jira ɗan lokaci ka buɗe wannan shafi.", credPayFail:"Ba a iya buɗe biyan kuɗi. Ka sake gwadawa.", credLoadFail:"Ba a iya kawo fakitin. Ka duba haɗin intanet.",
+  errCredit:"Kiredit ɗinka ya ƙare. Ka sayi kiredit don ci gaba.", errAuth:"Zaman shigarka ya ƙare. Ka sake shiga.", credNeed:"Kana buƙatar aƙalla 🪙{n} don wannan. Ka sayi kiredit.",
+  rWelcome:"Kyautar maraba", rPurchase:"Saye", rInterpret:"Fassarar tambaya", rChat:"Saƙon chat", rRefund:"Mayar da kiredit", rAdmin:"Daga admin",
+  adStRev:"Kuɗin da aka samu (₦)", adGrant:"Ƙara kiredit", adGrantAsk:"Nawa za a ƙara? (lamba mara kyau tana cirewa)", adGranted:"An sabunta kiredit ɗin.",
   mother:"Uwa", lang:"ha",
   guideBody:"<b>1.</b> Rubuta suna (da tambaya idan kana so).<br><b>2.</b> Zuba Iyaye 4 (Uwa 1 a dama): taɓa kowane layi don 1 ko 2 digo, ko 'Zuba da Kanka'.<br><b>3.</b> Latsa HAIFAR DA ƘASA don ganin gidaje 16.<br><b>4.</b> Latsa NEMI FASSARA don tattaunawa da AI a kan zanenka. Za ka buƙaci Gemini key naka (🔑).",
   aiLang:"Hausa", sysIntro:"Kai gwanin masanin ilmin Ramli ne. Ka yi amfani da sunayen taurari 16 kamar yadda littafin «الفلك المشحون» ya rubuta su." },
@@ -387,6 +415,13 @@ const T = {
   navAdmin:"Admin Panel", adReports:"Reports", adUsers:"Users", adSearch:"Search name...", adStUsers:"Users", adStMsgs:"Messages", adStVoice:"Voice", adStOpen:"Open reports", adStBans:"Banned", adBan:"Ban", adUnban:"Unban", adBanned:"Banned", adResolve:"Resolve", adDelMsg:"Delete message", adPurge:"Delete his group messages", adPurgeQ:"Delete all group messages this person sent?", adBanQ:"Ban this person from sending messages?", adReasonQ:"Reason (optional):", adNone:"Nothing here.", adGone:"(message already deleted)", adFrom:"Reporter", adAbout:"Reported", adDone:"Done.", adSetup:"Admin is not set up yet. Run supabase-admin-setup.sql.", fcBanned:"You are banned from sending messages.",
   chTabD:"DAY", chTabN:"NIGHT", lgEx:"Excellent", lgGood:"Good", lgNorm:"Normal", lgBad:"Unfavourable",
   bookSrc:"Book sources", bookMissing:"book.js was not found, so the AI will answer without the book. Put book.js next to the app.",
+  credTitle:"Credits", credBuy:"Buy", credBal:"Your credits", credPkgs:"Choose a credit pack", credHist:"Credit history", credNone:"No history yet.",
+  credCostInfo:"Question interpretation = 🪙3 • each chat message = 🪙1", credSecure:"Paid securely via Paystack (card, bank or USSD). Credits arrive instantly after payment.",
+  credOne:"per credit", credCredits:"credits", credBestVal:"Best value", credBuying:"Opening payment…", credChecking:"Confirming your payment…",
+  credAdded:"Credits added", credAlready:"This payment was already credited.", credNotPaid:"Payment was not completed. If you were charged, wait a moment and reopen this page.", credPayFail:"Could not start the payment. Please try again.", credLoadFail:"Could not load the packs. Check your connection.",
+  errCredit:"You are out of credits. Buy credits to continue.", errAuth:"Your session expired. Please log in again.", credNeed:"You need at least 🪙{n} for this. Buy credits.",
+  rWelcome:"Welcome gift", rPurchase:"Purchase", rInterpret:"Question interpretation", rChat:"Chat message", rRefund:"Refund", rAdmin:"From admin",
+  adStRev:"Revenue (₦)", adGrant:"Add credits", adGrantAsk:"How many credits to add? (negative removes)", adGranted:"Credits updated.",
   mother:"Mother", lang:"en",
   guideBody:"<b>1.</b> Enter a name (and a question if you like).<br><b>2.</b> Cast the 4 Mothers (Mother 1 on the right): tap each row for 1 or 2 dots, or 'Auto-cast'.<br><b>3.</b> Tap CAST THE CHART to see the 16 houses.<br><b>4.</b> Tap INTERPRET to chat with the AI about your chart. You need your own Gemini key (🔑).",
   aiLang:"English", sysIntro:"You are an expert in the science of Raml (geomancy). Use the names of the 16 figures exactly as written in the book «الفلك المشحون»." },
@@ -409,6 +444,13 @@ const T = {
   navAdmin:"لوحة الإدارة", adReports:"البلاغات", adUsers:"المستخدمون", adSearch:"ابحث بالاسم...", adStUsers:"المستخدمون", adStMsgs:"الرسائل", adStVoice:"صوتية", adStOpen:"بلاغات مفتوحة", adStBans:"محظورون", adBan:"منع", adUnban:"رفع المنع", adBanned:"ممنوع", adResolve:"إغلاق البلاغ", adDelMsg:"حذف الرسالة", adPurge:"حذف رسائله في المجموعة", adPurgeQ:"حذف كل رسائل هذا الشخص في المجموعة؟", adBanQ:"منع هذا الشخص من إرسال الرسائل؟", adReasonQ:"السبب (اختياري):", adNone:"لا شيء هنا.", adGone:"(الرسالة محذوفة)", adFrom:"المُبلِّغ", adAbout:"المُبلَّغ عنه", adDone:"تم.", adSetup:"لم يتم إعداد الإدارة. شغّل supabase-admin-setup.sql.", fcBanned:"أنت ممنوع من إرسال الرسائل.",
   chTabD:"النهار", chTabN:"الليل", lgEx:"ممتاز", lgGood:"جيد", lgNorm:"عادي", lgBad:"غير موات",
   bookSrc:"المصدر من الكتاب", bookMissing:"لم يُعثر على book.js، لذا سيجيب الذكاء دون الكتاب. ضع book.js بجانب التطبيق.",
+  credTitle:"الرصيد", credBuy:"شراء", credBal:"رصيدك", credPkgs:"اختر باقة رصيد", credHist:"سجل الرصيد", credNone:"لا يوجد سجل بعد.",
+  credCostInfo:"تفسير السؤال = 🪙3 • كل رسالة محادثة = 🪙1", credSecure:"الدفع عبر Paystack بأمان (بطاقة أو بنك أو USSD). يُضاف الرصيد فور الدفع.",
+  credOne:"للرصيد الواحد", credCredits:"رصيد", credBestVal:"الأوفر", credBuying:"جارٍ فتح الدفع…", credChecking:"جارٍ تأكيد دفعتك…",
+  credAdded:"تمت إضافة الرصيد", credAlready:"تمت إضافة هذه الدفعة مسبقاً.", credNotPaid:"لم تكتمل عملية الدفع. إن خُصم منك مبلغ فانتظر قليلاً ثم افتح هذه الصفحة.", credPayFail:"تعذّر بدء الدفع. حاول مرة أخرى.", credLoadFail:"تعذّر تحميل الباقات. تحقق من الاتصال.",
+  errCredit:"انتهى رصيدك. اشترِ رصيداً للمتابعة.", errAuth:"انتهت جلستك. سجّل الدخول من جديد.", credNeed:"تحتاج إلى 🪙{n} على الأقل. اشترِ رصيداً.",
+  rWelcome:"هدية الترحيب", rPurchase:"شراء", rInterpret:"تفسير سؤال", rChat:"رسالة محادثة", rRefund:"استرجاع", rAdmin:"من المشرف",
+  adStRev:"الإيرادات (₦)", adGrant:"إضافة رصيد", adGrantAsk:"كم رصيداً تضيف؟ (السالب يخصم)", adGranted:"تم تحديث الرصيد.",
   mother:"أم", lang:"ar",
   guideBody:"<b>1.</b> اكتب الاسم (والسؤال إن شئت).<br><b>2.</b> اضرب الأمهات الأربع (الأم 1 على اليمين): المس كل سطر لنقطة أو نقطتين، أو 'عشوائي'.<br><b>3.</b> اضغط اضرب الرمل لترى البيوت الستة عشر.<br><b>4.</b> اضغط فسّر للمحادثة مع الذكاء الاصطناعي. تحتاج إلى مفتاح Gemini الخاص بك (🔑).",
   aiLang:"Arabic (العربية)", sysIntro:"أنت خبير في علم الرمل. استخدم أسماء الأشكال الستة عشر كما وردت في كتاب «الفلك المشحون»." }
@@ -498,15 +540,16 @@ function castNow() {
   const name = $('nameIn').value.trim();
   if (!name) { $('nameIn').focus(); return toast(t('needName')); }
   const { H, dots } = calcChart(mothers);
-  chart = { name, question: $('qIn').value.trim(), time: new Date().toISOString(), mothers: JSON.parse(JSON.stringify(mothers)), H, dots };
+  chart = { name, question: $('qIn').value.trim(), time: new Date().toISOString(), mothers: JSON.parse(JSON.stringify(mothers)), H, dots, sid: crypto.randomUUID() };
   chatHist = []; $('chatLog').innerHTML = ''; renderResults(); go('results');
 }
 function go(v) {
-  view = v; ['home','cast','results','chat','history','dict','salat','admin','fchats','fchat'].forEach(x => $('v-' + x).classList.toggle('hidden', x !== v));
+  view = v; ['home','cast','results','chat','history','dict','salat','admin','fchats','fchat','credits'].forEach(x => $('v-' + x).classList.toggle('hidden', x !== v));
   if (v !== 'fchat') { openPeer = null; if (rec) cancelRec(); }
   if (v === 'home') startHome(); else stopHome();
   if (v === 'salat') startSalat(); else stopSalat();
   if (v === 'admin') loadAdmin();
+  if (v === 'credits') loadCredits();
   if (v === 'history') loadHistory(); if (v === 'dict') renderDict(); if (v === 'fchats') loadChats(); if (v !== 'fchat') window.scrollTo({ top: 0 });
 }
 function openDrawer() { $('dBack').classList.remove('hidden'); $('drawer').classList.remove('-translate-x-full'); }
@@ -566,10 +609,95 @@ async function checkSession() {
   const { data: { session } } = await sb.auth.getSession();
   $('authModal').classList.toggle('hidden', !!session);
   $('userMail').textContent = session ? session.user.email : '';
-  if (session) { ensureProfile(session); if (view === 'home') askLoc(); }
-  else { ME = null; $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
+  if (session) { ensureProfile(session); loadWallet(); handlePayReturn(); if (view === 'home') askLoc(); }
+  else { ME = null; WALLET = null; renderCreditUi(); $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
 }
 async function logout() { if (sb) await sb.auth.signOut(); closeDrawer(); checkSession(); }
+
+// ================= CREDITS (kiredit) =================
+const FN_URL = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/geo';
+const COST = { first: 3, next: 1 };
+let WALLET = null, creditBack = 'home', walletBusy = false;
+const PAY_PARAMS = (() => { try { const q = new URLSearchParams(location.search); return q.get('reference') || q.get('trxref') || ''; } catch (e) { return ''; } })();
+if (PAY_PARAMS) { try { sessionStorage.setItem('geo_pay_ref', PAY_PARAMS); } catch (e) {} }
+async function fn(action, body) {
+  if (!sb) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
+  let r, d = {};
+  try {
+    r = await fetch(FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify(Object.assign({ action }, body || {})) });
+    d = await r.json();
+  } catch (e) { throw Object.assign(new Error('BUSY'), { code: 'BUSY' }); }
+  if (typeof d.balance === 'number') setWallet(d.balance);
+  if (!r.ok) throw Object.assign(new Error(d.error || 'GEN'), { code: r.status === 402 ? 'CREDIT' : r.status === 401 ? 'AUTH' : (d.error || 'GEN'), data: d });
+  return d;
+}
+function setWallet(n) { WALLET = n; renderCreditUi(); }
+function renderCreditUi() {
+  document.querySelectorAll('.credBal').forEach(e => e.textContent = WALLET == null ? '–' : WALLET);
+  document.querySelectorAll('.costFirst').forEach(e => e.textContent = COST.first);
+  document.querySelectorAll('.costNext').forEach(e => e.textContent = COST.next);
+  const ci = $('credCostInfo'); if (ci) ci.textContent = t('credCostInfo');
+}
+async function loadWallet() {
+  if (!sb || walletBusy) return; walletBusy = true;
+  try { const { data, error } = await sb.rpc('get_my_wallet'); if (!error && typeof data === 'number') setWallet(data); } catch (e) {}
+  walletBusy = false;
+  try {
+    const { data } = await sb.from('credit_settings').select('key,value');
+    (data || []).forEach(x => { if (x.key === 'interpret_cost') COST.first = x.value; if (x.key === 'chat_cost') COST.next = x.value; }); renderCreditUi();
+  } catch (e) {}
+}
+function openCredits() { if (view !== 'credits') creditBack = view === 'results' || view === 'chat' || view === 'home' || view === 'cast' ? view : 'home'; go('credits'); }
+function closeCredits() { go(creditBack || 'home'); }
+function creditMsg(text, ok) {
+  const b = $('credMsg'); if (!b) return; if (!text) { b.classList.add('hidden'); return; }
+  b.textContent = text; b.className = 'rounded-xl p-3 text-sm font-bold text-center ' + (ok ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300');
+}
+async function loadCredits() {
+  renderCreditUi(); loadWallet(); handlePayReturn();
+  if (!sb) return;
+  const pk = await sb.from('credit_packages').select('*').eq('active', true).order('sort');
+  const L = $('credPkgs');
+  if (pk.error || !(pk.data || []).length) { L.innerHTML = `<p class="text-center text-sm text-slate-500 py-3">${t('credLoadFail')}</p>`; }
+  else {
+    const rows = pk.data, per = r => r.price_ngn / r.credits, best = Math.min(...rows.map(per));
+    L.innerHTML = rows.map(r => `<button onclick="buyPackage(${r.id})" class="relative flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border ${per(r) === best && rows.length > 1 ? 'border-[#D4A017]' : 'border-slate-200 dark:border-slate-800'} text-start shadow-sm active:scale-[.99]">
+      ${per(r) === best && rows.length > 1 ? `<span class="absolute -top-2 end-3 px-2 py-0.5 rounded-full bg-[#D4A017] text-[#0B132B] text-[10px] font-black">${t('credBestVal')}</span>` : ''}
+      <div><div class="text-xl font-black text-[#1F6B43] dark:text-[#7FCBA0]">🪙 ${r.credits} <span class="text-xs font-bold text-slate-500">${t('credCredits')}</span></div><div class="text-[11px] text-slate-500">₦${(Math.round(per(r) * 10) / 10).toLocaleString('en-US')} ${t('credOne')}</div></div>
+      <div class="px-4 py-2 rounded-xl bg-[#1F6B43] text-white font-extrabold text-sm">₦${r.price_ngn.toLocaleString('en-US')}</div></button>`).join('');
+  }
+  const lg = await sb.from('credit_ledger').select('delta,reason,created_at').order('created_at', { ascending: false }).limit(15);
+  const RN = { welcome: 'rWelcome', purchase: 'rPurchase', interpret: 'rInterpret', chat: 'rChat', refund: 'rRefund', admin: 'rAdmin' }, loc = LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en-GB' : 'ha-NG';
+  const H = $('credHist'), items = lg.data || [];
+  H.innerHTML = items.length ? items.map(x => `<div class="flex items-center justify-between px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs"><div><div class="font-bold">${t(RN[x.reason] || 'rChat')}</div><div class="text-[10px] text-slate-400">${new Date(x.created_at).toLocaleString(loc)}</div></div><b class="${x.delta > 0 ? 'text-emerald-600' : 'text-rose-600'}">${x.delta > 0 ? '+' : ''}${x.delta}</b></div>`).join('') : `<p class="text-center text-slate-500 py-3 text-xs">${t('credNone')}</p>`;
+}
+let buying = false;
+async function buyPackage(id) {
+  if (buying) return; buying = true; creditMsg(t('credBuying'), true);
+  try {
+    const d = await fn('init', { package_id: id, return_url: location.origin + location.pathname });
+    try { sessionStorage.setItem('geo_pay_ref', d.reference); localStorage.setItem('geo_pay_ref', d.reference); } catch (e) {}
+    location.href = d.authorization_url;
+  } catch (e) { creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credPayFail'), false); buying = false; }
+}
+let verifying = false;
+async function handlePayReturn() {
+  let ref = ''; try { ref = sessionStorage.getItem('geo_pay_ref') || localStorage.getItem('geo_pay_ref') || ''; } catch (e) {}
+  if (!ref || verifying) return; verifying = true;
+  const clear = () => { try { sessionStorage.removeItem('geo_pay_ref'); localStorage.removeItem('geo_pay_ref'); } catch (e) {} };
+  try { if (PAY_PARAMS) history.replaceState(null, '', location.pathname); } catch (e) {}
+  if (view !== 'credits') { creditBack = 'home'; go('credits'); }
+  creditMsg(t('credChecking'), true);
+  try {
+    const d = await fn('verify', { reference: ref });
+    if (d.status === 'success') { clear(); if (typeof d.balance === 'number') setWallet(d.balance); creditMsg(d.already ? t('credAlready') : t('credAdded') + ': +' + d.credits, true); }
+    else if (d.status === 'abandoned' || d.status === 'failed') { clear(); creditMsg(t('credNotPaid'), false); }
+    else creditMsg(t('credNotPaid'), false);
+  } catch (e) { if (e.code === 'NO_PAYMENT' || e.code === 'NOT_YOURS' || e.code === 'AMOUNT_MISMATCH') clear(); creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credNotPaid'), false); }
+  verifying = false;
+}
 
 // ================= GEMINI KEY =================
 const getKey = () => { try { return localStorage.getItem('gemini_api_key') || ''; } catch (e) { return ''; } };
@@ -627,19 +755,12 @@ function bookCleanJson(txt) {
   const m = String(txt).match(/\{[\s\S]*\}/); if (m) { try { return JSON.parse(m[0]); } catch (e) {} } return null;
 }
 async function planBook(q) {                                   // 1st (small) AI call: pick chapters from the table of contents
-  const key = getKey(); if (!key) return null;
   const toc = window.BOOK.chunks.map(c => c.i + '|' + c.t).join('\n');
   const prompt = `You choose which parts of the Arabic book «الفلك المشحون في علم الرمل المصون» are needed to answer a question about a geomancy (Raml) chart.\nUSER QUESTION (any language): ${q}\n\nCHART:\n${chartSummary()}\n\nBOOK TABLE OF CONTENTS (id|title):\n${toc}\n\nReturn ONLY JSON: {"chunks":[up to 8 ids from the table of contents most useful to answer THIS question, the best topic chapters first],"houses":[up to 3 house numbers 1-16 that rule the question topic],"keywords":[up to 8 Arabic keywords exactly as they would appear in the book]}`;
-  for (const model of MODELS) {
-    try {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0 } }) });
-      if (!r.ok) { if (r.status === 429) return null; continue; }
-      const d = await r.json(), txt = d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts[0].text, j = txt && bookCleanJson(txt);
-      if (j) return j;
-    } catch (e) {}
-  }
-  return null;
+  try {
+    const d = await fn('plan', { prompt, gemini_key: getKey() });
+    return d && d.text ? bookCleanJson(d.text) : null;
+  } catch (e) { return null; }
 }
 async function buildBookCtx(userText) {
   if (!bookReady() || !chart) return null;
@@ -674,18 +795,10 @@ function systemPrompt(bk) {
   return base + `\n\nBOOK RULES (very important): Below are excerpts from the book «الفلك المشحون في علم الرمل المصون» (OCR text, so small spelling errors are possible). Base EVERY judgement on these excerpts only, never on outside knowledge of geomancy. The book names the 16 figures with older names: each excerpt header that says "هذا الشكل في تخت المستفتي يسمى ..." links the book's figure to the figure in the chart. If the excerpts do not contain the rule needed to answer the question, say clearly that the parts of the book provided do not answer it, and do not invent anything. After each main point, name the chapter and page you used, like (باب … ص 123). You may quote short Arabic phrases from the book, but explain everything in ${t('aiLang')}.\n\nBOOK EXCERPTS:\n${bk.text}\n`;
 }
 async function callGemini(contents, sys) {
-  const key = getKey(); let last = 'GEN';
-  for (const model of MODELS) {
-    try {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: sys || systemPrompt() }] } }) });
-      if (r.ok) { const d = await r.json(); const txt = d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts[0].text; if (txt) return txt; last = 'GEN'; continue; }
-      if (r.status === 400 || r.status === 403 || r.status === 401) throw Object.assign(new Error('KEY'), { code: 'KEY' });
-      last = r.status === 429 ? 'LIMIT' : (r.status >= 500 ? 'BUSY' : 'GEN');
-    } catch (e) { if (e.code === 'KEY') throw e; last = 'GEN'; }
-  }
-  throw Object.assign(new Error(last), { code: last });
+  const d = await fn('ai', { session_id: chart.sid, contents, system: sys || systemPrompt(), gemini_key: getKey() });
+  if (typeof d.balance === 'number') setWallet(d.balance);
+  if (!d.text) throw Object.assign(new Error('GEN'), { code: 'GEN' });
+  return d.text;
 }
 function md(s) {
   return esc(s).replace(/^### (.*$)/gim, '<h3 class="font-bold mt-2">$1</h3>').replace(/^## (.*$)/gim, '<h2 class="font-bold text-base mt-2">$1</h2>')
@@ -698,10 +811,12 @@ function addBubble(role, text) {
     ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.parentNode.innerText.replace('📋',''))">📋</button>`}</div>`;
   $('chatLog').appendChild(d); $('chatLog').scrollTop = $('chatLog').scrollHeight; return d;
 }
-function errMsg(code) { return { KEY: t('errKey'), LIMIT: t('errLimit'), BUSY: t('errBusy') }[code] || t('errGen'); }
+function errMsg(code) { return { KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy') }[code] || t('errGen'); }
 async function ask(userText, hidden) {
   if (chatBusy) return;
   if (!getKey()) { toast(t('keyNeeded')); openKey(); return; }
+  const need = chatHist.length === 0 ? COST.first : COST.next;
+  if (WALLET != null && WALLET < need) { toast(t('credNeed').replace('{n}', need)); openCredits(); return; }
   chatBusy = true; $('sendBtn').disabled = true;
   if (!hidden) addBubble('user', userText);
   chatHist.push({ role: 'user', text: userText });
@@ -712,7 +827,7 @@ async function ask(userText, hidden) {
     if (!bk && !bookReady() && !bookWarned) { bookWarned = true; toast(t('bookMissing')); }
     const ans = (await callGemini(contents, systemPrompt(bk))) + (bk && bk.sources.length ? `\n\n📖 ${t('bookSrc')}: ${bk.sources.join(' • ')}` : '');
     chatHist.push({ role: 'model', text: ans }); wait.remove(); addBubble('model', ans);
-  } catch (e) { chatHist.pop(); wait.remove(); addBubble('model', '⚠️ ' + errMsg(e.code)); }
+  } catch (e) { chatHist.pop(); wait.remove(); addBubble('model', '⚠️ ' + errMsg(e.code)); if (e.code === 'CREDIT') { setTimeout(openCredits, 600); } }
   finally { chatBusy = false; $('sendBtn').disabled = false; }
 }
 function startChat() {
@@ -731,7 +846,7 @@ function shareChat() { if (!chatHist.length) return toast(t('noChat')); window.o
 async function saveChat() {
   if (!chart || !chatHist.length) return toast(t('noChat'));
   const { data: { session } } = await sb.auth.getSession(); if (!session) return checkSession();
-  const m = Object.assign({}, chart.mothers, { _name: chart.name });
+  const m = Object.assign({}, chart.mothers, { _name: chart.name, _sid: chart.sid });
   const { error } = await sb.from('readings').insert({ user_id: session.user.id, kind: 'ramli', question: chart.question, mothers: m, result: transcript() });
   toast(error ? error.message : t('saved'));
 }
@@ -753,7 +868,7 @@ function openReading(i) {
   for (let n = 1; n <= 4; n++) mothers[n] = [...r.mothers[n]];
   $('nameIn').value = r.mothers._name || ''; $('qIn').value = r.question || '';
   const { H, dots } = calcChart(mothers);
-  chart = { name: r.mothers._name || '', question: r.question || '', time: r.created_at, mothers: JSON.parse(JSON.stringify(mothers)), H, dots };
+  chart = { name: r.mothers._name || '', question: r.question || '', time: r.created_at, mothers: JSON.parse(JSON.stringify(mothers)), H, dots, sid: r.mothers._sid || crypto.randomUUID() };
   renderMothers(); renderResults(); $('chatLog').innerHTML = '';
   chatHist = [{ role: 'user', text: 'Interpret this chart.' }, { role: 'model', text: r.result || '' }];
   $('cSubject').textContent = chart.name + (chart.question ? ' — ' + chart.question : ''); addBubble('model', r.result || ''); go('chat');
@@ -1267,7 +1382,7 @@ function shareChartImage() {
 }
 
 // ================= ADMIN PANEL =================
-let adminTab = 'reports', adm = { reports: [], msgs: {}, bans: new Set(), stats: null, err: false };
+let adminTab = 'reports', adm = { reports: [], msgs: {}, bans: new Set(), stats: null, err: false, wallets: {}, rev: null };
 async function failToast(def) {
   try { const { data } = await sb.from('bans').select('user_id').eq('user_id', ME.id).maybeSingle(); if (data) return toast(t('fcBanned')); } catch (e) {}
   toast(def);
@@ -1285,6 +1400,8 @@ async function loadAdmin() {
   const ids = adm.reports.map(r => r.message_id).filter(x => x != null); adm.msgs = {};
   if (ids.length) { const ms = await sb.from('messages').select('*').in('id', ids); (ms.data || []).forEach(m => adm.msgs[m.id] = m); }
   const bn = await sb.from('bans').select('user_id'); adm.bans = new Set((bn.data || []).map(x => x.user_id));
+  const wl = await sb.rpc('admin_wallets'); adm.wallets = {}; (wl.data || []).forEach(w => adm.wallets[w.user_id] = w.balance);
+  const rv = await sb.rpc('admin_revenue'); adm.rev = rv.error ? null : rv.data;
   await loadProfiles(); if (view === 'admin') renderAdmin();
 }
 function renderAdmin() {
@@ -1293,7 +1410,7 @@ function renderAdmin() {
   $('aTabU').className = 'py-2.5 rounded-xl text-sm font-bold ' + (!R ? 'bg-[#1F6B43] text-white' : 'bg-slate-200 dark:bg-slate-800');
   $('aSearch').classList.toggle('hidden', R);
   const S = adm.stats, box = (n, l) => `<div class="rounded-2xl p-2.5 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="text-xl font-black text-[#1F6B43] dark:text-[#7FCBA0]">${n == null ? '–' : n}</div><div class="text-[10px] font-bold text-slate-500">${l}</div></div>`;
-  $('aStats').innerHTML = box(S && S.users, t('adStUsers')) + box(S && S.messages, t('adStMsgs')) + box(S && S.voice, t('adStVoice')) + box(S && S.open_reports, t('adStOpen')) + box(S && S.bans, t('adStBans')) + box('', '');
+  $('aStats').innerHTML = box(S && S.users, t('adStUsers')) + box(S && S.messages, t('adStMsgs')) + box(S && S.voice, t('adStVoice')) + box(S && S.open_reports, t('adStOpen')) + box(S && S.bans, t('adStBans')) + box(adm.rev ? Number(adm.rev.total_ngn).toLocaleString('en-US') : null, t('adStRev'));
   if (adm.err) { $('aBody').innerHTML = `<p class="text-center text-sm text-slate-600 dark:text-slate-300 py-4">${t('adSetup')}</p>`; return; }
   const bt = 'px-2.5 py-1.5 rounded-lg text-xs font-bold ', btn = (c, fn, txt) => `<button onclick="${fn}" class="${bt}${c}">${txt}</button>`;
   if (R) {
@@ -1315,9 +1432,16 @@ function renderAdmin() {
     const q = ($('aSearch').value || '').trim().toLowerCase();
     const us = Object.values(profiles).filter(p => p.id !== ME.id && (!q || (p.username || '').toLowerCase().includes(q))).sort((a, b) => (a.username || '').localeCompare(b.username || ''));
     $('aBody').innerHTML = us.length ? us.map(p => { const isB = adm.bans.has(p.id);
-      return `<div class="rounded-2xl p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="flex items-center gap-2.5">${avatarHtml(p.id, p.username, 'w-10 h-10')}<div class="min-w-0 flex-1"><div class="font-extrabold text-sm truncate">${esc(p.username)}</div>${isB ? `<div class="text-[11px] font-bold text-rose-600">🚫 ${t('adBanned')}</div>` : ''}</div></div>
-        <div class="flex flex-wrap gap-1.5 mt-2">${isB ? btn('bg-slate-200 dark:bg-slate-800', `adminUnban('${p.id}')`, '✅ ' + t('adUnban')) : btn('bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300', `adminBan('${p.id}')`, '🚫 ' + t('adBan'))}${btn('bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300', `adminPurge('${p.id}')`, '🗑 ' + t('adPurge'))}</div></div>`; }).join('') : `<p class="text-center text-sm text-slate-500 py-6">${t('adNone')}</p>`;
+      return `<div class="rounded-2xl p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="flex items-center gap-2.5">${avatarHtml(p.id, p.username, 'w-10 h-10')}<div class="min-w-0 flex-1"><div class="font-extrabold text-sm truncate">${esc(p.username)}</div>${isB ? `<div class="text-[11px] font-bold text-rose-600">🚫 ${t('adBanned')}</div>` : ''}</div><div class="px-2 py-1 rounded-lg bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B] text-xs font-black">🪙 ${adm.wallets[p.id] == null ? 0 : adm.wallets[p.id]}</div></div>
+        <div class="flex flex-wrap gap-1.5 mt-2">${isB ? btn('bg-slate-200 dark:bg-slate-800', `adminUnban('${p.id}')`, '✅ ' + t('adUnban')) : btn('bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300', `adminBan('${p.id}')`, '🚫 ' + t('adBan'))}${btn('bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B]', `adminGrant('${p.id}')`, '🪙 ' + t('adGrant'))}${btn('bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300', `adminPurge('${p.id}')`, '🗑 ' + t('adPurge'))}</div></div>`; }).join('') : `<p class="text-center text-sm text-slate-500 py-6">${t('adNone')}</p>`;
   }
+}
+async function adminGrant(uid) {
+  const v = prompt(t('adGrantAsk'), '10'); if (v == null) return;
+  const n = parseInt(v, 10); if (!n) return;
+  const r = await sb.rpc('admin_grant_credits', { target: uid, amount: n, note: 'admin' });
+  if (r.error) return toast(r.error.message);
+  adm.wallets[uid] = r.data; toast(t('adGranted')); renderAdmin();
 }
 async function adminBan(uid) {
   if (!confirm(t('adBanQ'))) return; const reason = (prompt(t('adReasonQ')) || '').slice(0, 200);
