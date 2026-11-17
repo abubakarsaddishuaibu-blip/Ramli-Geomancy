@@ -393,6 +393,7 @@ const T = {
   errCredit:"Kiredit ɗinka ya ƙare. Ka sayi kiredit don ci gaba.", errAuth:"Zaman shigarka ya ƙare. Ka sake shiga.", credNeed:"Kana buƙatar aƙalla 🪙{n} don wannan. Ka sayi kiredit.",
   rWelcome:"Kyautar maraba", rPurchase:"Saye", rInterpret:"Fassarar tambaya", rChat:"Saƙon chat", rRefund:"Mayar da kiredit", rAdmin:"Daga admin",
   adStRev:"Kuɗin da aka samu (₦)", adGrant:"Ƙara kiredit", adGrantAsk:"Nawa za a ƙara? (lamba mara kyau tana cirewa)", adGranted:"An sabunta kiredit ɗin.",
+  keyBad:"Wannan ba Gemini API Key ba ne. Yana farawa da AIza kuma tsawonsa kusan haruffa 39. Ka kwafo shi daga aistudio.google.com/apikey.",
   mother:"Uwa", lang:"ha",
   guideBody:"<b>1.</b> Rubuta suna (da tambaya idan kana so).<br><b>2.</b> Zuba Iyaye 4 (Uwa 1 a dama): taɓa kowane layi don 1 ko 2 digo, ko 'Zuba da Kanka'.<br><b>3.</b> Latsa HAIFAR DA ƘASA don ganin gidaje 16.<br><b>4.</b> Latsa NEMI FASSARA don tattaunawa da AI a kan zanenka. Za ka buƙaci Gemini key naka (🔑).",
   aiLang:"Hausa", sysIntro:"Kai gwanin masanin ilmin Ramli ne. Ka yi amfani da sunayen taurari 16 kamar yadda littafin «الفلك المشحون» ya rubuta su." },
@@ -422,6 +423,7 @@ const T = {
   errCredit:"You are out of credits. Buy credits to continue.", errAuth:"Your session expired. Please log in again.", credNeed:"You need at least 🪙{n} for this. Buy credits.",
   rWelcome:"Welcome gift", rPurchase:"Purchase", rInterpret:"Question interpretation", rChat:"Chat message", rRefund:"Refund", rAdmin:"From admin",
   adStRev:"Revenue (₦)", adGrant:"Add credits", adGrantAsk:"How many credits to add? (negative removes)", adGranted:"Credits updated.",
+  keyBad:"That is not a Gemini API key. It starts with AIza and is about 39 characters. Copy it from aistudio.google.com/apikey.",
   mother:"Mother", lang:"en",
   guideBody:"<b>1.</b> Enter a name (and a question if you like).<br><b>2.</b> Cast the 4 Mothers (Mother 1 on the right): tap each row for 1 or 2 dots, or 'Auto-cast'.<br><b>3.</b> Tap CAST THE CHART to see the 16 houses.<br><b>4.</b> Tap INTERPRET to chat with the AI about your chart. You need your own Gemini key (🔑).",
   aiLang:"English", sysIntro:"You are an expert in the science of Raml (geomancy). Use the names of the 16 figures exactly as written in the book «الفلك المشحون»." },
@@ -451,6 +453,7 @@ const T = {
   errCredit:"انتهى رصيدك. اشترِ رصيداً للمتابعة.", errAuth:"انتهت جلستك. سجّل الدخول من جديد.", credNeed:"تحتاج إلى 🪙{n} على الأقل. اشترِ رصيداً.",
   rWelcome:"هدية الترحيب", rPurchase:"شراء", rInterpret:"تفسير سؤال", rChat:"رسالة محادثة", rRefund:"استرجاع", rAdmin:"من المشرف",
   adStRev:"الإيرادات (₦)", adGrant:"إضافة رصيد", adGrantAsk:"كم رصيداً تضيف؟ (السالب يخصم)", adGranted:"تم تحديث الرصيد.",
+  keyBad:"هذا ليس مفتاح Gemini API. يبدأ بـ AIza وطوله حوالي 39 حرفاً. انسخه من aistudio.google.com/apikey.",
   mother:"أم", lang:"ar",
   guideBody:"<b>1.</b> اكتب الاسم (والسؤال إن شئت).<br><b>2.</b> اضرب الأمهات الأربع (الأم 1 على اليمين): المس كل سطر لنقطة أو نقطتين، أو 'عشوائي'.<br><b>3.</b> اضغط اضرب الرمل لترى البيوت الستة عشر.<br><b>4.</b> اضغط فسّر للمحادثة مع الذكاء الاصطناعي. تحتاج إلى مفتاح Gemini الخاص بك (🔑).",
   aiLang:"Arabic (العربية)", sysIntro:"أنت خبير في علم الرمل. استخدم أسماء الأشكال الستة عشر كما وردت في كتاب «الفلك المشحون»." }
@@ -700,10 +703,10 @@ async function handlePayReturn() {
 }
 
 // ================= GEMINI KEY =================
-const getKey = () => { try { return localStorage.getItem('gemini_api_key') || ''; } catch (e) { return ''; } };
+const getKey = () => { try { return (localStorage.getItem('gemini_api_key') || '').replace(/\s+/g, ''); } catch (e) { return ''; } };
 function updateKeyDot() {}
 function openKey() { $('keyIn').value = getKey(); openModal('keyModal'); }
-function saveKey() { try { localStorage.setItem('gemini_api_key', $('keyIn').value.trim()); } catch (e) {} updateKeyDot(); closeModal('keyModal'); toast(t('saved')); }
+function saveKey() { const kv = $('keyIn').value.replace(/\s+/g, ''); if (kv && !/^AIza[\w-]{30,60}$/.test(kv)) { toast(t('keyBad')); return; } try { localStorage.setItem('gemini_api_key', kv); } catch (e) {} updateKeyDot(); closeModal('keyModal'); toast(t('saved')); }
 function toggleKeyVis() { const i = $('keyIn'); i.type = i.type === 'password' ? 'text' : 'password'; }
 
 // ================= BOOK «الفلك المشحون» — RETRIEVAL (AI answers from the book) =================
