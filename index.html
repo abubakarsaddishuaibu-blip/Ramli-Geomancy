@@ -827,7 +827,7 @@ async function ask(userText, hidden) {
     if (!bk && !bookReady() && !bookWarned) { bookWarned = true; toast(t('bookMissing')); }
     const ans = (await callGemini(contents, systemPrompt(bk))) + (bk && bk.sources.length ? `\n\n📖 ${t('bookSrc')}: ${bk.sources.join(' • ')}` : '');
     chatHist.push({ role: 'model', text: ans }); wait.remove(); addBubble('model', ans);
-  } catch (e) { chatHist.pop(); wait.remove(); addBubble('model', '⚠️ ' + errMsg(e.code)); if (e.code === 'CREDIT') { setTimeout(openCredits, 600); } }
+  } catch (e) { chatHist.pop(); wait.remove(); addBubble('model', '⚠️ ' + errMsg(e.code) + (e.data && e.data.detail ? '\n\n(' + e.data.detail + ')' : '')); if (e.code === 'CREDIT') { setTimeout(openCredits, 600); } }
   finally { chatBusy = false; $('sendBtn').disabled = false; }
 }
 function startChat() {
