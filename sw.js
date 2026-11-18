@@ -1,8 +1,10 @@
 // GEOMANCY service worker: caches the app shell so it opens fast and works offline.
-const VERSION = 'geo-v1';
+const VERSION = 'geo-v4';
 const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net'];
 
-self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(['book.js']).catch(() => {})).then(() => self.skipWaiting()));
+});
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
