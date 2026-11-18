@@ -479,10 +479,34 @@ function calcChart(m) {
   let dots = 0; for (let i = 1; i <= 16; i++) dots += H[i].p.reduce((x, y) => x + y, 0);
   return { H, dots };
 }
+const TIME_OF = h => [1,4,7,10].includes(h) ? 'HAL/present' : [2,5,8,11].includes(h) ? 'MUSTAQBAL/future' : [3,6,9,12].includes(h) ? 'MADI/past' : 'ZAWA\'ID (partner of ' + ({13:1,14:4,15:7,16:10}[h]) + ')';
+// Natural housing (التسكين الطبيعي, book p.44): figure -> its natural house 1..16 (verified against the book's examples: Ahyan=2, Judula=11, Humra/Nusra-Dakhila 7 apart)
+const NATURAL = ['2122','1222','1112','1211','2111','1212','2211','2221','1122','2121','1121','2212','1221','1111','2112','2222'];
+// Planet of each figure (تسكين الكواكب, book p.44) and its exaltation/fall houses (book p.66)
+const PLANET = { Saturn: ['2221','1221'], Jupiter: ['1222','2111'], Mars: ['2122','1121'], Sun: ['1122','2121'], Venus: ['2211','1211'], Mercury: ['2222','2112'], Moon: ['2212','1111'], Ras: ['1212'], Dhanab: ['1112'] };
+const DIGNITY = { Saturn: [7,1], Jupiter: [4,12], Mars: [2,8], Sun: [1,7], Venus: [12,4], Mercury: [6,12], Moon: [2,8], Ras: [2,8], Dhanab: [2,8] };
+const MOVE_MEANING = { 1: 'in its own natural house (no movement)', 5: 'moved to its 5th: RAQIB and FARAH (joy)', 6: 'moved to its 6th: NAHS (misfortune)', 7: 'moved to its 7th: MATLUB (the sought thing)', 8: 'moved to its 8th: IHTIRAQ and WABAL (burning, ruin)', 9: 'moved to its 9th: GHAYB (absent/hidden)', 10: 'moved to its 10th: IZZ and MULK (honour, rule)', 12: 'moved to its 12th: ADAWA and DIDD (enmity, opposition)' };
+const planetOf = k => Object.keys(PLANET).find(pl => PLANET[pl].includes(k));
+function tafiyaOf(h) {                                         // where the same figure also appears (tikrar)
+  const key = chart.H[h].p.join(''), at = [];
+  for (let k = 1; k <= 16; k++) if (k !== h && chart.H[k].p.join('') === key) at.push(k);
+  return at;
+}
+function moveOf(h) {                                           // tafiya: how many houses the figure moved from its natural house (counted over the 16 houses, as the book does)
+  const key = chart.H[h].p.join(''), nat = NATURAL.indexOf(key) + 1, rel = ((h - nat + 16) % 16) + 1, pl = planetOf(key), d = pl && DIGNITY[pl];
+  return { nat, rel, planet: pl, meaning: MOVE_MEANING[rel] || 'moved to its ' + rel + 'th: the book gives no special rule for this distance', sharaf: !!(d && d[0] === h), hubut: !!(d && d[1] === h) };
+}
 function chartSummary() {
-  const lines = [`${t('subject')}: ${chart.name}`, chart.question ? `Question: ${chart.question}` : ''];
-  for (let i = 1; i <= 16; i++) { const f = figOf(chart.H[i].p); lines.push(`House ${i} (${catOf(i)}): ${f.ha} / ${f.en} / ${f.ar} [${chart.H[i].p.join('')}]`); }
-  return lines.filter(Boolean).join('\n');
+  const lines = [`${t('subject')}: ${chart.name}`, chart.question ? `Question: ${chart.question}` : '',
+    'For every house: the figure, its time (HAL=present, MUSTAQBAL=future, MADI=past), its natural house, its TAFIYA (how far it moved from its natural house) with the book meaning, its planet, and repeats.'];
+  for (let i = 1; i <= 16; i++) {
+    const f = figOf(chart.H[i].p), at = tafiyaOf(i), m = moveOf(i);
+    lines.push(`House ${i} (${catOf(i)}) [time: ${TIME_OF(i)}]: ${f.ha} / ${f.en} / ${f.ar} [${chart.H[i].p.join('')}] | natural house ${m.nat} | TAFIYA ${m.rel}: ${m.meaning} | planet ${m.planet || '?'}` + (m.sharaf ? ' | in its SHARAF (exaltation)' : '') + (m.hubut ? ' | in its HUBUT (fall)' : '') + (at.length ? ` | SAME FIGURE ALSO IN HOUSES ${at.join(', ')}` : ''));
+  }
+  const names = { 1: 'Dali\'i / the Querent (house 1)', 7: 'Madlub / the Sought (house 7)', 10: 'house 10', 4: 'house 4', 15: 'Judge/Witness (house 15)', 16: 'Reconciler (house 16)' };
+  lines.push('', 'KEY FIGURES (Dali\'i, Madlub and others) — judge by their TAFIYA, as the book does:');
+  Object.keys(names).forEach(h => { const f = figOf(chart.H[h].p), at = tafiyaOf(+h), m = moveOf(+h); lines.push(`- ${names[h]}: ${f.ar} (${f.ha}) — natural house ${m.nat}, ${m.meaning}` + (m.sharaf ? ', in its sharaf' : '') + (m.hubut ? ', in its hubut' : '') + (at.length ? `; also appears in houses ${at.join(', ')} (${at.map(k => TIME_OF(k).split('/')[0]).join(', ')})` : '; does not repeat in other houses')); });
+  return lines.filter(x => x !== undefined && x !== null).join('\n');
 }
 
 // ================= RENDER =================
@@ -792,7 +816,7 @@ async function buildBookCtx(userText) {
 function systemPrompt(bk) {
   const base = `${t('sysIntro')}\nThe 16 figures: ${Object.values(FIG).map(f => f.ha + ' (' + f.ar + ')').join(', ')}.\n` +
     `ALWAYS answer in ${t('aiLang')}. Be clear and concise. If something is not known, say so; never invent facts.\n` +
-    `For the first interpretation, use 4 parts: 1. **Direct Answer**, 2. **Houses Analysis** (the Judge, the two Witnesses, the Querent house 1, the Reconciler), 3. **Identified Issue**, 4. **Remedies** (supplications and dhikr only; no medical claims). ` +
+    `For the first interpretation, use exactly these 4 parts and nothing else: 1. **Direct Answer** — when the question is whether something will happen/exist/be obtained, begin with ONE bold verdict line chosen from exactly three: (a) YES, it will happen; (b) YES, BUT ONLY WITH MUCH PRAYER (supplication) — when the signs are mixed or hindered but the book shows a way; (c) NO, it will not happen. Write the verdict in the answer language (Hausa: **ZAI YI**, **ZAI YI IDAN AN YI ADDU'A SOSAI**, **BA ZAI YI BA**). Decide it plainly from the book's rules on the tafiya and the key figures (Dali'i, Madlub, Judge, Reconciler); do not hedge, do not give two verdicts, and do not say 'maybe'. Then one or two short sentences saying why, 2. **Tafiya (movements) analysis** — judge the way the book does: for the Dali'i (house 1, the querent), the Madlub (house 7) and the other key figures, say to which houses the figure moved or repeats (see TAFIYA in the chart) and give each rule the book states for THAT movement in the form 'if the figure moved to X, then Y' (what happened before, what is happening now, what will happen). Use the time of the house: houses 1,4,7,10 = present; 2,5,8,11 = future; 3,6,9,12 = past; 13-16 are partners of 1,4,7,10. The chart already gives, for every house, the figure's natural house and its TAFIYA with the book's meaning (7th = sought, 5th = joy, 6th = misfortune, 8th = burning/ruin, 9th = absent, 10th = honour/rule, 12th = enmity) and whether it is in its sharaf or hubut: USE these exact values, never recompute or invent them, and when a tafiya has no special rule, say the book gives none. 3. **Identified Issue**, 4. **Remedies** (supplications and dhikr only; NO charity prescriptions, NO written-and-drunk amulets, no medical claims). Do not repeat the verdict in a closing section. Be clear and direct; end with one short line that Allah knows best. ` +
     `For follow-up questions answer only the question, using the chart below.\n\nCHART:\n${chartSummary()}`;
   if (!bk || !bk.text) return base;
   return base + `\n\nBOOK RULES (very important): Below are excerpts from the book «الفلك المشحون في علم الرمل المصون» (OCR text, so small spelling errors are possible). Base EVERY judgement on these excerpts only, never on outside knowledge of geomancy. The book names the 16 figures with older names: each excerpt header that says "هذا الشكل في تخت المستفتي يسمى ..." links the book's figure to the figure in the chart. If the excerpts do not contain the rule needed to answer the question, say clearly that the parts of the book provided do not answer it, and do not invent anything. After each main point, name the chapter and page you used, like (باب … ص 123). You may quote short Arabic phrases from the book, but explain everything in ${t('aiLang')}.\n\nBOOK EXCERPTS:\n${bk.text}\n`;
@@ -810,8 +834,8 @@ function md(s) {
 function addBubble(role, text) {
   const mine = role === 'user', d = document.createElement('div');
   d.className = 'flex ' + (mine ? 'justify-end' : 'justify-start');
-  d.innerHTML = `<div class="bubble max-w-[88%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${mine ? 'bg-[#1F6B43] text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800'}">${mine ? esc(text) : md(text)}
-    ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.parentNode.innerText.replace('📋',''))">📋</button>`}</div>`;
+  d.innerHTML = `<div class="bubble max-w-[88%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${mine ? 'bg-[#1F6B43] text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800'}"><span class="btxt">${mine ? esc(text) : md(text)}</span>
+    ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.previousElementSibling.innerText)">📋</button>`}</div>`;
   $('chatLog').appendChild(d); $('chatLog').scrollTop = $('chatLog').scrollHeight; return d;
 }
 function errMsg(code) { return { KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy') }[code] || t('errGen'); }
