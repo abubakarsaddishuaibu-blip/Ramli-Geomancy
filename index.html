@@ -394,6 +394,7 @@ const T = {
   rWelcome:"Kyautar maraba", rPurchase:"Saye", rInterpret:"Fassarar tambaya", rChat:"Saƙon chat", rRefund:"Mayar da kiredit", rAdmin:"Daga admin",
   adStRev:"Kuɗin da aka samu (₦)", adGrant:"Ƙara kiredit", adGrantAsk:"Nawa za a ƙara? (lamba mara kyau tana cirewa)", adGranted:"An sabunta kiredit ɗin.",
   keyBad:"Wannan ba Gemini API Key ba ne. Yana farawa da AIza ko AQ. Ka kwafo shi daga aistudio.google.com/apikey.",
+  errBanned:"An rufe asusunka. Ka tuntuɓi admin.",
   mother:"Uwa", lang:"ha",
   guideBody:"<b>1.</b> Rubuta suna (da tambaya idan kana so).<br><b>2.</b> Zuba Iyaye 4 (Uwa 1 a dama): taɓa kowane layi don 1 ko 2 digo, ko 'Zuba da Kanka'.<br><b>3.</b> Latsa HAIFAR DA ƘASA don ganin gidaje 16.<br><b>4.</b> Latsa NEMI FASSARA don tattaunawa da AI a kan zanenka. Za ka buƙaci Gemini key naka (🔑).",
   aiLang:"Hausa", sysIntro:"Kai gwanin masanin ilmin Ramli ne. Ka yi amfani da sunayen taurari 16 kamar yadda aka saba a ilmin Ramli." },
@@ -424,6 +425,7 @@ const T = {
   rWelcome:"Welcome gift", rPurchase:"Purchase", rInterpret:"Question interpretation", rChat:"Chat message", rRefund:"Refund", rAdmin:"From admin",
   adStRev:"Revenue (₦)", adGrant:"Add credits", adGrantAsk:"How many credits to add? (negative removes)", adGranted:"Credits updated.",
   keyBad:"That is not a Gemini API key. It starts with AIza or AQ. Copy it from aistudio.google.com/apikey.",
+  errBanned:"Your account has been disabled. Contact the admin.",
   mother:"Mother", lang:"en",
   guideBody:"<b>1.</b> Enter a name (and a question if you like).<br><b>2.</b> Cast the 4 Mothers (Mother 1 on the right): tap each row for 1 or 2 dots, or 'Auto-cast'.<br><b>3.</b> Tap CAST THE CHART to see the 16 houses.<br><b>4.</b> Tap INTERPRET to chat with the AI about your chart. You need your own Gemini key (🔑).",
   aiLang:"English", sysIntro:"You are an expert in the science of Raml (geomancy). Use the traditional names of the 16 figures." },
@@ -454,6 +456,7 @@ const T = {
   rWelcome:"هدية الترحيب", rPurchase:"شراء", rInterpret:"تفسير سؤال", rChat:"رسالة محادثة", rRefund:"استرجاع", rAdmin:"من المشرف",
   adStRev:"الإيرادات (₦)", adGrant:"إضافة رصيد", adGrantAsk:"كم رصيداً تضيف؟ (السالب يخصم)", adGranted:"تم تحديث الرصيد.",
   keyBad:"هذا ليس مفتاح Gemini API. يبدأ بـ AIza أو AQ. انسخه من aistudio.google.com/apikey.",
+  errBanned:"تم إيقاف حسابك. تواصل مع المشرف.",
   mother:"أم", lang:"ar",
   guideBody:"<b>1.</b> اكتب الاسم (والسؤال إن شئت).<br><b>2.</b> اضرب الأمهات الأربع (الأم 1 على اليمين): المس كل سطر لنقطة أو نقطتين، أو 'عشوائي'.<br><b>3.</b> اضغط اضرب الرمل لترى البيوت الستة عشر.<br><b>4.</b> اضغط فسّر للمحادثة مع الذكاء الاصطناعي. تحتاج إلى مفتاح Gemini الخاص بك (🔑).",
   aiLang:"Arabic (العربية)", sysIntro:"أنت خبير في علم الرمل. استخدم الأسماء المعروفة للأشكال الستة عشر." }
@@ -838,7 +841,7 @@ function addBubble(role, text) {
     ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.previousElementSibling.innerText)">📋</button>`}</div>`;
   $('chatLog').appendChild(d); $('chatLog').scrollTop = $('chatLog').scrollHeight; return d;
 }
-function errMsg(code) { return { KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy') }[code] || t('errGen'); }
+function errMsg(code) { return { BANNED: t('errBanned'), KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy') }[code] || t('errGen'); }
 async function ask(userText, hidden) {
   if (chatBusy) return;
   if (!getKey()) { toast(t('keyNeeded')); openKey(); return; }
@@ -853,7 +856,7 @@ async function ask(userText, hidden) {
     const bk = await buildBookCtx(userText);
     if (!bk && !bookReady() && !bookWarned) { bookWarned = true; toast(t('bookMissing')); }
     const ans = await callGemini(contents, systemPrompt(bk));
-    chatHist.push({ role: 'model', text: ans }); wait.remove(); addBubble('model', ans);
+    chatHist.push({ role: 'model', text: ans }); wait.remove(); addBubble('model', ans); autoSave();
   } catch (e) { chatHist.pop(); wait.remove(); addBubble('model', '⚠️ ' + errMsg(e.code) + (e.data && e.data.detail ? '\n\n(' + e.data.detail + ')' : '')); if (e.code === 'CREDIT') { setTimeout(openCredits, 600); } }
   finally { chatBusy = false; $('sendBtn').disabled = false; }
 }
@@ -870,12 +873,20 @@ function copyChat() { if (chart && chatHist.length) copyText(shareText()); else 
 function shareChat() { if (!chatHist.length) return toast(t('noChat')); window.open('https://wa.me/?text=' + encodeURIComponent(shareText()), '_blank'); }
 
 // ================= HISTORY (Supabase `readings`) =================
-async function saveChat() {
-  if (!chart || !chatHist.length) return toast(t('noChat'));
-  const { data: { session } } = await sb.auth.getSession(); if (!session) return checkSession();
+async function saveReading() {                                  // saves (or refreshes) this reading in the history
+  if (!chart || !chatHist.length) return { error: { message: t('noChat') } };
+  const { data: { session } } = await sb.auth.getSession(); if (!session) { checkSession(); return { error: { message: t('errAuth') } }; }
   const m = Object.assign({}, chart.mothers, { _name: chart.name, _sid: chart.sid });
-  const { error } = await sb.from('readings').insert({ user_id: session.user.id, kind: 'ramli', question: chart.question, mothers: m, result: transcript() });
-  toast(error ? error.message : t('saved'));
+  const old = chart.rid; chart.rid = null;
+  const r = await sb.from('readings').insert({ user_id: session.user.id, kind: 'ramli', question: chart.question, mothers: m, result: transcript() }).select('id').single();
+  if (!r.error && r.data) { chart.rid = r.data.id; if (old) sb.from('readings').delete().eq('id', old).then(() => {}); }
+  else chart.rid = old;
+  return r;
+}
+function autoSave() { saveReading().catch(() => {}); }
+async function saveChat() {
+  const r = await saveReading();
+  toast(r.error ? r.error.message : t('saved'));
 }
 async function loadHistory() {
   const { data, error } = await sb.from('readings').select('*').order('created_at', { ascending: false }).limit(100);
@@ -895,7 +906,7 @@ function openReading(i) {
   for (let n = 1; n <= 4; n++) mothers[n] = [...r.mothers[n]];
   $('nameIn').value = r.mothers._name || ''; $('qIn').value = r.question || '';
   const { H, dots } = calcChart(mothers);
-  chart = { name: r.mothers._name || '', question: r.question || '', time: r.created_at, mothers: JSON.parse(JSON.stringify(mothers)), H, dots, sid: r.mothers._sid || crypto.randomUUID() };
+  chart = { name: r.mothers._name || '', question: r.question || '', time: r.created_at, mothers: JSON.parse(JSON.stringify(mothers)), H, dots, sid: r.mothers._sid || crypto.randomUUID(), rid: r.id };
   renderMothers(); renderResults(); $('chatLog').innerHTML = '';
   chatHist = [{ role: 'user', text: 'Interpret this chart.' }, { role: 'model', text: r.result || '' }];
   $('cSubject').textContent = chart.name + (chart.question ? ' — ' + chart.question : ''); addBubble('model', r.result || ''); go('chat');
@@ -1409,7 +1420,7 @@ function shareChartImage() {
 }
 
 // ================= ADMIN PANEL =================
-let adminTab = 'reports', adm = { reports: [], msgs: {}, bans: new Set(), stats: null, err: false, wallets: {}, rev: null };
+let adminTab = 'reports', adm = { reports: [], msgs: {}, bans: new Set(), stats: null, err: false, wallets: {}, rev: null, users: {}, usersOk: false };
 async function failToast(def) {
   try { const { data } = await sb.from('bans').select('user_id').eq('user_id', ME.id).maybeSingle(); if (data) return toast(t('fcBanned')); } catch (e) {}
   toast(def);
@@ -1429,6 +1440,7 @@ async function loadAdmin() {
   const bn = await sb.from('bans').select('user_id'); adm.bans = new Set((bn.data || []).map(x => x.user_id));
   const wl = await sb.rpc('admin_wallets'); adm.wallets = {}; (wl.data || []).forEach(w => adm.wallets[w.user_id] = w.balance);
   const rv = await sb.rpc('admin_revenue'); adm.rev = rv.error ? null : rv.data;
+  const au = await sb.rpc('admin_users'); adm.users = {}; adm.usersOk = !au.error; (au.data || []).forEach(u => adm.users[u.id] = u);
   await loadProfiles(); if (view === 'admin') renderAdmin();
 }
 function renderAdmin() {
@@ -1457,9 +1469,11 @@ function renderAdmin() {
         </div></div>`; }).join('') : `<p class="text-center text-sm text-slate-500 py-6">${t('adNone')}</p>`;
   } else {
     const q = ($('aSearch').value || '').trim().toLowerCase();
-    const us = Object.values(profiles).filter(p => p.id !== ME.id && (!q || (p.username || '').toLowerCase().includes(q))).sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+    const all = {}; Object.values(profiles).forEach(p => all[p.id] = p); Object.values(adm.users || {}).forEach(u => { if (!all[u.id]) all[u.id] = { id: u.id, username: (u.email || '').split('@')[0] }; });
+    const em = id => (adm.users && adm.users[id] && adm.users[id].email) || '';
+    const us = Object.values(all).filter(p => p.id !== ME.id && (!q || (p.username || '').toLowerCase().includes(q) || em(p.id).toLowerCase().includes(q))).sort((a, b) => ((adm.users[b.id] && adm.users[b.id].created_at) || '').localeCompare((adm.users[a.id] && adm.users[a.id].created_at) || '') || (a.username || '').localeCompare(b.username || ''));
     $('aBody').innerHTML = us.length ? us.map(p => { const isB = adm.bans.has(p.id);
-      return `<div class="rounded-2xl p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="flex items-center gap-2.5">${avatarHtml(p.id, p.username, 'w-10 h-10')}<div class="min-w-0 flex-1"><div class="font-extrabold text-sm truncate">${esc(p.username)}</div>${isB ? `<div class="text-[11px] font-bold text-rose-600">🚫 ${t('adBanned')}</div>` : ''}</div><div class="px-2 py-1 rounded-lg bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B] text-xs font-black">🪙 ${adm.wallets[p.id] == null ? 0 : adm.wallets[p.id]}</div></div>
+      return `<div class="rounded-2xl p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="flex items-center gap-2.5">${avatarHtml(p.id, p.username, 'w-10 h-10')}<div class="min-w-0 flex-1"><div class="font-extrabold text-sm truncate">${esc(p.username)}</div>${em(p.id) ? `<div class="text-[11px] text-slate-500 truncate select-all">✉️ ${esc(em(p.id))}</div>` : ''}${adm.users && adm.users[p.id] ? `<div class="text-[10px] text-slate-400">${new Date(adm.users[p.id].created_at).toLocaleDateString(locale())}</div>` : ''}${isB ? `<div class="text-[11px] font-bold text-rose-600">🚫 ${t('adBanned')}</div>` : ''}</div><div class="px-2 py-1 rounded-lg bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B] text-xs font-black">🪙 ${adm.wallets[p.id] == null ? 0 : adm.wallets[p.id]}</div></div>
         <div class="flex flex-wrap gap-1.5 mt-2">${isB ? btn('bg-slate-200 dark:bg-slate-800', `adminUnban('${p.id}')`, '✅ ' + t('adUnban')) : btn('bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300', `adminBan('${p.id}')`, '🚫 ' + t('adBan'))}${btn('bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B]', `adminGrant('${p.id}')`, '🪙 ' + t('adGrant'))}${btn('bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300', `adminPurge('${p.id}')`, '🗑 ' + t('adPurge'))}</div></div>`; }).join('') : `<p class="text-center text-sm text-slate-500 py-6">${t('adNone')}</p>`;
   }
 }
@@ -1473,9 +1487,10 @@ async function adminGrant(uid) {
 async function adminBan(uid) {
   if (!confirm(t('adBanQ'))) return; const reason = (prompt(t('adReasonQ')) || '').slice(0, 200);
   const { error } = await sb.from('bans').insert({ user_id: uid, reason }); if (error && !/duplicate|already/i.test(error.message)) return toast(error.message);
+  await sb.rpc('admin_set_disabled', { target: uid, disabled: true });
   adm.bans.add(uid); renderAdmin(); toast(t('adDone'));
 }
-async function adminUnban(uid) { const { error } = await sb.from('bans').delete().eq('user_id', uid); if (error) return toast(error.message); adm.bans.delete(uid); renderAdmin(); toast(t('adDone')); }
+async function adminUnban(uid) { const { error } = await sb.from('bans').delete().eq('user_id', uid); if (error) return toast(error.message); await sb.rpc('admin_set_disabled', { target: uid, disabled: false }); adm.bans.delete(uid); renderAdmin(); toast(t('adDone')); }
 async function adminDelMsg(id) {
   if (!confirm(t('delQ'))) return; const m = adm.msgs[id];
   const { error } = await sb.from('messages').delete().eq('id', id); if (error) return toast(error.message);
