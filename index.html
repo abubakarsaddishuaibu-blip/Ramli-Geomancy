@@ -395,6 +395,7 @@ const T = {
   adStRev:"Kuɗin da aka samu (₦)", adGrant:"Ƙara kiredit", adGrantAsk:"Nawa za a ƙara? (lamba mara kyau tana cirewa)", adGranted:"An sabunta kiredit ɗin.",
   keyBad:"Wannan ba Gemini API Key ba ne. Yana farawa da AIza ko AQ. Ka kwafo shi daga aistudio.google.com/apikey.",
   errBanned:"An rufe asusunka. Ka tuntuɓi admin.",
+  sSensorHelp:"Ka je Chrome ⋮ → Settings → Site settings → Motion sensors, ka ba da izini (Allow), sannan ka sake gwadawa. Idan wayarka ba ta da kamfas, yi amfani da lambar digiri da aka nuna.",
   mother:"Uwa", lang:"ha",
   guideBody:"<b>1.</b> Rubuta suna (da tambaya idan kana so).<br><b>2.</b> Zuba Iyaye 4 (Uwa 1 a dama): taɓa kowane layi don 1 ko 2 digo, ko 'Zuba da Kanka'.<br><b>3.</b> Latsa HAIFAR DA ƘASA don ganin gidaje 16.<br><b>4.</b> Latsa NEMI FASSARA don tattaunawa da AI a kan zanenka. Za ka buƙaci Gemini key naka (🔑).",
   aiLang:"Hausa", sysIntro:"Kai gwanin masanin ilmin Ramli ne. Ka yi amfani da sunayen taurari 16 kamar yadda aka saba a ilmin Ramli." },
@@ -426,6 +427,7 @@ const T = {
   adStRev:"Revenue (₦)", adGrant:"Add credits", adGrantAsk:"How many credits to add? (negative removes)", adGranted:"Credits updated.",
   keyBad:"That is not a Gemini API key. It starts with AIza or AQ. Copy it from aistudio.google.com/apikey.",
   errBanned:"Your account has been disabled. Contact the admin.",
+  sSensorHelp:"Go to Chrome ⋮ → Settings → Site settings → Motion sensors, set it to Allow, then try again. If your phone has no compass, use the degrees shown.",
   mother:"Mother", lang:"en",
   guideBody:"<b>1.</b> Enter a name (and a question if you like).<br><b>2.</b> Cast the 4 Mothers (Mother 1 on the right): tap each row for 1 or 2 dots, or 'Auto-cast'.<br><b>3.</b> Tap CAST THE CHART to see the 16 houses.<br><b>4.</b> Tap INTERPRET to chat with the AI about your chart. You need your own Gemini key (🔑).",
   aiLang:"English", sysIntro:"You are an expert in the science of Raml (geomancy). Use the traditional names of the 16 figures." },
@@ -457,6 +459,7 @@ const T = {
   adStRev:"الإيرادات (₦)", adGrant:"إضافة رصيد", adGrantAsk:"كم رصيداً تضيف؟ (السالب يخصم)", adGranted:"تم تحديث الرصيد.",
   keyBad:"هذا ليس مفتاح Gemini API. يبدأ بـ AIza أو AQ. انسخه من aistudio.google.com/apikey.",
   errBanned:"تم إيقاف حسابك. تواصل مع المشرف.",
+  sSensorHelp:"افتح Chrome ⋮ ← الإعدادات ← إعدادات الموقع ← مستشعرات الحركة، واختر السماح ثم أعد المحاولة. إن لم يكن في هاتفك بوصلة فاستخدم الدرجات المعروضة.",
   mother:"أم", lang:"ar",
   guideBody:"<b>1.</b> اكتب الاسم (والسؤال إن شئت).<br><b>2.</b> اضرب الأمهات الأربع (الأم 1 على اليمين): المس كل سطر لنقطة أو نقطتين، أو 'عشوائي'.<br><b>3.</b> اضغط اضرب الرمل لترى البيوت الستة عشر.<br><b>4.</b> اضغط فسّر للمحادثة مع الذكاء الاصطناعي. تحتاج إلى مفتاح Gemini الخاص بك (🔑).",
   aiLang:"Arabic (العربية)", sysIntro:"أنت خبير في علم الرمل. استخدم الأسماء المعروفة للأشكال الستة عشر." }
@@ -1298,7 +1301,7 @@ async function notify(title, body, tag) {
 
 // ================= PRAYER TIMES + QIBLA =================
 const PM = { MWL: { f: 18, i: 17 }, Egypt: { f: 19.5, i: 17.5 }, Karachi: { f: 18, i: 18 }, ISNA: { f: 15, i: 15 }, Makkah: { f: 18.5, im: 90 } };
-let PRAY = { method: 'MWL', asr: 1 }, remindOn = false, salatTimer = null, compassH = null, heading = null, prayCache = { key: '', list: null };
+let PRAY = { method: 'MWL', asr: 1 }, remindOn = false, salatTimer = null, compassH = null, compassS = null, heading = null, prayCache = { key: '', list: null };
 try { Object.assign(PRAY, JSON.parse(localStorage.getItem('geo_pray') || '{}')); remindOn = localStorage.getItem('geo_remind') === '1'; } catch (e) {}
 function prayTimes(date, lat, lon, method, asrF) {          // port of the PrayTimes.org algorithm → hours (local)
   const R = Math.PI / 180, sn = x => Math.sin(x * R), cs = x => Math.cos(x * R), acs = x => Math.acos(x) / R, asn = x => Math.asin(x) / R, at2 = (y, x) => Math.atan2(y, x) / R, acot = x => Math.atan(1 / x) / R;
@@ -1352,14 +1355,26 @@ function renderSalat() {
 }
 function setPrayOpts() { PRAY.method = $('sMethod').value; PRAY.asr = +$('sAsr').value; try { localStorage.setItem('geo_pray', JSON.stringify(PRAY)); } catch (e) {} prayCache = { key: '', list: null }; renderSalat(); homeSig = ''; }
 function startSalat() { stopSalat(); renderSalat(); salatTimer = setInterval(renderSalat, 1000); if ($('authModal').classList.contains('hidden')) askLoc(); }
-function stopSalat() { if (salatTimer) { clearInterval(salatTimer); salatTimer = null; } if (compassH) { window.removeEventListener('deviceorientationabsolute', compassH, true); window.removeEventListener('deviceorientation', compassH, true); compassH = null; } heading = null; }
+function stopSalat() { if (salatTimer) { clearInterval(salatTimer); salatTimer = null; } if (compassH) { window.removeEventListener('deviceorientationabsolute', compassH, true); window.removeEventListener('deviceorientation', compassH, true); compassH = null; } if (compassS) { try { compassS.stop(); } catch (e) {} compassS = null; } heading = null; }
 async function startCompass() {
   if (compassH) return;
   try { if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) { const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') return toast(t('sNoSensor')); } } catch (e) { return toast(t('sNoSensor')); }
   let got = false;
   compassH = e => { let h = null; if (e.webkitCompassHeading != null) h = e.webkitCompassHeading; else if (e.alpha != null && (e.absolute || e.type === 'deviceorientationabsolute')) h = (360 - e.alpha) % 360; if (h != null) { heading = h; got = true; } };
   window.addEventListener('deviceorientationabsolute', compassH, true); window.addEventListener('deviceorientation', compassH, true);
-  setTimeout(() => { if (!got) toast(t('sNoSensor')); }, 2500);
+  const fail = () => { if (compassH) { window.removeEventListener('deviceorientationabsolute', compassH, true); window.removeEventListener('deviceorientation', compassH, true); compassH = null; } toast(t('sNoSensor') + ' ' + t('sSensorHelp')); };
+  setTimeout(async () => {                                      // Android: fall back to the Generic Sensor API (magnetometer + accelerometer)
+    if (got) return;
+    try {
+      if (!('AbsoluteOrientationSensor' in window)) return fail();
+      for (const n of ['accelerometer', 'magnetometer', 'gyroscope']) { try { const q = await navigator.permissions.query({ name: n }); if (q.state === 'denied') return fail(); } catch (e) {} }
+      const sen = new AbsoluteOrientationSensor({ frequency: 30, referenceFrame: 'screen' });
+      sen.addEventListener('reading', () => { const q = sen.quaternion; if (!q) return; const x = q[0], y = q[1], z = q[2], w = q[3]; let h = Math.atan2(2 * (x * y - z * w), 1 - 2 * (x * x + z * z)) * 180 / Math.PI; if (h < 0) h += 360; heading = h; got = true; });
+      sen.addEventListener('error', () => { if (!got) fail(); });
+      sen.start(); compassS = sen;
+      setTimeout(() => { if (!got) fail(); }, 2500);
+    } catch (e) { fail(); }
+  }, 1500);
 }
 function updateRemindUi() { const e = $('sRemindTag'); if (e) { e.textContent = remindOn ? 'ON' : 'OFF'; e.className = 'text-xs px-2.5 py-1 rounded-full ' + (remindOn ? 'bg-[#1F6B43] text-white' : 'bg-slate-200 dark:bg-slate-800'); } }
 async function toggleRemind() {
