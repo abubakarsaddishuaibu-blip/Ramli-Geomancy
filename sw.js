@@ -1,5 +1,5 @@
 // GEOMANCY service worker: caches the app shell so it opens fast and works offline.
-const VERSION = 'geo-v4';
+const VERSION = 'geo-v5';
 const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net'];
 
 self.addEventListener('install', e => {
@@ -11,7 +11,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const req = e.request;
-  if (req.method !== 'GET') return;
+  if (req.method !== 'GET' || /\.(mp3|ogg|m4a)(\?|$)/i.test(req.url) || req.headers.has('range')) return;
   const url = new URL(req.url);
   const same = url.origin === self.location.origin;
   if (!same && !CDN.includes(url.hostname)) return;          // Supabase, Gemini, etc. always go to the network
