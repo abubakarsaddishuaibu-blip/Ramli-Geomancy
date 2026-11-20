@@ -195,25 +195,15 @@
       <select id="sAsr" onchange="setPrayOpts()" class="px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold"><option value="1" data-t="sAsrStd"></option><option value="2" data-t="sAsrHan"></option></select>
     </div>
     <button id="sRemindBtn" onclick="toggleRemind()" class="w-full py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm font-bold flex items-center justify-between px-4"><span>🔔 <span data-t="sRemind"></span></span><span id="sRemindTag" class="text-xs px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800"></span></button>
-    <button id="sAdhanBtn" onclick="toggleAdhan()" class="w-full py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm font-bold flex items-center justify-between px-4"><span>🕌 <span id="sAdhanLbl"></span></span><span id="sAdhanTag" class="text-xs px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800"></span></button>
-    <button id="sAdhanStop" onclick="stopAdhan()" class="hidden w-full py-3 rounded-xl bg-red-600 text-white text-sm font-bold">⏹ <span id="sAdhanStopLbl"></span></button>
     <div class="bg-[#0B132B]/85 text-white rounded-3xl p-4 text-center border border-slate-700">
       <h3 data-t="sQibla" class="font-extrabold text-amber-300 mb-1"></h3>
-      <svg viewBox="0 0 200 200" class="w-64 h-64 mx-auto">
-        <polygon points="100,3 94,15 106,15" fill="#16a34a"/>
-        <circle cx="100" cy="100" r="92" fill="#000" opacity="0.12"/>
+      <svg viewBox="0 0 200 200" class="w-52 h-52 mx-auto">
+        <polygon points="100,2 93,17 107,17" fill="#F5C542"/>
         <g id="cmp">
-          <circle cx="100" cy="100" r="88" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
-          <circle cx="100" cy="100" r="62" fill="#EEF2F6"/>
-          <line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(10 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(20 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(30 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(40 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(50 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(60 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(70 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(80 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(100 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(110 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(120 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(130 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(140 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(150 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(160 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(170 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(190 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(200 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(210 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(220 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(230 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(240 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(250 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(260 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(280 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(290 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(300 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(310 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(320 100 100)"/><line x1="100" y1="18" x2="100" y2="27" stroke="#475569" stroke-width="2" transform="rotate(330 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(340 100 100)"/><line x1="100" y1="20" x2="100" y2="24" stroke="#94a3b8" stroke-width="1" transform="rotate(350 100 100)"/>
-          <g font-family="system-ui,sans-serif" font-size="15" font-weight="800" fill="#0f172a" text-anchor="middle"><text x="100" y="42">N</text><text x="160" y="106">E</text><text x="100" y="170">S</text><text x="40" y="106">W</text></g>
-          <g id="qArrow">
-            <polygon points="100,52 92,100 108,100" fill="#16a34a"/>
-            <polygon points="100,148 92,100 108,100" fill="#cbd5e1"/>
-            <circle cx="100" cy="36" r="13" fill="#fff" stroke="#16a34a" stroke-width="2.5"/>
-            <text x="100" y="42" text-anchor="middle" font-size="16">🕋</text>
-          </g>
-          <circle cx="100" cy="100" r="8" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+          <circle cx="100" cy="100" r="84" fill="#0F2E1E" stroke="#D4A017" stroke-width="3"/>
+          <g font-family="system-ui,sans-serif" font-size="14" font-weight="800" fill="#fff" text-anchor="middle"><text x="100" y="32">N</text><text x="171" y="105">E</text><text x="100" y="178">S</text><text x="29" y="105">W</text></g>
+          <g id="qArrow"><line x1="100" y1="100" x2="100" y2="58" stroke="#4ADE80" stroke-width="5" stroke-linecap="round"/><text x="100" y="56" text-anchor="middle" font-size="22">🕋</text></g>
+          <circle cx="100" cy="100" r="5" fill="#F5C542"/>
         </g>
       </svg>
       <div id="qText" class="text-sm font-bold ltr-lock"></div>
@@ -1342,11 +1332,6 @@ function prayTimes(date, lat, lon, method, asrF) {          // port of the PrayT
   const isha = m.im ? maghrib + m.im / 60 : sat(m.i, 18 / 24) + adj;
   return { fajr, sunrise, dhuhr, asr: asrT, maghrib, isha };
 }
-let PBELL = {}, PDONE = {};
-try { PBELL = JSON.parse(localStorage.getItem('geo_pbell') || '{}'); PDONE = JSON.parse(localStorage.getItem('geo_pdone') || '{}'); } catch (e) {}
-const pBellOn = k => PBELL[k] == null ? k !== 'sunrise' : !!PBELL[k];
-function togglePBell(k) { PBELL[k] = !pBellOn(k); try { localStorage.setItem('geo_pbell', JSON.stringify(PBELL)); } catch (e) {} if (PBELL[k] && 'Notification' in window && Notification.permission === 'default') { try { Notification.requestPermission(); } catch (e) {} } renderSalat(); }
-function togglePDone(k) { const dk = new Date().toDateString(); PDONE[dk] = PDONE[dk] || {}; PDONE[dk][k] = !PDONE[dk][k]; const keep = {}; Object.keys(PDONE).slice(-14).forEach(d => keep[d] = PDONE[d]); PDONE = keep; try { localStorage.setItem('geo_pdone', JSON.stringify(PDONE)); } catch (e) {} renderSalat(); }
 const PNAMES = [['fajr', 'pFajr'], ['sunrise', 'pSun'], ['dhuhr', 'pDhuhr'], ['asr', 'pAsr'], ['maghrib', 'pMaghrib'], ['isha', 'pIsha']];
 function prayersFor(day) {
   if (!GEO) return null; const key = day.toDateString() + '|' + GEO.lat.toFixed(2) + GEO.lon.toFixed(2) + '|' + PRAY.method + PRAY.asr + '|' + day.getTimezoneOffset();
@@ -1371,22 +1356,16 @@ function qiblaBearing() {
   const R = Math.PI / 180, p1 = GEO.lat * R, p2 = 21.4225 * R, dl = (39.8262 - GEO.lon) * R;
   return (Math.atan2(Math.sin(dl) * Math.cos(p2), Math.cos(p1) * Math.sin(p2) - Math.sin(p1) * Math.cos(p2) * Math.cos(dl)) / R + 360) % 360;
 }
-function qiblaKm() {
-  const R = Math.PI / 180, p1 = GEO.lat * R, p2 = 21.4225 * R, dl = (39.8262 - GEO.lon) * R;
-  const a = Math.sin((p2 - p1) / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
-  return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
 function renderSalat() {
-  $('sMethod').value = PRAY.method; $('sAsr').value = String(PRAY.asr); updateRemindUi(); updateAdhanUi();
+  $('sMethod').value = PRAY.method; $('sAsr').value = String(PRAY.asr); updateRemindUi();
   if (!GEO) { $('sNextBox').innerHTML = `<div class="text-sm font-bold mb-2">${t('sNoLoc')}</div><button onclick="askedLoc=false;askLoc()" class="px-4 py-2 rounded-xl bg-white/20 text-sm font-bold">${t('sAskLoc')}</button>`; $('sList').innerHTML = ''; $('qText').textContent = ''; return; }
   const now = new Date(), n = nextPrayer(now), L = prayersFor(new Date(now.getFullYear(), now.getMonth(), now.getDate())) || [];
   $('sNextBox').innerHTML = n ? `<div class="text-[11px] font-bold text-amber-200">${t('sNext')}</div><div class="text-3xl font-black">${t(n.l)} · <span class="ltr-lock inline-block">${hmOk(n.ms)}</span></div><div class="text-xs opacity-90 mt-0.5">${t('sLeft')} <span class="ltr-lock inline-block">${fmtLeft(n.ms - now.getTime())}</span></div>` : '';
-  const dk = now.toDateString(), done = (PDONE[dk] || {});
-  $('sList').innerHTML = L.map(x => { const on = n && x.k === n.k && n.ms - now.getTime() < 864e5 && prayersFor(new Date(now.getFullYear(), now.getMonth(), now.getDate())).includes(x), past = isFinite(x.ms) && x.ms < now.getTime(), sun = x.k === 'sunrise', bell = pBellOn(x.k);
-    return `<div class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border ${on ? 'border-[#1F6B43] ring-2 ring-[#1F6B43]/40' : 'border-slate-200 dark:border-slate-800'} ${past && !on && !done[x.k] ? 'opacity-60' : ''}"><span class="font-extrabold text-sm flex-1">${sun ? '🌅 ' : ''}${t(x.l)}</span><span class="font-black tabular-nums ltr-lock">${hmOk(x.ms)}</span><button onclick="togglePBell('${x.k}')" class="w-9 h-9 rounded-xl text-base ${bell ? 'bg-[#1F6B43]/15' : 'bg-slate-100 dark:bg-slate-800 opacity-50'}" aria-label="bell">${bell ? '🔔' : '🔕'}</button>${sun ? '<span class="w-7"></span>' : `<button onclick="togglePDone('${x.k}')" class="w-7 h-7 rounded-lg border-2 ${done[x.k] ? 'bg-[#1F6B43] border-[#1F6B43] text-white' : 'border-slate-300 dark:border-slate-600'} text-sm font-black leading-none" aria-label="done">${done[x.k] ? '✓' : ''}</button>`}</div>`; }).join('');
+  $('sList').innerHTML = L.map(x => { const on = n && x.k === n.k && n.ms - now.getTime() < 864e5 && prayersFor(new Date(now.getFullYear(), now.getMonth(), now.getDate())).includes(x), past = isFinite(x.ms) && x.ms < now.getTime();
+    return `<div class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border ${on ? 'border-[#1F6B43] ring-2 ring-[#1F6B43]/40' : 'border-slate-200 dark:border-slate-800'} ${past && !on ? 'opacity-55' : ''}"><span class="font-extrabold text-sm">${x.k === 'sunrise' ? '🌅 ' : ''}${t(x.l)}</span><span class="font-black tabular-nums ltr-lock">${hmOk(x.ms)}</span></div>`; }).join('');
   const q = qiblaBearing(); $('qArrow').setAttribute('transform', `rotate(${q} 100 100)`);
   $('cmp').setAttribute('transform', `rotate(${heading == null ? 0 : -heading} 100 100)`);
-  $('qText').textContent = t('sQiblaDeg') + ' ' + Math.round(q) + '° ' + (heading == null ? '' : '· ' + Math.round(heading) + '°') + '  ·  ' + Math.round(qiblaKm()).toLocaleString('en-US') + ' km';
+  $('qText').textContent = t('sQiblaDeg') + ' ' + Math.round(q) + '° ' + (heading == null ? '' : '· ' + Math.round(heading) + '°');
 }
 function setPrayOpts() { PRAY.method = $('sMethod').value; PRAY.asr = +$('sAsr').value; try { localStorage.setItem('geo_pray', JSON.stringify(PRAY)); } catch (e) {} prayCache = { key: '', list: null }; renderSalat(); homeSig = ''; }
 function startSalat() { stopSalat(); renderSalat(); salatTimer = setInterval(renderSalat, 1000); if ($('authModal').classList.contains('hidden')) askLoc(); }
@@ -1411,30 +1390,6 @@ async function startCompass() {
     } catch (e) { fail(); }
   }, 1500);
 }
-
-// ---- Kiran sallah (sauti) ----
-let ADHAN_ON = false, adhanAudio = null, adhanPrimed = false;
-try { ADHAN_ON = localStorage.getItem('geo_adhan') === '1'; } catch (e) {}
-const ADH_T = { ha: ['Kiran sallah (sauti)', 'Dakatar da kiran sallah', 'Kiran sallah ya kunna. Ka bar manhajar a buɗe ko a baya domin ta ji lokacin.', 'Kiran sallah ya kashe.'], en: ['Adhan sound', 'Stop adhan', 'Adhan on. Keep the app open or in the background so it can play at prayer time.', 'Adhan off.'], ar: ['صوت الأذان', 'إيقاف الأذان', 'تم تشغيل الأذان. أبقِ التطبيق مفتوحاً أو في الخلفية.', 'تم إيقاف الأذان.'] };
-const adT = i => (ADH_T[LANG] || ADH_T.ha)[i];
-function getAdhan() { if (!adhanAudio) { adhanAudio = new Audio('adhan.mp3'); adhanAudio.preload = 'auto'; adhanAudio.addEventListener('ended', () => { const b = $('sAdhanStop'); if (b) b.classList.add('hidden'); }); } return adhanAudio; }
-function primeAdhan() { if (adhanPrimed) return; adhanPrimed = true; try { const a = getAdhan(); a.muted = true; const pr = a.play(); if (pr && pr.then) pr.then(() => { a.pause(); a.currentTime = 0; a.muted = false; }).catch(() => { a.muted = false; adhanPrimed = false; }); } catch (e) { adhanPrimed = false; } }
-document.addEventListener('pointerdown', () => { if (ADHAN_ON) primeAdhan(); }, { once: true });
-function beepFallback() { try { const C = window.AudioContext || window.webkitAudioContext, c = new C(); [0, 0.7, 1.4].forEach(d => { const o = c.createOscillator(), g = c.createGain(); o.frequency.value = 660; o.connect(g); g.connect(c.destination); g.gain.setValueAtTime(0.0001, c.currentTime + d); g.gain.exponentialRampToValueAtTime(0.4, c.currentTime + d + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + d + 0.6); o.start(c.currentTime + d); o.stop(c.currentTime + d + 0.65); }); } catch (e) {} }
-function playAdhan() {
-  if (!ADHAN_ON) return;
-  const a = getAdhan(), b = $('sAdhanStop');
-  try { a.currentTime = 0; a.muted = false; const pr = a.play(); if (pr && pr.then) pr.then(() => { if (b) b.classList.remove('hidden'); }).catch(() => beepFallback()); } catch (e) { beepFallback(); }
-  a.onerror = () => beepFallback();
-}
-function stopAdhan() { try { if (adhanAudio) { adhanAudio.pause(); adhanAudio.currentTime = 0; } } catch (e) {} const b = $('sAdhanStop'); if (b) b.classList.add('hidden'); }
-function updateAdhanUi() { const l = $('sAdhanLbl'), g = $('sAdhanTag'), sb = $('sAdhanStopLbl'); if (l) l.textContent = adT(0); if (sb) sb.textContent = adT(1); if (g) { g.textContent = ADHAN_ON ? 'ON' : 'OFF'; g.className = 'text-xs px-2.5 py-1 rounded-full ' + (ADHAN_ON ? 'bg-[#1F6B43] text-white' : 'bg-slate-200 dark:bg-slate-800'); } }
-function toggleAdhan() {
-  ADHAN_ON = !ADHAN_ON; try { localStorage.setItem('geo_adhan', ADHAN_ON ? '1' : '0'); } catch (e) {}
-  if (ADHAN_ON) { primeAdhan(); if (!remindOn) { remindOn = true; try { localStorage.setItem('geo_remind', '1'); } catch (e) {} updateRemindUi(); } if ('Notification' in window && Notification.permission === 'default') { try { Notification.requestPermission(); } catch (e) {} } }
-  else stopAdhan();
-  updateAdhanUi(); toast(ADHAN_ON ? adT(2) : adT(3));
-}
 function updateRemindUi() { const e = $('sRemindTag'); if (e) { e.textContent = remindOn ? 'ON' : 'OFF'; e.className = 'text-xs px-2.5 py-1 rounded-full ' + (remindOn ? 'bg-[#1F6B43] text-white' : 'bg-slate-200 dark:bg-slate-800'); } }
 async function toggleRemind() {
   remindOn = !remindOn; try { localStorage.setItem('geo_remind', remindOn ? '1' : '0'); } catch (e) {}
@@ -1443,10 +1398,10 @@ async function toggleRemind() {
 }
 function checkRemind() {
   if (!remindOn || !GEO) return; const now = new Date(), t0 = now.getTime(), L = prayersFor(new Date(now.getFullYear(), now.getMonth(), now.getDate())); if (!L) return;
-  for (const x of L) { if (x.k === 'sunrise' || !isFinite(x.ms) || !pBellOn(x.k)) continue;
+  for (const x of L) { if (x.k === 'sunrise' || !isFinite(x.ms)) continue;
     if (t0 >= x.ms && t0 < x.ms + 120000) { const id = now.toDateString() + x.k; let last = ''; try { last = localStorage.getItem('geo_lastremind') || ''; } catch (e) {} if (last === id) return;
       try { localStorage.setItem('geo_lastremind', id); } catch (e) {} const msg = t('sTimeFor') + ' ' + t(x.l) + ' (' + hm(x.ms) + ')';
-      if (!document.hidden) toast('🕌 ' + msg); notify('🕌 ' + t(x.l), msg, 'salat'); playAdhan(); return; } }
+      if (!document.hidden) toast('🕌 ' + msg); notify('🕌 ' + t(x.l), msg, 'salat'); return; } }
 }
 
 // ================= SHARE CHART AS IMAGE =================
