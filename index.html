@@ -464,6 +464,21 @@ try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catc
 // true  = AI yana aiki kai tsaye da Gemini key ɗinka (🔑), babu Supabase, babu login, babu kiredit.
 // false = tsohon yanayi (Supabase + login + kiredit).
 const STANDALONE = false;
+// AI_DIRECT = true: AI yana kiran Gemini kai tsaye da key ɗin mai amfani (babu Edge Function).
+// Login da kiredit suna nan a Supabase (ai_check / ai_charge a SQL).
+const AI_DIRECT = true;
+async function aiGate(first) {
+  if (!sb) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
+  const { data, error } = await sb.rpc('ai_check', { first_msg: first });
+  if (error || !data) throw Object.assign(new Error('NET'), { code: 'NET' });
+  if (typeof data.balance === 'number') setWallet(data.balance);
+  if (!data.ok) throw Object.assign(new Error(data.error), { code: data.error });
+}
+async function aiCharge(first, sid) {
+  try { const { data } = await sb.rpc('ai_charge', { first_msg: first, sid: String(sid || '').slice(0, 64) }); if (typeof data === 'number') setWallet(data); } catch (e) {}
+}
 async function geminiDirect(body, onText) {
   const key = (localStorage.getItem('gemini_api_key') || '').replace(/\s+/g, '');
   const E = c => Object.assign(new Error(c), { code: c });
@@ -855,6 +870,11 @@ let WALLET = null, creditBack = 'home', walletBusy = false;
 const PAY_PARAMS = (() => { try { const q = new URLSearchParams(location.search); return q.get('reference') || q.get('trxref') || ''; } catch (e) { return ''; } })();
 if (PAY_PARAMS) { try { sessionStorage.setItem('geo_pay_ref', PAY_PARAMS); } catch (e) {} }
 async function fn(action, body) {
+  if (AI_DIRECT && (action === 'ai' || action === 'plan')) {
+    if (action === 'plan') return { text: await geminiDirect({ contents: [{ role: 'user', parts: [{ text: body.prompt }] }] }) };
+    const first = body.contents.length <= 1; await aiGate(first);
+    const text = await geminiDirect(body); await aiCharge(first, body.session_id); return { text };
+  }
   if (STANDALONE && (action === 'ai' || action === 'plan')) { const text = await geminiDirect(action === 'plan' ? { contents: [{ role: 'user', parts: [{ text: body.prompt }] }] } : body); return { text }; }
   if (!sb) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   const { data: { session } } = await sb.auth.getSession();
@@ -863,7 +883,7 @@ async function fn(action, body) {
   try {
     r = await fetch(FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify(Object.assign({ action }, body || {})) });
     d = await r.json();
-  } catch (e) { throw Object.assign(new Error('BUSY'), { code: 'BUSY' }); }
+  } catch (e) { throw Object.assign(new Error('NET'), { code: 'NET' }); }
   if (typeof d.balance === 'number') setWallet(d.balance);
   if (!r.ok) throw Object.assign(new Error(d.error || 'GEN'), { code: r.status === 402 ? 'CREDIT' : r.status === 401 ? 'AUTH' : (d.error || 'GEN'), data: d });
   return d;
@@ -1037,12 +1057,13 @@ function systemPrompt(bk) {
 }
 async function fnStream(body, onText) {
   if (STANDALONE) return geminiDirect(body, onText);
+  if (AI_DIRECT) { const first = body.contents.length <= 1; await aiGate(first); const txt = await geminiDirect(body, onText); await aiCharge(first, body.session_id); return txt; }
   if (!sb) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   let r;
   try { r = await fetch(FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify(Object.assign({ action: 'ai', stream: true }, body)) }); }
-  catch (e) { throw Object.assign(new Error('BUSY'), { code: 'BUSY' }); }
+  catch (e) { throw Object.assign(new Error('NET'), { code: 'NET' }); }
   const ct = r.headers.get('content-type') || '';
   if (!r.ok || !ct.includes('text/event-stream')) {
     let d = {}; try { d = await r.json(); } catch (e) {}
@@ -1084,7 +1105,7 @@ function addBubble(role, text) {
     ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.previousElementSibling.innerText)">📋</button>`}</div>`;
   $('chatLog').appendChild(d); $('chatLog').scrollTop = $('chatLog').scrollHeight; return d;
 }
-function errMsg(code) { return { BANNED: t('errBanned'), KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy') }[code] || t('errGen'); }
+function errMsg(code) { return { BANNED: t('errBanned'), KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy'), NET: LANG === 'ar' ? 'تعذّر الاتصال بالخادم (geo). تأكد من نشر الدالة.' : LANG === 'en' ? 'Cannot reach the server (geo function). Make sure it is deployed.' : 'Ba a iya haɗuwa da uwar garke (geo). Ka tabbatar an saka function ɗin a Supabase.' }[code] || t('errGen'); }
 async function ask(userText, hidden) {
   if (chatBusy) return;
   if (!getKey()) { toast(t('keyNeeded')); openKey(); return; }
