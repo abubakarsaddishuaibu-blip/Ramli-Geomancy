@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#08231a">
+<meta name="theme-color" content="#1F6B43">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,82 +23,6 @@
   .bubble p{margin:.25rem 0}
   @keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
   .dot-pop{animation:pop .2s ease-out}
-</style>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
-<style id="theme-madina">
-/* ===== TSARIN LAUNI: "Daren Madina" — emerald + zinariya + duhun dare ===== */
-:root{
-  --night:#06140f; --night2:#0a2019; --emerald:#0f5a3c; --jade:#1f8a5b;
-  --gold:#d9a93a; --gold-hi:#f3de9a; --gold-lo:#a67c1f; --parch:#faf5e6;
-  --glass:rgba(6,22,16,.74); --hair:rgba(217,169,58,.38);
-}
-html{background:var(--night)}
-body{color:#f4efe0}
-/* duhun baya: hoton Madina + inuwa + tauraron ado mai laushi */
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(120% 60% at 50% -8%,rgba(217,169,58,.20),transparent 60%),
-    linear-gradient(180deg,rgba(4,16,11,.50) 0%,rgba(4,16,11,.72) 55%,rgba(3,12,9,.90) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23d9a93a' stroke-opacity='.10' stroke-width='1'%3E%3Cpath d='M32 6l7 19 19 7-19 7-7 19-7-19-19-7 19-7z'/%3E%3Crect x='20' y='20' width='24' height='24' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");}
-/* kai (header) */
-body header.sticky{background:linear-gradient(180deg,#0d3524 0%,#08231a 100%)!important;
-  border-bottom:1px solid transparent;
-  box-shadow:0 8px 24px rgba(0,0,0,.45),0 1px 0 rgba(243,222,154,.35);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-body header.sticky::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
-  background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold-hi) 50%,var(--gold) 80%,transparent);
-  box-shadow:0 0 12px rgba(243,222,154,.55)}
-.kalma{filter:drop-shadow(0 0 8px rgba(247,210,74,.40)) drop-shadow(0 1px 0 rgba(0,0,0,.6));letter-spacing:.2px}
-/* katunan gilashi masu duhu */
-.bg-\[\#0B132B\]\/85,.bg-\[\#0B132B\]\/90,.bg-\[\#0B132B\]{background:var(--glass)!important;border:1px solid var(--hair)!important;
-  backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);
-  box-shadow:0 12px 32px rgba(0,0,0,.40),inset 0 1px 0 rgba(255,255,255,.07)}
-.bg-\[\#151E3F\]{background:linear-gradient(180deg,#0e2a20,#0a1f17)!important}
-.bg-\[\#0F2E1E\]{background:#0a2a1d!important}
-/* maɓallai da fuskokin kore */
-.bg-\[\#1F6B43\]{background:linear-gradient(180deg,#1f8a5b 0%,#0f5a3c 100%)!important;
-  box-shadow:0 4px 14px rgba(8,60,38,.45),inset 0 1px 0 rgba(255,255,255,.22);
-  border:1px solid rgba(243,222,154,.28)}
-.bg-\[\#175434\],.bg-\[\#175434\]\/70{background:linear-gradient(180deg,#0f5a3c,#0a3f2a)!important;border:1px solid rgba(243,222,154,.22)}
-.bg-\[\#D4A017\]{background:linear-gradient(180deg,#f3de9a 0%,#d9a93a 55%,#a67c1f 100%)!important;color:#1a1204!important;
-  box-shadow:0 4px 14px rgba(217,169,58,.35),inset 0 1px 0 rgba(255,255,255,.5)}
-body header.sticky .bg-\[\#175434\]\/70{box-shadow:none}
-/* katunan fari (jerin sallah, abokai, da sauransu) */
-html:not(.dark) .bg-white{background:rgba(250,245,230,.95)!important;border-color:rgba(166,124,31,.28)!important;color:#1b1a14}
-html:not(.dark) .bg-white.rounded-2xl,html:not(.dark) .bg-white.rounded-3xl{box-shadow:0 6px 18px rgba(0,0,0,.22)}
-html.dark .bg-slate-900:not(.rounded-full){background:rgba(7,22,17,.88)!important;border-color:rgba(217,169,58,.22)!important}
-.rounded-3xl.bg-\[\#1F6B43\]{box-shadow:0 14px 34px rgba(5,50,32,.55),inset 0 1px 0 rgba(255,255,255,.25),0 0 0 1px rgba(243,222,154,.35)}
-/* saƙonni a chat */
-.bubble{box-shadow:0 4px 14px rgba(0,0,0,.28);line-height:1.65}
-/* drawer */
-#drawer{border-right:1px solid var(--hair);box-shadow:12px 0 40px rgba(0,0,0,.55)}
-html:not(.dark) #drawer{background:linear-gradient(180deg,#fbf6e8,#f1e8cc)!important}
-/* filin rubutu */
-input,textarea,select{transition:box-shadow .15s,border-color .15s}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(217,169,58,.30)}
-*:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
-/* amsa idan an taɓa */
-button:active{transform:translateY(1px)}
-/* sandar gungurawa */
-*{scrollbar-width:thin;scrollbar-color:rgba(217,169,58,.5) transparent}
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(217,169,58,.5);border-radius:6px}
-/* rubutu mai launi na zinariya */
-.text-amber-300{color:#f3de9a!important}
-.text-emerald-300{color:#7fe0b0!important}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-/* ===== Digo masu haske da girma ===== */
-.dot-pop{width:1.25rem!important;height:1.25rem!important;box-shadow:0 0 0 2px rgba(255,255,255,.12)}
-html.dark .dot-pop{background:#f3de9a!important;box-shadow:0 0 10px rgba(243,222,154,.65)}
-html:not(.dark) .dot-pop{background:#0b1f16!important}
-/* ===== Rubutu mafi girma ===== */
-html{font-size:18px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-.text-\[9px\]{font-size:12px!important}
-.text-\[10px\]{font-size:12.5px!important}
-.text-\[11px\]{font-size:13.5px!important}
-.text-\[12px\]{font-size:14.5px!important}
-.text-\[13px\]{font-size:15.5px!important}
-.bubble{font-size:1.02rem;line-height:1.7}
-input,textarea,select{font-size:1rem}
 </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100 min-h-screen flex justify-center">
@@ -578,7 +502,6 @@ const NATURAL = ['2122','1222','1112','1211','2111','1212','2211','2221','1122',
 const PLANET = { Saturn: ['2221','1221'], Jupiter: ['1222','2111'], Mars: ['2122','1121'], Sun: ['1122','2121'], Venus: ['2211','1211'], Mercury: ['2222','2112'], Moon: ['2212','1111'], Ras: ['1212'], Dhanab: ['1112'] };
 const DIGNITY = { Saturn: [7,1], Jupiter: [4,12], Mars: [2,8], Sun: [1,7], Venus: [12,4], Mercury: [6,12], Moon: [2,8], Ras: [2,8], Dhanab: [2,8] };
 const MOVE_MEANING = { 1: 'in its own natural house (no movement)', 5: 'moved to its 5th: RAQIB and FARAH (joy)', 6: 'moved to its 6th: NAHS (misfortune)', 7: 'moved to its 7th: MATLUB (the sought thing)', 8: 'moved to its 8th: IHTIRAQ and WABAL (burning, ruin)', 9: 'moved to its 9th: GHAYB (absent/hidden)', 10: 'moved to its 10th: IZZ and MULK (honour, rule)', 12: 'moved to its 12th: ADAWA and DIDD (enmity, opposition)' };
-const PNAME = { Saturn: 'Zohal (Saturn)', Jupiter: 'Mushtari (Jupiter)', Mars: 'Mirrikh (Mars)', Sun: 'Shams (Sun)', Venus: 'Zohra (Venus)', Mercury: 'Otarid (Mercury)', Moon: 'Qamar (Moon)', Ras: 'Ras (Dragon\'s Head)', Dhanab: 'Dhanab (Dragon\'s Tail)' };
 const planetOf = k => Object.keys(PLANET).find(pl => PLANET[pl].includes(k));
 function tafiyaOf(h) {                                         // where the same figure also appears (tikrar)
   const key = chart.H[h].p.join(''), at = [];
@@ -594,7 +517,7 @@ function chartSummary() {
     'For every house: the figure, its time (HAL=present, MUSTAQBAL=future, MADI=past), its natural house, its TAFIYA (how far it moved from its natural house) with its meaning, its planet, and repeats.'];
   for (let i = 1; i <= 16; i++) {
     const f = figOf(chart.H[i].p), at = tafiyaOf(i), m = moveOf(i);
-    lines.push(`House ${i} (${catOf(i)}) [time: ${TIME_OF(i)}]: ${f.ha} / ${f.en} / ${f.ar} [${chart.H[i].p.join('')}] | natural house ${m.nat} | TAFIYA ${m.rel}: ${m.meaning} | planet ${PNAME[m.planet] || m.planet || '?'}` + (m.sharaf ? ' | in its SHARAF (exaltation)' : '') + (m.hubut ? ' | in its HUBUT (fall)' : '') + (at.length ? ` | SAME FIGURE ALSO IN HOUSES ${at.join(', ')}` : ''));
+    lines.push(`House ${i} (${catOf(i)}) [time: ${TIME_OF(i)}]: ${f.ha} / ${f.en} / ${f.ar} [${chart.H[i].p.join('')}] | natural house ${m.nat} | TAFIYA ${m.rel}: ${m.meaning} | planet ${m.planet || '?'}` + (m.sharaf ? ' | in its SHARAF (exaltation)' : '') + (m.hubut ? ' | in its HUBUT (fall)' : '') + (at.length ? ` | SAME FIGURE ALSO IN HOUSES ${at.join(', ')}` : ''));
   }
   const names = { 1: 'Dali\'i / the Querent (house 1)', 7: 'Madlub / the Sought (house 7)', 10: 'house 10', 4: 'house 4', 15: 'Judge/Witness (house 15)', 16: 'Reconciler (house 16)' };
   lines.push('', 'KEY FIGURES (Dali\'i, Madlub and others) — judge by their TAFIYA, by their rules:');
@@ -913,7 +836,7 @@ function systemPrompt(bk) {
     `0. OPENING — begin with one line of blessing on the Prophet (Hausa: **Allahumma salli ala Annabi Muhammad sallallahu alaihi wa sallam.**; English: *O Allah, send blessings and peace upon the Prophet Muhammad ﷺ.*; Arabic: اللهم صل وسلم على نبينا محمد ﷺ). Do NOT use any other opening line. ` +
     `1. **NAZARIN GIDAJE DA TAFIYA** (translate to the answer language) — there is NO separate verdict section. Go house by house through the Dali'i (house 1, the querent), the Madlub (house 7, what is sought), the Judge (15), the Reconciler (16), the two witnesses (13, 14), the houses of the topic asked about, and ONLY the other houses that carry a strong sign (do not walk through all 16 houses when they add nothing; keep each house to 1-2 short sentences). For each: the figure, its nature and planet, whether it is in its sharaf (exaltation) or hubut (fall), its natural house and its TAFIYA (movement) with the meaning given for it, and what that says about the past (houses 3,6,9,12), the present (1,4,7,10) and the future (2,5,8,11); 13-16 are partners of 1,4,7,10. Use the 'if the figure moved to X, then Y' form, and state the RESULT right there, inside each judgement, as the tafiya shows it (what happened, what is happening, what will happen). FIRST classify the question silently, then answer according to its type. (A) A yes/no question about something that may happen, exist or be obtained (e.g. 'will I marry so-and-so', 'will the stolen goods be found', 'will I get money today', a job, a journey, a debt, a recovery): state the verdict DIRECTLY and plainly, in one bold sentence at the point where the tafiya decides it, choosing exactly one of three outcomes written in ${t('aiLang')}: it WILL happen (Hausa: **ZAI YI**); it will happen ONLY IF MUCH PRAYER is made (Hausa: **ZAI YI IDAN AN YI ADDU'A SOSAI**); it will NOT happen at all (Hausa: **BA ZAI YI BA**). Say it once, add no hedging and no 'maybe', and make clear which of the three it is, because the person must know whether the matter will come without prayer, only with prayer, or never. (B) A 'who / where / what / how / which' question (a thief, a lost item, a sick person's state, an enemy, a hidden thing): give the specific answer such a question needs (who or what kind of person, where, what state, in which direction), as the tafiya decides it, plus whether the thing will be recovered or resolved using the same three outcomes. (C) A general question (e.g. 'about life'): describe the state of the person with no verdict. ALSO distinguish TIME: if the question is about the immediate / present need (today, now, this matter at hand) judge it from the present houses (1,4,7,10) and say whether it comes now; if it is about the later / future need judge it from the future houses (2,5,8,11) and say whether and when it comes later; if the signs show it will not come now but will come later (or the reverse), say exactly that. If the question mixes several needs, give a separate direct answer for each. The chart already gives each house's natural house, TAFIYA meaning, planet, sharaf/hubut and repeats: USE these exact values, never recompute or invent them; when a tafiya has no special rule, draw no conclusion from it. ` +
     `2. **ABIN DA ALAMUN SUKA NUNA** (translate to the answer language) — summarise the past, the present and the future of the matter, and name the real issue only if the signs indicate it (e.g. envy/hasada, enmity, delay, a block, a sickness, a trick, a hidden helper). ` +
-    `Name the planets ONLY with these names, exactly as written: Zohal (Saturn), Mushtari (Jupiter), Mirrikh (Mars), Shams (Sun), Zohra (Venus), Otarid (Mercury), Qamar (Moon), plus Ras and Dhanab for the Dragon's Head and Tail; always write the Hausa/Arabic name first and never use the bare English names alone. Use plain words for the times (past, present, future) and never leave raw technical labels such as Hal or Mustaqbal in the text. Never invent details the chart does not show (e.g. a father, a child, a person) beyond what the house meaning gives. In the closing summary, answer the actual question asked directly and specifically, not in generalities. Prefer the few strongest signs over many weak ones. Judge with the mastery, confidence and depth of the great masters of Raml and astrology: weigh the key signs against each other, and give the final reading as an expert's firm conclusion. Do NOT add any advice, sermon, reminder, supplication, written remedy or charity section: the reading ends with the judgement itself. Give the judgement exactly as the rules of the art state it, firmly and plainly, with no softening, no consoling words, no 'but Allah may change it' and no hedging; if the rule says something bad, say it as it is. ` +
+    `Use plain words for the planets and times (e.g. Rana, Wata, Mars, Saturn; past/present/future) and never leave raw technical labels such as Ras, Dhanab, Hal or Mustaqbal in the text. Never invent details the chart does not show (e.g. a father, a child, a person) beyond what the house meaning gives. In the closing summary, answer the actual question asked directly and specifically, not in generalities. Prefer the few strongest signs over many weak ones. Judge with the mastery, confidence and depth of the great masters of Raml and astrology: weigh the key signs against each other, and give the final reading as an expert's firm conclusion. Do NOT add any advice, sermon, reminder, supplication, written remedy or charity section: the reading ends with the judgement itself. Give the judgement exactly as the rules of the art state it, firmly and plainly, with no softening, no consoling words, no 'but Allah may change it' and no hedging; if the rule says something bad, say it as it is. ` +
     `Finish with one short line: Allah knows best (Hausa: Allah ne masani). No medical claims or diagnoses; do not give guarantees of the unseen. Judge only from the chart and the rules in the excerpts. ` +
     `If the question is not a yes/no question, simply give the analysis and the other parts.\n` +
     `For follow-up questions answer only the question, using the chart below.\n\nCHART:\n${chartSummary()}`;
