@@ -463,7 +463,7 @@ try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catc
 // ===== STANDALONE MODE =====
 // true  = AI yana aiki kai tsaye da Gemini key ɗinka (🔑), babu Supabase, babu login, babu kiredit.
 // false = tsohon yanayi (Supabase + login + kiredit).
-const STANDALONE = true;
+const STANDALONE = false;
 async function geminiDirect(body, onText) {
   const key = (localStorage.getItem('gemini_api_key') || '').replace(/\s+/g, '');
   const E = c => Object.assign(new Error(c), { code: c });
@@ -1453,10 +1453,31 @@ function buildClock() {
   [[12, 100, 68], [3, 132, 104], [6, 100, 140], [9, 68, 104]].forEach(([n, x, y]) => h += `<text x="${x}" y="${y}" text-anchor="middle" font-size="16" font-weight="800" fill="#fff" font-family="system-ui,sans-serif">${n}</text>`);
   $('clkTicks').innerHTML = h;
 }
+function hijriText(d) {
+  let day, mon, yr;
+  try {
+    const f = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric', year: 'numeric' });
+    if (/islamic/.test(f.resolvedOptions().calendar || '')) {
+      const o = {}; f.formatToParts(d).forEach(x => o[x.type] = x.value);
+      day = parseInt(o.day, 10); mon = parseInt(o.month, 10); yr = parseInt(o.year, 10);
+    }
+  } catch (e) {}
+  if (!(day > 0 && mon > 0 && yr > 0)) { // lissafi idan browser bai da kalandar Hijira
+    const jd = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000) + 2440588;
+    const l = jd - 1948440 + 10632, n = Math.floor((l - 1) / 10631), l2 = l - 10631 * n + 354;
+    const j = (Math.floor((10985 - l2) / 5316)) * (Math.floor((50 * l2) / 17719)) + (Math.floor(l2 / 5670)) * (Math.floor((43 * l2) / 15238));
+    const l3 = l2 - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+    mon = Math.floor((24 * l3) / 709); day = l3 - Math.floor((709 * mon) / 24); yr = 30 * n + j - 30;
+  }
+  const M = LANG === 'ar'
+    ? ['محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة']
+    : ['Muharram', 'Safar', "Rabi'ul Awwal", "Rabi'ul Akhir", 'Jumada Ula', 'Jumada Thani', 'Rajab', "Sha'aban", 'Ramadan', 'Shawwal', "Zul-Qi'da", 'Zul-Hijja'];
+  return day + ' ' + M[mon - 1] + ' ' + yr + (LANG === 'ar' ? ' هـ' : ' AH');
+}
 function renderHomeInfo(now) {
   const loc = locale();
   try { $('hDate').textContent = now.toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { $('hDate').textContent = now.toDateString(); }
-  try { $('hHijri').textContent = new Intl.DateTimeFormat((LANG === 'ar' ? 'ar-SA' : 'en') + '-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(now); } catch (e) { $('hHijri').textContent = ''; }
+  try { $('hHijri').textContent = hijriText(now); } catch (e) { $('hHijri').textContent = ''; }
   const t0 = now.getTime(), night = chTab ? chTab === 'night' : chIsNight(now), Hf = chHalf(now, night);
   $('chTabD').className = 'py-2.5 ' + (!night ? 'bg-[#1F6B43] text-white border-b-2 border-amber-400' : 'text-slate-400 bg-white/5');
   $('chTabN').className = 'py-2.5 ' + (night ? 'bg-[#1F6B43] text-white border-b-2 border-amber-400' : 'text-slate-400 bg-white/5');
