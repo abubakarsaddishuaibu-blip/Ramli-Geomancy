@@ -24,7 +24,7 @@
   @keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
   .dot-pop{animation:pop .2s ease-out}
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
 <style id="theme-madina">
 /* ===== TSARIN LAUNI: "Daren Madina" — emerald + zinariya + duhun dare ===== */
 :root{
@@ -91,14 +91,30 @@ button:active{transform:translateY(1px)}
 html.dark .dot-pop{background:#f3de9a!important;box-shadow:0 0 10px rgba(243,222,154,.65)}
 html:not(.dark) .dot-pop{background:#0b1f16!important}
 /* ===== Rubutu mafi girma ===== */
-html{font-size:18px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-.text-\[9px\]{font-size:12px!important}
-.text-\[10px\]{font-size:12.5px!important}
-.text-\[11px\]{font-size:13.5px!important}
-.text-\[12px\]{font-size:14.5px!important}
-.text-\[13px\]{font-size:15.5px!important}
+html{font-size:16.5px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.text-\[9px\]{font-size:11px!important}
+.text-\[10px\]{font-size:11.5px!important}
+.text-\[11px\]{font-size:12.5px!important}
+.text-\[12px\]{font-size:13.5px!important}
+.text-\[13px\]{font-size:14.5px!important}
 .bubble{font-size:1.02rem;line-height:1.7}
 input,textarea,select{font-size:1rem}
+</style>
+<style id="nav-tabs-css">
+#navTabs{position:fixed;left:0;right:0;bottom:0;margin:0 auto;width:100%;max-width:28rem;z-index:25;display:flex;background:rgba(6,22,16,.95);border-top:1px solid var(--hair,rgba(217,169,58,.38));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 -2px 8px rgba(0,0,0,.28);padding-bottom:env(safe-area-inset-bottom,0px)}
+#navTabs.hidden{display:none}
+#navTabs button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.28rem;padding:.55rem .2rem .45rem;font-size:.6rem;font-weight:800;line-height:1.15;text-align:center;letter-spacing:.2px;color:#aebcb2;position:relative;border-top:3px solid transparent;transition:color .15s,background .15s}
+#navTabs button::before{content:"";display:block;width:1.65rem;height:1.65rem;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+#navTabs button[data-tab=ramli]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='8' cy='5' r='2'/%3E%3Ccircle cx='16' cy='5' r='2'/%3E%3Ccircle cx='12' cy='10' r='2'/%3E%3Ccircle cx='8' cy='15' r='2'/%3E%3Ccircle cx='16' cy='15' r='2'/%3E%3Ccircle cx='12' cy='20' r='2'/%3E%3C/svg%3E")}
+#navTabs button[data-tab=chog]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3Cpath d='M11 1h2v4h-2zM11 19h2v4h-2zM1 11h4v2H1zM19 11h4v2h-4zM4.2 5.6l1.4-1.4 2.8 2.8-1.4 1.4zM15.6 17l1.4-1.4 2.8 2.8-1.4 1.4zM5.6 19.8l-1.4-1.4 2.8-2.8 1.4 1.4zM17 8.4l-1.4-1.4 2.8-2.8 1.4 1.4z'/%3E%3C/svg%3E")}
+#navTabs button[data-tab=salat]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.5 14.5A8.5 8.5 0 019.5 3.5 9 9 0 1020.5 14.5z'/%3E%3C/svg%3E")}
+#navTabs button[data-tab=agogo]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v6l4.5 2.7.9-1.5-3.4-2V7z'/%3E%3C/svg%3E")}
+#navTabs button:active{background:rgba(255,255,255,.08)}
+body.has-bnav{padding-bottom:var(--navh,0px)}
+body.has-bnav #v-chat>.sticky.bottom-0{bottom:var(--navh,0px)}
+#navTabs,#navTabs button,h2,h3{font-family:'Tajawal',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif}
+#navTabs button.badge::after{content:"";position:absolute;top:.4rem;left:50%;margin-left:.55rem;width:.55rem;height:.55rem;border-radius:50%;background:#e53935;border:2px solid #08231a;box-sizing:content-box;animation:pop .6s ease-out}
+#navTabs button.on{color:#f3de9a;border-top-color:var(--gold,#d9a93a);background:rgba(217,169,58,.10)}
 </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100 min-h-screen flex justify-center">
@@ -113,8 +129,17 @@ input,textarea,select{font-size:1rem}
     <button onclick="go('fchats')" aria-label="chat" class="relative w-11 h-11 rounded-xl bg-[#175434]/70 hover:bg-[#175434] text-lg">💬<span id="chatDot" class="hidden absolute top-1 right-1 w-3 h-3 rounded-full bg-red-500 border border-white"></span></button>
   </header>
 
+  <!-- NAVIGATION TABS -->
+  <nav id="navTabs" class="hidden">
+    <button type="button" data-tab="ramli" onclick="navTab('ramli')" data-t="tabRamli"></button>
+    <button type="button" data-tab="chog" onclick="navTab('chog')" data-t="tabChog"></button>
+    <button type="button" data-tab="salat" onclick="navTab('salat')" data-t="tabSalat"></button>
+    <button type="button" data-tab="agogo" onclick="navTab('agogo')" data-t="tabAgogo"></button>
+  </nav>
+
   <!-- HOME (clock + chaughadiya) -->
   <main id="v-home" class="flex-1 px-4 pt-4 pb-8 flex flex-col gap-3">
+    <div class="hp-a flex flex-col gap-3">
     <div class="bg-[#0B132B]/85 text-white rounded-3xl p-4 text-center shadow-lg border border-slate-700">
       <svg id="clk" viewBox="0 0 200 200" class="w-52 h-52 mx-auto">
         <circle cx="100" cy="100" r="94" fill="#0F2E1E" stroke="#D4A017" stroke-width="4"/>
@@ -134,6 +159,8 @@ input,textarea,select{font-size:1rem}
       <div id="hSalatT" class="text-xs text-slate-300 mt-1"></div>
       <div data-t="homeSalat" class="text-[11px] text-emerald-300 mt-1.5 font-bold"></div>
     </button>
+    </div>
+    <div class="hp-c hidden flex flex-col gap-3">
     <div class="bg-[#0B132B]/85 text-white rounded-3xl overflow-hidden border border-slate-700">
       <div class="px-4 pt-3 pb-2"><h3 data-t="chTitle" class="font-extrabold text-amber-300"></h3></div>
       <div class="grid grid-cols-2 text-center text-sm font-extrabold">
@@ -148,11 +175,14 @@ input,textarea,select{font-size:1rem}
       <div class="px-4 py-2 flex justify-between text-[11px] text-slate-300"><span id="chRise"></span><span id="chSet"></span></div>
       <p id="chNote" class="text-[10px] text-slate-400 pb-3 text-center"></p>
     </div>
+    </div>
+    <div class="hp-a flex flex-col gap-3">
     <button onclick="openCredits()" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-[#0B132B]/85 border border-[#D4A017]/60 text-white shadow">
       <span class="font-extrabold text-sm">🪙 <span data-t="credTitle"></span>: <span class="credBal text-[#F5D26B]">–</span></span>
       <span class="px-3 py-1 rounded-lg bg-[#D4A017] text-[#0B132B] text-xs font-black" data-t="credBuy"></span>
     </button>
     <button onclick="go('cast')" data-t="homeEnter" class="w-full py-4 rounded-2xl bg-[#1F6B43] hover:bg-[#175434] text-white font-extrabold shadow-lg"></button>
+    </div>
   </main>
 
   <!-- CAST -->
@@ -430,6 +460,48 @@ const MODELS = ['gemini-3-flash-preview', 'gemini-2.5-flash'];
 let sb = null;
 try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) { console.error(e); }
 
+// ===== STANDALONE MODE =====
+// true  = AI yana aiki kai tsaye da Gemini key ɗinka (🔑), babu Supabase, babu login, babu kiredit.
+// false = tsohon yanayi (Supabase + login + kiredit).
+const STANDALONE = true;
+async function geminiDirect(body, onText) {
+  const key = (localStorage.getItem('gemini_api_key') || '').replace(/\s+/g, '');
+  const E = c => Object.assign(new Error(c), { code: c });
+  if (!key) throw E('KEY');
+  let last = 'GEN';
+  for (const model of MODELS) {
+    let r;
+    try {
+      r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':streamGenerateContent?alt=sse', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: body.contents, systemInstruction: { parts: [{ text: body.system || '' }] } })
+      });
+    } catch (e) { last = 'BUSY'; continue; }
+    if (!r.ok) {
+      let msg = ''; try { msg = (await r.json()).error.message || ''; } catch (e) {}
+      const code = (r.status === 400 || r.status === 401 || r.status === 403) ? (/api key|permission|denied/i.test(msg) ? 'KEY' : 'GEN') : r.status === 429 ? 'LIMIT' : (r.status >= 500 ? 'BUSY' : 'GEN');
+      last = code; if (code === 'KEY' || code === 'LIMIT') break; continue;
+    }
+    const reader = r.body.getReader(), dec = new TextDecoder(); let buf = '', acc = '';
+    for (;;) {
+      let ch; try { ch = await reader.read(); } catch (e) { break; }
+      if (ch.done) break;
+      buf += dec.decode(ch.value, { stream: true }).replace(/\r\n/g, '\n'); let i;
+      while ((i = buf.indexOf('\n\n')) >= 0) {
+        const ev = buf.slice(0, i).trim(); buf = buf.slice(i + 2);
+        if (!ev.startsWith('data:')) continue;
+        let d; try { d = JSON.parse(ev.slice(5)); } catch (e) { continue; }
+        const parts = (d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts) || [];
+        const t = parts.filter(x => x.text && !x.thought).map(x => x.text).join('');
+        if (t) { acc += t; if (onText) onText(acc); }
+      }
+    }
+    if (acc) return acc;
+    last = 'GEN';
+  }
+  throw E(last);
+}
+
 // ============ 16 FIGURES (daga littafin «الفلك المشحون»; layin sama = na farko) ============
 const FIG = {
   "1121": { ha: "Kausaj", en: "Kawsaj", ar: "كوسج" },
@@ -463,7 +535,7 @@ const T = {
   needName:"Dan Allah ka rubuta suna.", copied:"An kwafi!", saved:"An adana!", noChat:"Babu abin da za a adana tukuna.",
   errLimit:"Ka kai iyakar key ɗinka na kyauta. Ka jira ɗan lokaci ka sake gwadawa.", errKey:"Gemini API Key bai daidai ba. Ka sake saka shi (🔑).", errBusy:"Google yana da aiki yanzu. Ka sake gwadawa nan da ɗan lokaci.", errGen:"Ba a samu amsa ba. Duba intanet ka sake gwadawa.",
   house:"Gida", fMother:"An zuba shi kai tsaye a matsayin Uwa ta", fDaughter:"An ciro layi na", fDaughter2:"daga Iyaye 1, 2, 3 da 4.", fCombine:"An haɗa gida na", fAnd:"da gida na", fRule:". Digo iri ɗaya yana ba da ••, saɓanin haka yana ba da •.",
-  navHome:"Agogo", homeEnter:"SHIGA ZUBA ƘASA", chTitle:"Chogadiya", chDay:"Sa'o'in Rana", chNight:"Sa'o'in Dare", chLeft:"ya rage", chRise:"Fitowar rana", chSet:"Faɗuwar rana", chApprox:"Ana amfani da 6:00 da 18:00 (ba a samu wurinka ba)", chLoc:"An lissafa bisa wurinka",
+  tabRamli:"RAMLI", tabChog:"CHOGADIA", tabSalat:"LOKUTAN SALLAH & ALKIBLA", tabAgogo:"AGOGO", navHome:"Agogo", homeEnter:"SHIGA ZUBA ƘASA", chTitle:"Chogadiya", chDay:"Sa'o'in Rana", chNight:"Sa'o'in Dare", chLeft:"ya rage", chRise:"Fitowar rana", chSet:"Faɗuwar rana", chApprox:"Ana amfani da 6:00 da 18:00 (ba a samu wurinka ba)", chLoc:"An lissafa bisa wurinka",
   fullName:"Cikakken suna (suna da sunan uba)", needFull:"Dan Allah ka rubuta cikakken sunanka.", forgot:"Ka manta kalmar sirri?", needEmail:"Ka fara rubuta imel ɗinka a sama.", resetSent:"An aiko hanyar sabunta kalmar sirri zuwa imel ɗinka. Ka duba inbox (da spam).", newPassTitle:"Sabuwar Kalmar Sirri", newPassPh:"Sabuwar kalmar sirri (aƙalla haruffa 6)", newPassSave:"Adana", passChanged:"An canja kalmar sirri!",
   navChats:"Hira da Abokai", navName:"Canja Sunana", fcTitle:"Tattaunawa da Abokai", fcAll:"Kowa (Ƙungiya)", fcAllSub:"Saƙon da kowane mai amfani zai gani", fcSearch:"Nemi suna...", fcPh:"Rubuta saƙo...", fcEmpty:"Babu saƙo tukuna. Fara tattaunawa!", fcFail:"Ba a aika saƙon ba. Duba intanet ka sake gwadawa.", fcNamePrompt:"Rubuta sunanka da abokai za su gani:", fcSetup:"Ba a kammala saita chat ɗin ba tukuna. Ana buƙatar a gudanar da fayil ɗin supabase-chat-setup.sql a Supabase (SQL Editor).",
   navSalat:"Lokutan Sallah", navBlocked:"Waɗanda Aka Toshe", navAvatar:"Canja Hotona", navNotif:"Sanarwa", navInstall:"Sanya a Waya", installHow:"A Safari: latsa Share, sannan 'Add to Home Screen'. A Chrome: latsa ⋮ sannan 'Install app'.", notifOn:"An kunna sanarwa.", notifOff:"An hana sanarwa a browser ɗinka. Ka kunna ta a settings.", notifNo:"Wannan browser ɗin ba ya goyon bayan sanarwa.", fcBlock:"Toshe", fcUnblock:"Cire Toshe", fcReport:"Kai Rahoto", fcDelete:"Goge", fcBlockQ:"A toshe wannan mutumin? Ba za ka ƙara ganin saƙonninsa ba.", fcDelQ:"A goge wannan saƙon?", fcReportQ:"Me ya sa kake kai rahoto? (zaɓi)", fcReported:"An aika rahoto. Na gode.", fcBlocked:"An toshe shi.", fcUnblocked:"An cire toshe.", fcNoBlocked:"Babu wanda ka toshe.", fcVoice:"🎤 Saƙon murya", fcNoMic:"Ba a samu damar makirufo ba.", fcRecording:"Ana rikodi…", fcVoiceFail:"Ba a aika saƙon murya ba.", fcPhotoDone:"An canja hoto!", fcPhotoFail:"Ba a loda hoto ba.",
@@ -495,7 +567,7 @@ const T = {
   needName:"Please enter a name.", copied:"Copied!", saved:"Saved!", noChat:"Nothing to save yet.",
   errLimit:"You hit your free key's limit. Wait a while and try again.", errKey:"The Gemini API key is not valid. Please set it again (🔑).", errBusy:"Google is busy right now. Please try again shortly.", errGen:"No answer received. Check your connection and try again.",
   house:"House", fMother:"Cast directly as Mother", fDaughter:"Taken as row", fDaughter2:"from Mothers 1, 2, 3 and 4.", fCombine:"Combined house", fAnd:"and house", fRule:". Matching dots give ••, differing dots give •.",
-  navHome:"Clock", homeEnter:"ENTER CAST", chTitle:"Chogadiya", chDay:"Day Hours", chNight:"Night Hours", chLeft:"left", chRise:"Sunrise", chSet:"Sunset", chApprox:"Using 06:00 / 18:00 (location unavailable)", chLoc:"Based on your location",
+  tabRamli:"RAMLI", tabChog:"CHOGADIYA", tabSalat:"PRAYER TIMES & QIBLA", tabAgogo:"CLOCK", navHome:"Clock", homeEnter:"ENTER CAST", chTitle:"Chogadiya", chDay:"Day Hours", chNight:"Night Hours", chLeft:"left", chRise:"Sunrise", chSet:"Sunset", chApprox:"Using 06:00 / 18:00 (location unavailable)", chLoc:"Based on your location",
   fullName:"Full name", needFull:"Please enter your full name.", forgot:"Forgot password?", needEmail:"Enter your email above first.", resetSent:"A password reset link was sent to your email. Check your inbox (and spam).", newPassTitle:"New Password", newPassPh:"New password (at least 6 characters)", newPassSave:"Save", passChanged:"Password changed!",
   navChats:"Chat with Friends", navName:"Change My Name", fcTitle:"Chat with Friends", fcAll:"Everyone (Group)", fcAllSub:"Messages every user can see", fcSearch:"Search name...", fcPh:"Type a message...", fcEmpty:"No messages yet. Start chatting!", fcFail:"Message not sent. Check your connection and try again.", fcNamePrompt:"Enter the name your friends will see:", fcSetup:"Chat is not set up yet. Run the supabase-chat-setup.sql file in Supabase (SQL Editor).",
   navSalat:"Prayer Times", navBlocked:"Blocked Users", navAvatar:"Change Photo", navNotif:"Notifications", navInstall:"Install App", installHow:"Safari: tap Share, then 'Add to Home Screen'. Chrome: tap ⋮ then 'Install app'.", notifOn:"Notifications enabled.", notifOff:"Notifications are blocked in your browser. Enable them in settings.", notifNo:"This browser does not support notifications.", fcBlock:"Block", fcUnblock:"Unblock", fcReport:"Report", fcDelete:"Delete", fcBlockQ:"Block this person? You will no longer see their messages.", fcDelQ:"Delete this message?", fcReportQ:"Why are you reporting this? (optional)", fcReported:"Report sent. Thank you.", fcBlocked:"Blocked.", fcUnblocked:"Unblocked.", fcNoBlocked:"You have not blocked anyone.", fcVoice:"🎤 Voice message", fcNoMic:"Microphone is not available.", fcRecording:"Recording…", fcVoiceFail:"Voice message failed.", fcPhotoDone:"Photo updated!", fcPhotoFail:"Photo upload failed.",
@@ -527,7 +599,7 @@ const T = {
   needName:"من فضلك اكتب الاسم.", copied:"تم النسخ!", saved:"تم الحفظ!", noChat:"لا يوجد ما يُحفظ بعد.",
   errLimit:"بلغ مفتاحك المجاني حدّه. انتظر قليلاً ثم أعد المحاولة.", errKey:"مفتاح Gemini API غير صالح. أدخله من جديد (🔑).", errBusy:"Google مشغول الآن. أعد المحاولة بعد قليل.", errGen:"لم نحصل على إجابة. تحقق من الاتصال وأعد المحاولة.",
   house:"البيت", fMother:"ضُرب مباشرة كأم رقم", fDaughter:"أُخذ السطر", fDaughter2:"من الأمهات 1 و2 و3 و4.", fCombine:"جُمع البيت", fAnd:"مع البيت", fRule:". النقاط المتشابهة تعطي ••، والمختلفة تعطي •.",
-  navHome:"الساعة", homeEnter:"ادخل إلى الضرب", chTitle:"شوغاديا", chDay:"ساعات النهار", chNight:"ساعات الليل", chLeft:"متبقي", chRise:"الشروق", chSet:"الغروب", chApprox:"يُستخدم 6:00 و18:00 (الموقع غير متاح)", chLoc:"حسب موقعك",
+  tabRamli:"الرمل", tabChog:"شوغاديا", tabSalat:"مواقيت الصلاة والقبلة", tabAgogo:"الساعة", navHome:"الساعة", homeEnter:"ادخل إلى الضرب", chTitle:"شوغاديا", chDay:"ساعات النهار", chNight:"ساعات الليل", chLeft:"متبقي", chRise:"الشروق", chSet:"الغروب", chApprox:"يُستخدم 6:00 و18:00 (الموقع غير متاح)", chLoc:"حسب موقعك",
   fullName:"الاسم الكامل", needFull:"من فضلك اكتب اسمك الكامل.", forgot:"نسيت كلمة المرور؟", needEmail:"اكتب بريدك الإلكتروني أعلاه أولاً.", resetSent:"أُرسل رابط إعادة تعيين كلمة المرور إلى بريدك. تحقق من الوارد (والرسائل غير المرغوبة).", newPassTitle:"كلمة مرور جديدة", newPassPh:"كلمة المرور الجديدة (6 أحرف على الأقل)", newPassSave:"حفظ", passChanged:"تم تغيير كلمة المرور!",
   navChats:"دردشة مع الأصدقاء", navName:"تغيير اسمي", fcTitle:"دردشة مع الأصدقاء", fcAll:"الجميع (مجموعة)", fcAllSub:"رسائل يراها كل مستخدم", fcSearch:"ابحث بالاسم...", fcPh:"اكتب رسالة...", fcEmpty:"لا توجد رسائل بعد. ابدأ المحادثة!", fcFail:"لم تُرسل الرسالة. تحقق من الاتصال وأعد المحاولة.", fcNamePrompt:"اكتب الاسم الذي سيراه أصدقاؤك:", fcSetup:"لم يتم إعداد الدردشة بعد. شغّل ملف supabase-chat-setup.sql في Supabase (SQL Editor).",
   navSalat:"مواقيت الصلاة", navBlocked:"المحظورون", navAvatar:"تغيير الصورة", navNotif:"الإشعارات", navInstall:"تثبيت التطبيق", installHow:"في Safari: اضغط مشاركة ثم 'إضافة إلى الشاشة الرئيسية'. في Chrome: اضغط ⋮ ثم 'تثبيت التطبيق'.", notifOn:"تم تفعيل الإشعارات.", notifOff:"الإشعارات محظورة في المتصفح. فعّلها من الإعدادات.", notifNo:"هذا المتصفح لا يدعم الإشعارات.", fcBlock:"حظر", fcUnblock:"إلغاء الحظر", fcReport:"إبلاغ", fcDelete:"حذف", fcBlockQ:"حظر هذا الشخص؟ لن ترى رسائله بعد الآن.", fcDelQ:"حذف هذه الرسالة؟", fcReportQ:"لماذا تبلّغ؟ (اختياري)", fcReported:"تم إرسال البلاغ. شكراً.", fcBlocked:"تم الحظر.", fcUnblocked:"تم إلغاء الحظر.", fcNoBlocked:"لم تحظر أحداً.", fcVoice:"🎤 رسالة صوتية", fcNoMic:"الميكروفون غير متاح.", fcRecording:"جارٍ التسجيل…", fcVoiceFail:"فشل إرسال الرسالة الصوتية.", fcPhotoDone:"تم تحديث الصورة!", fcPhotoFail:"فشل رفع الصورة.",
@@ -665,6 +737,7 @@ function castNow() {
 }
 function go(v) {
   view = v; ['home','cast','results','chat','history','dict','salat','admin','fchats','fchat','credits'].forEach(x => $('v-' + x).classList.toggle('hidden', x !== v));
+  if (v === 'home') homeTab = 'agogo'; syncTabs();
   if (v !== 'fchat') { openPeer = null; if (rec) cancelRec(); }
   if (v === 'home') startHome(); else stopHome();
   if (v === 'salat') startSalat(); else stopSalat();
@@ -672,6 +745,46 @@ function go(v) {
   if (v === 'credits') loadCredits();
   if (v === 'history') loadHistory(); if (v === 'dict') renderDict(); if (v === 'fchats') loadChats(); if (v !== 'fchat') window.scrollTo({ top: 0 });
 }
+// ================= NAVIGATION TABS =================
+let homeTab = 'agogo';
+function syncTabs() {
+  const nav = $('navTabs'); if (!nav) return;
+  nav.classList.toggle('hidden', !['home','cast','results','chat','salat'].includes(view));
+  document.body.classList.toggle('has-bnav', !nav.classList.contains('hidden')); fitTabs(); updateBadges();
+  document.querySelectorAll('#v-home .hp-a').forEach(e => e.classList.toggle('hidden', homeTab !== 'agogo'));
+  document.querySelectorAll('#v-home .hp-c').forEach(e => e.classList.toggle('hidden', homeTab !== 'chog'));
+  const cur = view === 'salat' ? 'salat' : view === 'home' ? homeTab : 'ramli';
+  nav.querySelectorAll('button').forEach(b => { const on = b.dataset.tab === cur; b.classList.toggle('on', on); if (on && b.scrollIntoView) { try { nav.scrollTo({ left: b.offsetLeft - (nav.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' }); } catch (e) {} } });
+}
+function navTab(k) {
+  if (k === 'ramli') { if (view !== 'cast') go('cast'); }
+  else if (k === 'salat') { if (view !== 'salat') go('salat'); }
+  else { go('home'); homeTab = k; syncTabs(); }
+}
+function fitTabs() { const n = $('navTabs'); if (!n) return; n.style.top = ''; document.documentElement.style.setProperty('--navh', n.classList.contains('hidden') ? '0px' : n.offsetHeight + 'px'); }
+function updateBadges() { try { const b = document.querySelector('#navTabs [data-tab=salat]'); if (!b) return; let soon = false; if (typeof GEO !== 'undefined' && GEO) { const now = new Date(), n = nextPrayer(now); soon = !!(n && isFinite(n.ms) && n.ms - now.getTime() <= 30 * 60000); } b.classList.toggle('badge', soon); } catch (e) {} }
+setInterval(updateBadges, 30000); window.addEventListener('load', () => { fitTabs(); updateBadges(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTabs); });
+(function () {
+  const order = ['ramli', 'chog', 'salat', 'agogo']; let sx = 0, sy = 0, st = 0, ok = false;
+  const cur = () => view === 'salat' ? 'salat' : view === 'home' ? homeTab : 'ramli';
+  function blocked(el) {
+    if (!['home', 'cast', 'salat'].includes(view)) return true;
+    if (document.querySelector('[id$="Modal"]:not(.hidden)')) return true;
+    const d = $('dBack'); if (d && !d.classList.contains('hidden')) return true;
+    for (let e = el; e && e !== document.body; e = e.parentElement) {
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.tagName) || e.isContentEditable) return true;
+      if (e.scrollWidth > e.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(e).overflowX)) return true;
+    }
+    return false;
+  }
+  document.addEventListener('touchstart', e => { if (e.touches.length !== 1) { ok = false; return; } const t0 = e.touches[0]; sx = t0.clientX; sy = t0.clientY; st = Date.now(); ok = !blocked(e.target); }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!ok) return; ok = false; const t1 = e.changedTouches[0], dx = t1.clientX - sx, dy = t1.clientY - sy;
+    if (Date.now() - st > 700 || Math.abs(dx) < 70 || Math.abs(dx) < 1.8 * Math.abs(dy)) return;
+    const i = order.indexOf(cur()), n = i + (dx < 0 ? 1 : -1); if (n >= 0 && n < order.length) navTab(order[n]);
+  }, { passive: true });
+})();
+window.addEventListener('resize', fitTabs); window.addEventListener('load', fitTabs);
 function openDrawer() { $('dBack').classList.remove('hidden'); $('drawer').classList.remove('-translate-x-full'); }
 function closeDrawer() { $('dBack').classList.add('hidden'); $('drawer').classList.add('-translate-x-full'); }
 function openModal(id) { if (id === 'guideModal') $('guideBody').innerHTML = t('guideBody'); $(id).classList.remove('hidden'); }
@@ -725,6 +838,7 @@ async function saveNewPass() {
   try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
 }
 async function checkSession() {
+  if (STANDALONE) { $('authModal').classList.add('hidden'); return; }
   if (!sb) return $('authModal').classList.remove('hidden');
   const { data: { session } } = await sb.auth.getSession();
   $('authModal').classList.toggle('hidden', !!session);
@@ -741,6 +855,7 @@ let WALLET = null, creditBack = 'home', walletBusy = false;
 const PAY_PARAMS = (() => { try { const q = new URLSearchParams(location.search); return q.get('reference') || q.get('trxref') || ''; } catch (e) { return ''; } })();
 if (PAY_PARAMS) { try { sessionStorage.setItem('geo_pay_ref', PAY_PARAMS); } catch (e) {} }
 async function fn(action, body) {
+  if (STANDALONE && (action === 'ai' || action === 'plan')) { const text = await geminiDirect(action === 'plan' ? { contents: [{ role: 'user', parts: [{ text: body.prompt }] }] } : body); return { text }; }
   if (!sb) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
@@ -921,6 +1036,7 @@ function systemPrompt(bk) {
   return base + `\n\nBOOK RULES (very important): Below are excerpts from the book «الفلك المشحون في علم الرمل المصون» (OCR text, so small spelling errors are possible). Base EVERY judgement on these excerpts only, never on outside knowledge of geomancy. The book names the 16 figures with older names: each excerpt header that says "هذا الشكل في تخت المستفتي يسمى ..." links the book's figure to the figure in the chart. If the excerpts do not contain the rule needed for a point, simply leave that point out; do not invent anything. NEVER mention the book, its chapters, its pages, the excerpts, or phrases like 'the book says', 'according to the book' or 'it is written'. Give the judgement directly, in your own voice, as a knowledgeable geomancer would, without citing any source. Explain everything in ${t('aiLang')}.\n\nBOOK EXCERPTS:\n${bk.text}\n`;
 }
 async function fnStream(body, onText) {
+  if (STANDALONE) return geminiDirect(body, onText);
   if (!sb) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
@@ -1692,7 +1808,7 @@ async function adminPurge(uid) {
 
 // ================= INIT =================
 document.addEventListener('visibilitychange', () => { if (!document.hidden && view === 'home') { askedLoc = false; homeSig = ''; tickHome(); askLoc(); } });
-window.addEventListener('DOMContentLoaded', () => { applyTheme(); setLang(LANG); go('home'); checkSession(); initPwa(); setInterval(checkRemind, 20000); if (sb) sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') $('recModal').classList.remove('hidden'); checkSession(); }); });
+window.addEventListener('DOMContentLoaded', () => { if (STANDALONE) { document.querySelectorAll('button[onclick*="openCredits"], button[onclick*="logout"], button[onclick*="go(\'admin\')"]').forEach(b => b.style.display = 'none'); document.querySelectorAll('[data-t="navChats"]').forEach(e => { const b = e.closest('button'); if (b) b.style.display = 'none'; }); } applyTheme(); setLang(LANG); go('home'); fitTabs(); checkSession(); initPwa(); setInterval(checkRemind, 20000); if (sb) sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') $('recModal').classList.remove('hidden'); checkSession(); }); });
 </script>
 </body>
 </html>
