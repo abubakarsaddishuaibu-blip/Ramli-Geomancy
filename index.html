@@ -218,7 +218,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
 
   <!-- RESULTS -->
   <section id="v-results" class="hidden flex-1 bg-[#0B132B]/80 text-white">
-    <div class="rwrap p-3 space-y-3">
+    <div class="rwrap p-3 space-y-2">
       <div class="rsubj bg-[#151E3F] border border-slate-700 rounded-2xl p-3 flex items-center justify-between gap-2">
         <div class="min-w-0"><div data-t="subject" class="text-[11px] uppercase text-[#5DB887] font-bold"></div>
           <div id="rSubject" class="text-sm font-extrabold truncate"></div><div id="rTime" class="text-[11px] text-slate-400"></div></div>
@@ -228,12 +228,12 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
           <button onclick="go('cast')" class="p-2.5 rounded-xl bg-indigo-600">↩</button>
         </div>
       </div>
-      <div class="ltr-lock space-y-2.5">
+      <div class="ltr-lock space-y-1.5">
         <div><div class="flex justify-between text-[10px] font-bold uppercase text-slate-400 px-1 mb-1"><span data-t="daughters"></span><span data-t="mothersH"></span></div><div id="rowA" class="grid grid-cols-8 gap-1"></div></div>
         <div><div data-t="nieces" class="text-center text-[10px] font-bold uppercase text-slate-400 mb-1"></div><div id="rowB" class="grid grid-cols-4 gap-1.5"></div></div>
-        <div><div data-t="witnesses" class="text-center text-[10px] font-bold uppercase text-slate-400 mb-1"></div><div id="rowC" class="grid grid-cols-2 gap-2 max-w-[60%] mx-auto"></div></div>
-        <div><div data-t="judge" class="text-center text-[10px] font-bold uppercase text-amber-400 mb-1"></div><div id="rowD" class="max-w-[31%] mx-auto"></div></div>
-        <div><div data-t="reconciler" class="text-center text-[10px] font-bold uppercase text-cyan-400 mb-1"></div><div id="rowE" class="max-w-[31%] mx-auto"></div></div>
+        <div><div data-t="witnesses" class="text-center text-[10px] font-bold uppercase text-slate-400 mb-1"></div><div id="rowC" class="grid grid-cols-2 gap-1.5 max-w-[50%] mx-auto"></div></div>
+        <div><div data-t="judge" class="text-center text-[10px] font-bold uppercase text-amber-400 mb-1"></div><div id="rowD" class="max-w-[26%] mx-auto"></div></div>
+        <div><div data-t="reconciler" class="text-center text-[10px] font-bold uppercase text-cyan-400 mb-1"></div><div id="rowE" class="max-w-[26%] mx-auto"></div></div>
       </div>
       <div class="text-center space-y-1">
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#151E3F] border border-slate-700 text-xs font-extrabold"><span data-t="totalDots"></span><span id="rDots" class="text-[#5DB887] text-sm"></span></div>
@@ -727,6 +727,10 @@ function renderMothers() {
 }
 function houseCard(h, compact) {
   const f = figOf(h.p), hl = h.n === 15 ? 'border-amber-400/70 bg-[#1B254B]' : h.n === 16 ? 'border-cyan-400/70 bg-[#182347]' : 'border-slate-700 bg-[#151E3F]';
+  if (compact === 'm') return `<button type="button" onclick="inspect(${h.n})" class="relative w-full ${hl} hover:border-[#5DB887] border rounded-lg py-1 px-1 flex flex-col items-center active:scale-95 transition">
+    <span class="absolute top-0.5 start-1 text-[8px] font-bold text-slate-400 leading-none">${h.n}</span>
+    <div class="flex flex-col gap-[3px] mt-0.5">${dotsHtml(h.p, 'w-[5px] h-[5px]', 'gap-[3px]')}</div>
+    <div class="mt-0.5 w-full flex items-baseline justify-center gap-1 leading-tight"><span class="text-[8px] font-extrabold truncate">${esc(fname(f))}</span><span class="text-[7px] text-slate-400 truncate">${esc(f.ar)}</span></div></button>`;
   return `<button type="button" onclick="inspect(${h.n})" class="w-full ${hl} hover:border-[#5DB887] border rounded-xl ${compact ? 'py-1.5 px-0.5' : 'py-1.5 px-1'} flex flex-col items-center active:scale-95 transition">
     <div class="w-full text-start px-1 text-[9px] font-bold text-slate-400 leading-none mb-1">${h.n}</div>
     <div class="flex flex-col gap-1 my-0.5">${dotsHtml(h.p, compact ? 'w-1.5 h-1.5' : 'w-2 h-2', compact ? 'gap-1' : 'gap-1.5')}</div>
@@ -736,9 +740,9 @@ function renderResults() {
   $('rSubject').textContent = chart.name; $('rTime').textContent = new Date(chart.time).toLocaleString(LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en-GB' : 'ha-NG');
   const H = chart.H;
   $('rowA').innerHTML = [8,7,6,5,4,3,2,1].map(n => houseCard(H[n], true)).join('');
-  $('rowB').innerHTML = [12,11,10,9].map(n => houseCard(H[n])).join('');
-  $('rowC').innerHTML = [14,13].map(n => houseCard(H[n])).join('');
-  $('rowD').innerHTML = houseCard(H[15]); $('rowE').innerHTML = houseCard(H[16]); $('rDots').textContent = chart.dots;
+  $('rowB').innerHTML = [12,11,10,9].map(n => houseCard(H[n], 'm')).join('');
+  $('rowC').innerHTML = [14,13].map(n => houseCard(H[n], 'm')).join('');
+  $('rowD').innerHTML = houseCard(H[15], 'm'); $('rowE').innerHTML = houseCard(H[16], 'm'); $('rDots').textContent = chart.dots;
 }
 function inspect(n) {
   const h = chart.H[n], f = figOf(h.p);
@@ -1114,7 +1118,7 @@ function md(s) {
 function addBubble(role, text) {
   const mine = role === 'user', d = document.createElement('div');
   d.className = 'flex ' + (mine ? 'justify-end' : 'justify-start');
-  d.innerHTML = `<div class="bubble max-w-[88%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${mine ? 'bg-[#1F6B43] text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800'}"><span class="btxt">${mine ? esc(text) : md(text)}</span>
+  d.innerHTML = `<div class="bubble max-w-[88%] px-3.5 py-2.5 rounded-2xl text-[16px] leading-relaxed ${mine ? 'bg-[#1F6B43] text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800'}"><span class="btxt">${mine ? esc(text) : md(text)}</span>
     ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.previousElementSibling.innerText)">📋</button>`}</div>`;
   $('chatLog').appendChild(d); $('chatLog').scrollTop = $('chatLog').scrollHeight; return d;
 }
