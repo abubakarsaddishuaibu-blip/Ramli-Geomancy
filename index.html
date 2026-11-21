@@ -24,7 +24,7 @@
   @keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
   .dot-pop{animation:pop .2s ease-out}
   @keyframes aispin{to{transform:rotate(360deg)}}
-  .ai-spin{width:46px;height:46px;border-radius:50%;border:4px solid rgba(212,160,23,.22);border-top-color:#D4A017;animation:aispin .9s linear infinite}
+  .ai-spin{flex:none;width:16px;height:16px;border-radius:50%;border:2.5px solid rgba(212,160,23,.25);border-top-color:#D4A017;animation:aispin .8s linear infinite}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
 <style id="theme-madina">
@@ -547,7 +547,7 @@ const catOf = h => h <= 4 ? 'mother' : h <= 8 ? 'daughter' : h <= 12 ? 'niece' :
 const T = {
  ha: { namePh:"RUBUTA SUNA ANAN", questionPh:"RUBUTA TAMBAYA ANAN (ZABI)", tapHint:"Taɓa digo don canza 1 (•) ko 2 (••)", reset:"Sakewa", auto:"Zuba da Kanka", cast:"HAIFAR DA ƘASA", guide:"YADDA AKE ZUBA ƘASA",
   subject:"Sunan Bincike", daughters:"← 'Ya'ya (8 - 5)", mothersH:"Iyaye (4 - 1) →", nieces:"Jikoki (12 - 9)", witnesses:"Shaidu (14 & 13)", judge:"Alƙali (15)", reconciler:"Mai Sulhu (16)", totalDots:"JIMLAR DIGO:", tapHouse:"Taɓa kowane gida don ganin yadda aka lissafa shi", interpret:"NEMI FASSARA",
-  chatTitle:"Tattaunawa da AI", chatPh:"Yi tambaya a kan wannan zane...", send:"Aika", thinking:"AI yana tunani...", thinkTitle:"Masani na AI yana nazarin gidaje 16 da taurari...", thinkSub:"Ana duba addu'o'i da magani da suka dace...", you:"Kai", ai:"AI",
+  chatTitle:"Tattaunawa da AI", chatPh:"Yi tambaya a kan wannan zane...", send:"Aika", thinking:"AI yana tunani...", thinkTitle:"AI yana nazarin gidaje 16 da taurari...", thinkSub:"Ana duba addu'o'i da magani da suka dace...", you:"Kai", ai:"AI",
   histTitle:"Tarihin Bincike", histEmpty:"Babu bincike da aka adana tukuna.", histSearch:"Nemi suna ko tambaya...", open:"Buɗe", del:"Goge", delQ:"A goge wannan bincike?", back:"← Komawa", dictTitle:"Taurari 16 na Ramli",
   navCast:"Zuba Ƙasa", navHistory:"Tarihin Bincike", navDict:"Taurari 16", navKey:"Gemini API Key", navGuide:"Yadda Ake Zuba Ƙasa", theme:"Haske/Duhu", logout:"Fita",
   keyTitle:"Gemini API Key (kyauta)", keyDesc:"Don fassarar AI da tattaunawa, kana buƙatar Gemini API Key naka na kyauta. Ɗauko shi, sannan ka liƙa a nan.", keyGet:"Buɗe Google AI Studio don ɗauko key", keyNote:"Key ɗin yana a wayarka kawai.", save:"Adana", keyNeeded:"Ka fara saka Gemini API Key naka (maɓallin 🔑).",
@@ -579,7 +579,7 @@ const T = {
   aiLang:"Hausa", sysIntro:"Kai gwanin masanin ilmin Ramli ne. Ka yi amfani da sunayen taurari 16 kamar yadda aka saba a ilmin Ramli." },
  en: { namePh:"ENTER NAME HERE", questionPh:"ENTER QUESTION HERE (OPTIONAL)", tapHint:"Tap dots to switch 1 (•) or 2 (••)", reset:"Reset", auto:"Auto-cast", cast:"CAST THE CHART", guide:"HOW TO CAST",
   subject:"Reading Subject", daughters:"← Daughters (8 - 5)", mothersH:"Mothers (4 - 1) →", nieces:"Nieces (12 - 9)", witnesses:"Witnesses (14 & 13)", judge:"Judge (15)", reconciler:"Reconciler (16)", totalDots:"TOTAL DOTS:", tapHouse:"Tap any house to see how it was derived", interpret:"INTERPRET",
-  chatTitle:"Chat with AI", chatPh:"Ask about this chart...", send:"Send", thinking:"AI is thinking...", thinkTitle:"The AI expert is studying the 16 houses and the planets...", thinkSub:"Preparing the fitting prayers and remedies...", you:"You", ai:"AI",
+  chatTitle:"Chat with AI", chatPh:"Ask about this chart...", send:"Send", thinking:"AI is thinking...", thinkTitle:"AI is studying the 16 houses and planets...", thinkSub:"Preparing the fitting prayers and remedies...", you:"You", ai:"AI",
   histTitle:"Reading History", histEmpty:"No saved readings yet.", histSearch:"Search name or question...", open:"Open", del:"Delete", delQ:"Delete this reading?", back:"← Back", dictTitle:"The 16 Figures",
   navCast:"Cast Chart", navHistory:"Reading History", navDict:"16 Figures", navKey:"Gemini API Key", navGuide:"How to Cast", theme:"Light/Dark", logout:"Log out",
   keyTitle:"Gemini API Key (free)", keyDesc:"For AI interpretation and chat you need your own free Gemini API key. Get it, then paste it here.", keyGet:"Open Google AI Studio to get a key", keyNote:"The key stays on your phone only.", save:"Save", keyNeeded:"Please set your Gemini API key first (🔑 button).",
@@ -611,7 +611,7 @@ const T = {
   aiLang:"English", sysIntro:"You are an expert in the science of Raml (geomancy). Use the traditional names of the 16 figures." },
  ar: { namePh:"اكتب الاسم هنا", questionPh:"اكتب السؤال هنا (اختياري)", tapHint:"المس النقاط للتبديل بين 1 (•) أو 2 (••)", reset:"إعادة", auto:"عشوائي", cast:"اضرب الرمل", guide:"طريقة الضرب",
   subject:"اسم القراءة", daughters:"← البنات (8 - 5)", mothersH:"الأمهات (4 - 1) →", nieces:"بنات البنات (12 - 9)", witnesses:"الشاهدان (14 و 13)", judge:"القاضي (15)", reconciler:"المصلح (16)", totalDots:"مجموع النقاط:", tapHouse:"المس أي بيت لترى كيف استُخرج", interpret:"فسّر",
-  chatTitle:"محادثة مع الذكاء الاصطناعي", chatPh:"اسأل عن هذا الشكل...", send:"إرسال", thinking:"الذكاء الاصطناعي يفكر...", thinkTitle:"يدرس الخبير الذكي البيوت الستة عشر والكواكب...", thinkSub:"يجري تجهيز الأدعية والعلاجات المناسبة...", you:"أنت", ai:"الذكاء",
+  chatTitle:"محادثة مع الذكاء الاصطناعي", chatPh:"اسأل عن هذا الشكل...", send:"إرسال", thinking:"الذكاء الاصطناعي يفكر...", thinkTitle:"يدرس الذكاء البيوت الستة عشر والكواكب...", thinkSub:"يجري تجهيز الأدعية والعلاجات المناسبة...", you:"أنت", ai:"الذكاء",
   histTitle:"سجل القراءات", histEmpty:"لا توجد قراءات محفوظة بعد.", histSearch:"ابحث بالاسم أو السؤال...", open:"فتح", del:"حذف", delQ:"هل تريد حذف هذه القراءة؟", back:"→ رجوع", dictTitle:"الأشكال الستة عشر",
   navCast:"اضرب الرمل", navHistory:"سجل القراءات", navDict:"الأشكال الستة عشر", navKey:"مفتاح Gemini API", navGuide:"طريقة الضرب", theme:"فاتح/داكن", logout:"خروج",
   keyTitle:"مفتاح Gemini API (مجاني)", keyDesc:"للتفسير والمحادثة تحتاج إلى مفتاح Gemini API مجاني خاص بك. احصل عليه ثم الصقه هنا.", keyGet:"افتح Google AI Studio للحصول على مفتاح", keyNote:"يبقى المفتاح على هاتفك فقط.", save:"حفظ", keyNeeded:"أدخل مفتاح Gemini API أولاً (زر 🔑).",
@@ -1120,7 +1120,7 @@ async function ask(userText, hidden) {
   if (!hidden) addBubble('user', userText);
   chatHist.push({ role: 'user', text: userText });
   const wait = addBubble('model', t('thinking'));
-  try { wait.querySelector('.btxt').innerHTML = `<div class="flex flex-col items-center text-center gap-2 py-3 px-2"><div class="ai-spin"></div><div class="font-bold text-[13px]">${t('thinkTitle')}</div><div class="text-[11px] opacity-70">${t('thinkSub')}</div></div>`; wait.firstElementChild.classList.add('w-[88%]'); const cb = wait.querySelector('button'); if (cb) cb.style.display = 'none'; } catch (e) {}
+  try { wait.querySelector('.btxt').innerHTML = `<span class="inline-flex items-center gap-2"><span class="ai-spin"></span><span class="ai-msg text-[12px] font-semibold">${t('thinkTitle')}</span></span>`; const cb = wait.querySelector('button'); if (cb) cb.style.display = 'none'; const msgs = [t('thinkTitle'), t('thinkSub')]; let mk = 0; const iv = setInterval(() => { if (!document.body.contains(wait)) { clearInterval(iv); return; } const el = wait.querySelector('.ai-msg'); if (!el) { clearInterval(iv); return; } mk = (mk + 1) % 2; el.textContent = msgs[mk]; }, 3500); } catch (e) {}
   try {
     const contents = chatHist.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }));
     const bk = await buildBookCtx(userText);
