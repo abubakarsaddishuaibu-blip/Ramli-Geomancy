@@ -113,7 +113,7 @@ input,textarea,select{font-size:1rem}
 #navTabs button[data-tab=agogo]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v6l4.5 2.7.9-1.5-3.4-2V7z'/%3E%3C/svg%3E")}
 #navTabs button:active{background:rgba(255,255,255,.08)}
 body.has-bnav{padding-bottom:var(--navh,0px)}
-body.has-bnav #v-chat>.sticky.bottom-0{bottom:var(--navh,0px)}
+body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 auto;width:100%;max-width:28rem;bottom:var(--navh,0px);z-index:24}
 #navTabs,#navTabs button,h2,h3{font-family:'Tajawal',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif}
 #navTabs button.badge::after{content:"";position:absolute;top:.4rem;left:50%;margin-left:.55rem;width:.55rem;height:.55rem;border-radius:50%;background:#e53935;border:2px solid #08231a;box-sizing:content-box;animation:pop .6s ease-out}
 #navTabs button.on{color:#f3de9a;border-top-color:var(--gold,#d9a93a);background:rgba(217,169,58,.10)}
@@ -247,7 +247,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{bottom:var(--navh,0px)}
         <button onclick="go('results')" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white">↩</button>
       </div>
     </div>
-    <div id="chatLog" class="flex-1 overflow-y-auto p-3 space-y-3" style="min-height:50vh"></div>
+    <div id="chatLog" class="flex-1 overflow-y-auto p-3 space-y-3" style="min-height:50vh;padding-bottom:6.5rem;scroll-padding-bottom:6.5rem"></div>
     <div class="sticky bottom-0 p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex gap-2">
       <input id="chatIn" data-ph="chatPh" onkeydown="if(event.key==='Enter')sendChat()" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm">
       <button id="sendBtn" onclick="sendChat()" class="px-4 rounded-xl bg-[#1F6B43] text-white font-bold leading-tight"><span data-t="send"></span><span class="block text-[10px] font-semibold opacity-80">🪙 <span class="costNext">1</span></span></button>
