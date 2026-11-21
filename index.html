@@ -472,7 +472,7 @@ async function aiGate(first) {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   const { data, error } = await sb.rpc('ai_check', { first_msg: first });
-  if (error || !data) { console.error('ai_check', error); throw Object.assign(new Error('SETUP'), { code: 'SETUP' }); }
+  if (error || !data) { console.error('ai_check', error); window.__aiErr = error ? ((error.code || '') + ' ' + (error.message || '')).trim() : 'empty'; throw Object.assign(new Error('SETUP'), { code: 'SETUP' }); }
   if (typeof data.balance === 'number') setWallet(data.balance);
   if (!data.ok) throw Object.assign(new Error(data.error), { code: data.error });
 }
@@ -1105,7 +1105,7 @@ function addBubble(role, text) {
     ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.previousElementSibling.innerText)">📋</button>`}</div>`;
   $('chatLog').appendChild(d); $('chatLog').scrollTop = $('chatLog').scrollHeight; return d;
 }
-function errMsg(code) { return { BANNED: t('errBanned'), KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy'), SETUP: 'Ba a samu ai_check a Supabase ba. Ka gudanar da supabase-ai-direct.sql a SQL Editor.', NET: LANG === 'ar' ? 'تعذّر الاتصال بالخادم (geo). تأكد من نشر الدالة.' : LANG === 'en' ? 'Cannot reach the server (geo function). Make sure it is deployed.' : 'Ba a iya haɗuwa da uwar garke (geo). Ka tabbatar an saka function ɗin a Supabase.' }[code] || t('errGen'); }
+function errMsg(code) { return { BANNED: t('errBanned'), KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy'), SETUP: 'Kuskuren Supabase (ai_check): ' + (window.__aiErr || ''), NET: LANG === 'ar' ? 'تعذّر الاتصال بالخادم (geo). تأكد من نشر الدالة.' : LANG === 'en' ? 'Cannot reach the server (geo function). Make sure it is deployed.' : 'Ba a iya haɗuwa da uwar garke (geo). Ka tabbatar an saka function ɗin a Supabase.' }[code] || t('errGen'); }
 async function ask(userText, hidden) {
   if (chatBusy) return;
   if (!getKey()) { toast(t('keyNeeded')); openKey(); return; }
