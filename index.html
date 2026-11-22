@@ -150,6 +150,7 @@ html.dark #v-history>.ptop,html.dark #v-dict>.ptop,html.dark #v-credits>.ptop,ht
 #v-results>.rwrap{padding-bottom:5.5rem}
 #v-results .rsubj{position:sticky;top:var(--hdrh,68px);z-index:20;box-shadow:0 6px 10px -6px rgba(0,0,0,.6)}
 #v-results .rfix{position:fixed;left:.75rem;right:.75rem;max-width:26.5rem;margin:0 auto;bottom:calc(var(--navh,0px) + .5rem);z-index:24;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+body.plan-once #v-credits [data-t="credPkgs"],body.plan-once #credPkgs,body.plan-once #v-credits [data-t="credHist"],body.plan-once #credHist,body.plan-once #credCostInfo,body.plan-once #credMsg:empty{display:none}
 #v-fchat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 auto;width:100%;max-width:28rem;bottom:var(--navh,0px);z-index:24}
 body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 auto;width:100%;max-width:28rem;bottom:var(--navh,0px);z-index:24}
 #navTabs,#navTabs button,h2,h3{font-family:'Tajawal',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif}
@@ -428,7 +429,18 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
   </aside>
 
   <!-- Auth -->
-  <div id="authModal" class="hidden fixed inset-0 z-[70] bg-slate-100/85 dark:bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-5">
+  <div id="payWall" class="hidden fixed inset-0 z-[95] flex items-center justify-center p-5" style="background:rgba(7,12,26,.97)">
+  <div class="w-full max-w-sm rounded-3xl p-6 text-center bg-gradient-to-br from-[#0F2E1E] to-[#1F6B43] border border-[#D4A017]/70 text-white space-y-3 shadow-2xl">
+    <div class="text-4xl">♾️</div>
+    <div id="pwTitle" class="text-lg font-black text-[#F5D26B]"></div>
+    <div id="pwSub" class="text-sm opacity-90 leading-relaxed"></div>
+    <div id="pwPrice" class="text-3xl font-black"></div>
+    <button id="pwBtn" onclick="buyUnlimited()" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]"></button>
+    <div id="pwMsg" class="text-sm font-bold min-h-[1.25rem]"></div>
+    <button id="pwOut" onclick="logout()" class="text-xs underline opacity-80"></button>
+  </div>
+</div>
+<div id="authModal" class="hidden fixed inset-0 z-[70] bg-slate-100/85 dark:bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-5">
     <div class="w-full max-w-sm space-y-3">
       <div class="text-end"><select onchange="setLang(this.value)" class="langSel2 px-2 py-1 rounded bg-white dark:bg-slate-800 text-xs"><option value="ha">Hausa</option><option value="en">English</option><option value="ar">العربية</option></select></div>
       <h2 class="kalma text-2xl font-extrabold text-[#1F6B43] text-center">لا إله إلا الله محمد رسول الله</h2>
@@ -511,6 +523,9 @@ const STANDALONE = false;
 // AI_DIRECT = true: AI yana kiran Gemini kai tsaye da key ɗin mai amfani (babu Edge Function).
 // Login da kiredit suna nan a Supabase (ai_check / ai_charge a SQL).
 const AI_DIRECT = true;
+// PLAN_MODE: 'credits' = ana cire kiredit a kowace tambaya  |  'once' = biyan sau ɗaya, amfani ba iyaka, babu kiredit
+const PLAN_MODE = 'credits';
+document.addEventListener('DOMContentLoaded', () => { if (PLAN_MODE === 'once') document.body.classList.add('plan-once'); });
 async function aiGate(first) {
   if (!sb) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   const { data: { session } } = await sb.auth.getSession();
@@ -518,6 +533,7 @@ async function aiGate(first) {
   const { data, error } = await sb.rpc('ai_check', { first_msg: first });
   if (error || !data) { console.error('ai_check', error); window.__aiErr = error ? ((error.code || '') + ' ' + (error.message || '')).trim() : 'empty'; throw Object.assign(new Error('SETUP'), { code: 'SETUP' }); }
   UNL = !!data.unlimited; if (typeof data.balance === 'number') setWallet(data.balance); else renderCreditUi();
+  if (PLAN_MODE === 'once' && !data.unlimited && data.error !== 'BANNED' && data.error !== 'AUTH') throw Object.assign(new Error('PAYWALL'), { code: 'PAYWALL' });
   if (!data.ok) throw Object.assign(new Error(data.error), { code: data.error });
 }
 async function aiCharge(first, sid) {
@@ -907,14 +923,14 @@ async function checkSession() {
   $('authModal').classList.toggle('hidden', !!session);
   $('userMail').textContent = session ? session.user.email : '';
   if (session) { ensureProfile(session); loadWallet(); handlePayReturn(); if (view === 'home') askLoc(); }
-  else { ME = null; WALLET = null; UNL = false; renderCreditUi(); $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
+  else { ME = null; WALLET = null; UNL = false; PLAN_LOADED = false; renderCreditUi(); $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
 }
 async function logout() { if (sb) await sb.auth.signOut(); closeDrawer(); checkSession(); }
 
 // ================= CREDITS (kiredit) =================
 const FN_URL = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/geo';
 const COST = { first: 3, next: 1 };
-let UNL = false, UNL_PRICE = 0;   // amfani ba iyaka (biyan sau ɗaya)
+let UNL = false, UNL_PRICE = 0, PLAN_LOADED = false;   // amfani ba iyaka (biyan sau ɗaya)
 let WALLET = null, creditBack = 'home', walletBusy = false;
 const PAY_PARAMS = (() => { try { const q = new URLSearchParams(location.search); return q.get('reference') || q.get('trxref') || ''; } catch (e) { return ''; } })();
 if (PAY_PARAMS) { try { sessionStorage.setItem('geo_pay_ref', PAY_PARAMS); } catch (e) {} }
@@ -938,32 +954,42 @@ async function fn(action, body) {
   return d;
 }
 const UNL_T = {
-  ha: { title: 'Biyan sau ɗaya, amfani ba iyaka', sub: 'Ka biya sau ɗaya kawai, sannan ka yi amfani da AI ba tare da sayen kiredit ba, har abada.', active: '✅ Kana da amfani ba iyaka. Ba sai ka sayi kiredit ba.', paid: 'An kunna amfani ba iyaka. Alhamdulillah!', or: 'Ko ka sayi kiredit kamar yadda kake so:' },
-  en: { title: 'One-time payment, unlimited use', sub: 'Pay once and use the AI without buying credits, for good.', active: '✅ You have unlimited use. No need to buy credits.', paid: 'Unlimited use activated. Alhamdulillah!', or: 'Or buy credits as you like:' },
-  ar: { title: 'دفعة واحدة، استخدام غير محدود', sub: 'ادفع مرة واحدة واستخدم الذكاء الاصطناعي دون شراء رصيد، إلى الأبد.', active: '✅ لديك استخدام غير محدود. لا حاجة لشراء رصيد.', paid: 'تم تفعيل الاستخدام غير المحدود. الحمد لله!', or: 'أو اشترِ رصيدًا كما تشاء:' }
+  ha: { title: 'Haɓaka: biya sau ɗaya, amfani ba iyaka', sub: 'Idan kana sayen kiredit akai-akai, ka haɓaka sau ɗaya kawai ka daina sayen kiredit har abada.', up: 'Haɓaka', active: '✅ Kana da amfani ba iyaka. Ba sai ka sayi kiredit ba.', paid: 'An kunna amfani ba iyaka. Alhamdulillah!', or: 'Ko ka sayi kiredit kamar yadda kake so:', pwTitle: 'Maraba! Ka biya sau ɗaya don buɗe manhajar', pwSub: 'Ka biya sau ɗaya kawai yanzu, sannan manhajar ta buɗe maka har abada, ba tare da ka sake sayen komai ba.', pwBtn: 'Biya yanzu', pwOut: 'Fita', need: 'Ka biya sau ɗaya don amfani da AI, ba tare da sayen kiredit ba.', noprice: 'Ba a saka farashin biyan sau ɗaya tukuna ba.' },
+  en: { title: 'Upgrade: pay once, unlimited use', sub: 'If you keep buying credits, upgrade once and stop buying credits for good.', up: 'Upgrade', active: '✅ You have unlimited use. No need to buy credits.', paid: 'Unlimited use activated. Alhamdulillah!', or: 'Or buy credits as you like:', pwTitle: 'Welcome! Pay once to unlock the app', pwSub: 'Pay just once now and the app opens for you forever, with nothing more to buy.', pwBtn: 'Pay now', pwOut: 'Log out', need: 'Pay once to use the AI, with no credits to buy.', noprice: 'The one-time price has not been set yet.' },
+  ar: { title: 'ترقية: دفعة واحدة، استخدام غير محدود', sub: 'إن كنت تشتري الرصيد باستمرار فارتقِ مرة واحدة وتوقف عن الشراء إلى الأبد.', up: 'ترقية', active: '✅ لديك استخدام غير محدود. لا حاجة لشراء رصيد.', paid: 'تم تفعيل الاستخدام غير المحدود. الحمد لله!', or: 'أو اشترِ رصيدًا كما تشاء:', pwTitle: 'أهلًا بك! ادفع مرة واحدة لفتح التطبيق', pwSub: 'ادفع مرة واحدة الآن ويُفتح التطبيق لك إلى الأبد دون شراء أي شيء آخر.', pwBtn: 'ادفع الآن', pwOut: 'تسجيل الخروج', need: 'ادفع مرة واحدة لاستخدام الذكاء الاصطناعي دون شراء رصيد.', noprice: 'لم يُحدد سعر الدفعة الواحدة بعد.' }
 };
+function updatePayWall() {
+  const w = $('payWall'); if (!w) return;
+  const show = PLAN_MODE === 'once' && ME && PLAN_LOADED && !UNL && !(ME && ME.isAdmin);
+  w.classList.toggle('hidden', !show); if (!show) return;
+  const T = UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'];
+  $('pwTitle').textContent = T.pwTitle; $('pwSub').textContent = T.pwSub; $('pwOut').textContent = T.pwOut;
+  $('pwPrice').textContent = UNL_PRICE > 0 ? '₦' + UNL_PRICE.toLocaleString('en-US') : ''; $('pwBtn').textContent = T.pwBtn;
+  $('pwBtn').classList.toggle('hidden', !(UNL_PRICE > 0)); if (!(UNL_PRICE > 0)) $('pwMsg').textContent = T.noprice;
+}
 function renderUnlCard() {
   const el = $('credUnl'); if (!el) return; const T = UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'];
   if (UNL) { el.innerHTML = `<div class="rounded-2xl p-4 text-center font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300/60">${T.active}</div>`; }
   else if (UNL_PRICE > 0) {
     el.innerHTML = `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#3A2C05] to-[#7A5C0B] text-white border border-[#D4A017] shadow space-y-2">
       <div class="font-black text-base text-[#F5D26B]">♾️ ${T.title}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.sub}</div>
-      <button onclick="buyUnlimited()" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]">₦${UNL_PRICE.toLocaleString('en-US')}</button></div>
-      <p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>`;
-  } else el.innerHTML = '';
+      <button onclick="buyUnlimited()" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]">${T.up} · ₦${UNL_PRICE.toLocaleString('en-US')}</button></div>
+      ${PLAN_MODE === 'credits' ? `<p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>` : ''}`;
+  } else el.innerHTML = `<div class="rounded-2xl p-4 text-center text-sm font-bold bg-amber-100 text-amber-800">${T.noprice}</div>`;
 }
 function setWallet(n) { WALLET = n; renderCreditUi(); }
 function renderCreditUi() {
-  document.querySelectorAll('.credBal').forEach(e => e.textContent = UNL ? '∞' : (WALLET == null ? '–' : WALLET));
-  document.querySelectorAll('.costFirst').forEach(e => e.textContent = UNL ? '∞' : COST.first);
-  document.querySelectorAll('.costNext').forEach(e => e.textContent = UNL ? '∞' : COST.next);
-  renderUnlCard();
+  const lock = PLAN_MODE === 'once' && !UNL;
+  document.querySelectorAll('.credBal').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : (WALLET == null ? '–' : WALLET));
+  document.querySelectorAll('.costFirst').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : COST.first);
+  document.querySelectorAll('.costNext').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : COST.next);
+  renderUnlCard(); try { updatePayWall(); } catch (e) {}
   const ci = $('credCostInfo'); if (ci) ci.textContent = t('credCostInfo');
 }
 async function loadWallet() {
   if (!sb || walletBusy) return; walletBusy = true;
   try { const { data, error } = await sb.rpc('get_my_wallet'); if (!error && typeof data === 'number') setWallet(data); } catch (e) {}
-  try { const { data } = await sb.rpc('get_my_plan'); if (data && !data.error) { UNL = !!data.unlimited; UNL_PRICE = data.price || 0; if (typeof data.balance === 'number') WALLET = data.balance; renderCreditUi(); } } catch (e) {}
+  try { const { data } = await sb.rpc('get_my_plan'); if (data && !data.error) { UNL = !!data.unlimited; UNL_PRICE = data.price || 0; PLAN_LOADED = true; if (typeof data.balance === 'number') WALLET = data.balance; renderCreditUi(); } } catch (e) {}
   walletBusy = false;
   try {
     const { data } = await sb.from('credit_settings').select('key,value');
@@ -973,6 +999,7 @@ async function loadWallet() {
 function openCredits() { if (view !== 'credits') creditBack = view === 'results' || view === 'chat' || view === 'home' || view === 'cast' ? view : 'home'; go('credits'); }
 function closeCredits() { go(creditBack || 'home'); }
 function creditMsg(text, ok) {
+  const pm = $('pwMsg'); if (pm) pm.textContent = text || '';
   const b = $('credMsg'); if (!b) return; if (!text) { b.classList.add('hidden'); return; }
   b.textContent = text; b.className = 'rounded-xl p-3 text-sm font-bold text-center ' + (ok ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300');
 }
@@ -1179,12 +1206,13 @@ function addBubble(role, text) {
     ${mine ? '' : `<button class="mt-1 text-[11px] text-slate-400" onclick="copyText(this.previousElementSibling.innerText)">📋</button>`}</div>`;
   $('chatLog').appendChild(d); $('chatLog').scrollTop = $('chatLog').scrollHeight; return d;
 }
-function errMsg(code) { return { BANNED: t('errBanned'), KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy'), SETUP: 'Kuskuren Supabase (ai_check): ' + (window.__aiErr || ''), NET: LANG === 'ar' ? 'تعذّر الاتصال بالخادم (geo). تأكد من نشر الدالة.' : LANG === 'en' ? 'Cannot reach the server (geo function). Make sure it is deployed.' : 'Ba a iya haɗuwa da uwar garke (geo). Ka tabbatar an saka function ɗin a Supabase.' }[code] || t('errGen'); }
+function errMsg(code) { return { BANNED: t('errBanned'), KEY: t('errKey'), CREDIT: t('errCredit'), AUTH: t('errAuth'), LIMIT: t('errLimit'), BUSY: t('errBusy'), SETUP: 'Kuskuren Supabase (ai_check): ' + (window.__aiErr || ''), PAYWALL: UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].need, NET: LANG === 'ar' ? 'تعذّر الاتصال بالخادم (geo). تأكد من نشر الدالة.' : LANG === 'en' ? 'Cannot reach the server (geo function). Make sure it is deployed.' : 'Ba a iya haɗuwa da uwar garke (geo). Ka tabbatar an saka function ɗin a Supabase.' }[code] || t('errGen'); }
 async function ask(userText, hidden) {
   if (chatBusy) return;
   if (!getKey()) { toast(t('keyNeeded')); openKey(); return; }
   const need = chatHist.length === 0 ? COST.first : COST.next;
-  if (!UNL && WALLET != null && WALLET < need) { toast(t('credNeed').replace('{n}', need)); openCredits(); return; }
+  if (PLAN_MODE === 'once' && !UNL) { toast(UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].need); openCredits(); return; }
+  if (PLAN_MODE === 'credits' && !UNL && WALLET != null && WALLET < need) { toast(t('credNeed').replace('{n}', need)); openCredits(); return; }
   chatBusy = true; $('sendBtn').disabled = true;
   if (!hidden) addBubble('user', userText);
   chatHist.push({ role: 'user', text: userText });
@@ -1899,7 +1927,7 @@ async function failToast(def) {
 }
 async function checkAdmin() {
   const { data, error } = await sb.from('admins').select('user_id').eq('user_id', ME.id).maybeSingle();
-  ME.isAdmin = !error && !!data; $('navAdmin').classList.toggle('hidden', !ME.isAdmin);
+  ME.isAdmin = !error && !!data; $('navAdmin').classList.toggle('hidden', !ME.isAdmin); try { updatePayWall(); } catch (e) {}
 }
 function setAdminTab(x) { adminTab = x; renderAdmin(); }
 async function loadAdmin() {
