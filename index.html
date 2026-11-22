@@ -2,7 +2,7 @@
 <html lang="ha" class="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#08231a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,6 +11,35 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>لا إله إلا الله محمد رسول الله</title>
+<script>
+// ===== App Inventor (WebViewer) storage bridge =====
+// Idan WebViewer ba ya ajiye localStorage (ko ba shi da shi), ana ajiye session, key da harshe ta TinyDB.
+(function () {
+  var B = null; try { if (window.AppInventor && window.AppInventor.getWebViewString) B = window.AppInventor; } catch (e) {}
+  var ok = false; try { window.localStorage.setItem('__t', '1'); window.localStorage.removeItem('__t'); ok = true; } catch (e) {}
+  if (ok && !B) return;                       // browser na yau da kullum: babu abin yi
+  var KEEP = /^(sb-|gemini_api_key|geo_)/, saved = {};
+  if (B) { try { saved = JSON.parse(B.getWebViewString() || '{}') || {}; } catch (e) { saved = {}; } }
+  var push = function () { if (B) { try { B.setWebViewString(JSON.stringify(saved)); } catch (e) {} } };
+  if (ok) {                                   // localStorage yana nan: a maido abin da ya ɓace, a kwafi sabbin rubuce-rubuce
+    try { Object.keys(saved).forEach(function (k) { if (window.localStorage.getItem(k) == null) window.localStorage.setItem(k, saved[k]); }); } catch (e) {}
+    var _s = Storage.prototype.setItem, _r = Storage.prototype.removeItem;
+    Storage.prototype.setItem = function (k, v) { _s.apply(this, arguments); if (this === window.localStorage && KEEP.test(k)) { saved[k] = String(v); push(); } };
+    Storage.prototype.removeItem = function (k) { _r.apply(this, arguments); if (this === window.localStorage && KEEP.test(k)) { delete saved[k]; push(); } };
+    return;
+  }
+  var mem = {}; Object.keys(saved).forEach(function (k) { mem[k] = saved[k]; });   // localStorage babu shi: a maye gurbinsa
+  var shim = {
+    getItem: function (k) { return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
+    setItem: function (k, v) { mem[k] = String(v); if (KEEP.test(k)) { saved[k] = mem[k]; push(); } },
+    removeItem: function (k) { delete mem[k]; if (KEEP.test(k)) { delete saved[k]; push(); } },
+    clear: function () { mem = {}; saved = {}; push(); },
+    key: function (i) { return Object.keys(mem)[i] || null; }
+  };
+  Object.defineProperty(shim, 'length', { get: function () { return Object.keys(mem).length; } });
+  try { Object.defineProperty(window, 'localStorage', { value: shim, configurable: true }); } catch (e) {}
+})();
+</script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>tailwind.config = { darkMode: 'class' }</script>
@@ -94,6 +123,7 @@ html.dark .dot-pop{background:#f3de9a!important;box-shadow:0 0 10px rgba(243,222
 html:not(.dark) .dot-pop{background:#0b1f16!important}
 /* ===== Rubutu mafi girma ===== */
 html{font-size:14.5px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{touch-action:pan-x pan-y}
 .text-\[9px\]{font-size:11px!important}
 .text-\[10px\]{font-size:11.5px!important}
 .text-\[11px\]{font-size:12.5px!important}
@@ -284,6 +314,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
       <div class="text-[11px] opacity-90" id="credCostInfo"></div>
     </div>
     <div id="credMsg" class="hidden rounded-xl p-3 text-sm font-bold text-center"></div>
+    <div id="credUnl"></div>
     <h3 class="font-extrabold text-sm pt-1" data-t="credPkgs"></h3>
     <div id="credPkgs" class="grid gap-2"></div>
     <p class="text-[11px] text-slate-500 text-center" data-t="credSecure"></p>
@@ -486,7 +517,7 @@ async function aiGate(first) {
   if (!session) throw Object.assign(new Error('AUTH'), { code: 'AUTH' });
   const { data, error } = await sb.rpc('ai_check', { first_msg: first });
   if (error || !data) { console.error('ai_check', error); window.__aiErr = error ? ((error.code || '') + ' ' + (error.message || '')).trim() : 'empty'; throw Object.assign(new Error('SETUP'), { code: 'SETUP' }); }
-  if (typeof data.balance === 'number') setWallet(data.balance);
+  UNL = !!data.unlimited; if (typeof data.balance === 'number') setWallet(data.balance); else renderCreditUi();
   if (!data.ok) throw Object.assign(new Error(data.error), { code: data.error });
 }
 async function aiCharge(first, sid) {
@@ -876,13 +907,14 @@ async function checkSession() {
   $('authModal').classList.toggle('hidden', !!session);
   $('userMail').textContent = session ? session.user.email : '';
   if (session) { ensureProfile(session); loadWallet(); handlePayReturn(); if (view === 'home') askLoc(); }
-  else { ME = null; WALLET = null; renderCreditUi(); $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
+  else { ME = null; WALLET = null; UNL = false; renderCreditUi(); $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
 }
 async function logout() { if (sb) await sb.auth.signOut(); closeDrawer(); checkSession(); }
 
 // ================= CREDITS (kiredit) =================
 const FN_URL = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/geo';
 const COST = { first: 3, next: 1 };
+let UNL = false, UNL_PRICE = 0;   // amfani ba iyaka (biyan sau ɗaya)
 let WALLET = null, creditBack = 'home', walletBusy = false;
 const PAY_PARAMS = (() => { try { const q = new URLSearchParams(location.search); return q.get('reference') || q.get('trxref') || ''; } catch (e) { return ''; } })();
 if (PAY_PARAMS) { try { sessionStorage.setItem('geo_pay_ref', PAY_PARAMS); } catch (e) {} }
@@ -905,16 +937,33 @@ async function fn(action, body) {
   if (!r.ok) throw Object.assign(new Error(d.error || 'GEN'), { code: r.status === 402 ? 'CREDIT' : r.status === 401 ? 'AUTH' : (d.error || 'GEN'), data: d });
   return d;
 }
+const UNL_T = {
+  ha: { title: 'Biyan sau ɗaya, amfani ba iyaka', sub: 'Ka biya sau ɗaya kawai, sannan ka yi amfani da AI ba tare da sayen kiredit ba, har abada.', active: '✅ Kana da amfani ba iyaka. Ba sai ka sayi kiredit ba.', paid: 'An kunna amfani ba iyaka. Alhamdulillah!', or: 'Ko ka sayi kiredit kamar yadda kake so:' },
+  en: { title: 'One-time payment, unlimited use', sub: 'Pay once and use the AI without buying credits, for good.', active: '✅ You have unlimited use. No need to buy credits.', paid: 'Unlimited use activated. Alhamdulillah!', or: 'Or buy credits as you like:' },
+  ar: { title: 'دفعة واحدة، استخدام غير محدود', sub: 'ادفع مرة واحدة واستخدم الذكاء الاصطناعي دون شراء رصيد، إلى الأبد.', active: '✅ لديك استخدام غير محدود. لا حاجة لشراء رصيد.', paid: 'تم تفعيل الاستخدام غير المحدود. الحمد لله!', or: 'أو اشترِ رصيدًا كما تشاء:' }
+};
+function renderUnlCard() {
+  const el = $('credUnl'); if (!el) return; const T = UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'];
+  if (UNL) { el.innerHTML = `<div class="rounded-2xl p-4 text-center font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300/60">${T.active}</div>`; }
+  else if (UNL_PRICE > 0) {
+    el.innerHTML = `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#3A2C05] to-[#7A5C0B] text-white border border-[#D4A017] shadow space-y-2">
+      <div class="font-black text-base text-[#F5D26B]">♾️ ${T.title}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.sub}</div>
+      <button onclick="buyUnlimited()" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]">₦${UNL_PRICE.toLocaleString('en-US')}</button></div>
+      <p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>`;
+  } else el.innerHTML = '';
+}
 function setWallet(n) { WALLET = n; renderCreditUi(); }
 function renderCreditUi() {
-  document.querySelectorAll('.credBal').forEach(e => e.textContent = WALLET == null ? '–' : WALLET);
-  document.querySelectorAll('.costFirst').forEach(e => e.textContent = COST.first);
-  document.querySelectorAll('.costNext').forEach(e => e.textContent = COST.next);
+  document.querySelectorAll('.credBal').forEach(e => e.textContent = UNL ? '∞' : (WALLET == null ? '–' : WALLET));
+  document.querySelectorAll('.costFirst').forEach(e => e.textContent = UNL ? '∞' : COST.first);
+  document.querySelectorAll('.costNext').forEach(e => e.textContent = UNL ? '∞' : COST.next);
+  renderUnlCard();
   const ci = $('credCostInfo'); if (ci) ci.textContent = t('credCostInfo');
 }
 async function loadWallet() {
   if (!sb || walletBusy) return; walletBusy = true;
   try { const { data, error } = await sb.rpc('get_my_wallet'); if (!error && typeof data === 'number') setWallet(data); } catch (e) {}
+  try { const { data } = await sb.rpc('get_my_plan'); if (data && !data.error) { UNL = !!data.unlimited; UNL_PRICE = data.price || 0; if (typeof data.balance === 'number') WALLET = data.balance; renderCreditUi(); } } catch (e) {}
   walletBusy = false;
   try {
     const { data } = await sb.from('credit_settings').select('key,value');
@@ -954,6 +1003,14 @@ async function buyPackage(id) {
     location.href = d.authorization_url;
   } catch (e) { creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credPayFail'), false); buying = false; }
 }
+async function buyUnlimited() {
+  if (buying) return; buying = true; creditMsg(t('credBuying'), true);
+  try {
+    const d = await fn('init', { plan: 'unlimited', return_url: location.origin + location.pathname });
+    try { sessionStorage.setItem('geo_pay_ref', d.reference); localStorage.setItem('geo_pay_ref', d.reference); } catch (e) {}
+    location.href = d.authorization_url;
+  } catch (e) { creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credPayFail'), false); buying = false; }
+}
 let verifying = false;
 async function handlePayReturn() {
   let ref = ''; try { ref = sessionStorage.getItem('geo_pay_ref') || localStorage.getItem('geo_pay_ref') || ''; } catch (e) {}
@@ -964,7 +1021,7 @@ async function handlePayReturn() {
   creditMsg(t('credChecking'), true);
   try {
     const d = await fn('verify', { reference: ref });
-    if (d.status === 'success') { clear(); if (typeof d.balance === 'number') setWallet(d.balance); creditMsg(d.already ? t('credAlready') : t('credAdded') + ': +' + d.credits, true); }
+    if (d.status === 'success') { clear(); if (typeof d.balance === 'number') setWallet(d.balance); if (d.unlimited) { UNL = true; renderCreditUi(); creditMsg(UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].paid, true); } else creditMsg(d.already ? t('credAlready') : t('credAdded') + ': +' + d.credits, true); }
     else if (d.status === 'abandoned' || d.status === 'failed') { clear(); creditMsg(t('credNotPaid'), false); }
     else creditMsg(t('credNotPaid'), false);
   } catch (e) { if (e.code === 'NO_PAYMENT' || e.code === 'NOT_YOURS' || e.code === 'AMOUNT_MISMATCH') clear(); creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credNotPaid'), false); }
@@ -1127,7 +1184,7 @@ async function ask(userText, hidden) {
   if (chatBusy) return;
   if (!getKey()) { toast(t('keyNeeded')); openKey(); return; }
   const need = chatHist.length === 0 ? COST.first : COST.next;
-  if (WALLET != null && WALLET < need) { toast(t('credNeed').replace('{n}', need)); openCredits(); return; }
+  if (!UNL && WALLET != null && WALLET < need) { toast(t('credNeed').replace('{n}', need)); openCredits(); return; }
   chatBusy = true; $('sendBtn').disabled = true;
   if (!hidden) addBubble('user', userText);
   chatHist.push({ role: 'user', text: userText });
@@ -1613,9 +1670,17 @@ function tickHome() {
 }
 function startHome() { stopHome(); homeSig = ''; tickHome(); lookupCountry(); homeTimer = setInterval(tickHome, 1000); if ($('authModal').classList.contains('hidden')) askLoc(); }
 function stopHome() { if (homeTimer) { clearInterval(homeTimer); homeTimer = null; } }
+const CITIES = [['Kano', 12.0022, 8.5920], ['Lagos', 6.5244, 3.3792], ['Abuja', 9.0765, 7.3986], ['Kaduna', 10.5105, 7.4165], ['Katsina', 12.9908, 7.6018], ['Sokoto', 13.0059, 5.2476], ['Maiduguri', 11.8333, 13.15], ['Jos', 9.8965, 8.8583], ['Zaria', 11.0855, 7.7199], ['Bauchi', 10.3158, 9.8442], ['Gombe', 10.2897, 11.1673], ['Yola', 9.2035, 12.4954], ['Ilorin', 8.4966, 4.5421], ['Ibadan', 7.3775, 3.9470], ['Port Harcourt', 4.8156, 7.0498], ['Niamey', 13.5116, 2.1254], ['Accra', 5.6037, -0.1870], ['Makkah', 21.3891, 39.8579], ['Madinah', 24.5247, 39.5692]];
+function afterGeo() { homeSig = ''; prayCache = { key: '', list: null }; if (view === 'home') tickHome(); if (view === 'salat') renderSalat(); try { lookupCountry(); } catch (e) {} }
+function pickCity(i) { const c = CITIES[+i]; if (!c) return; GEO = { lat: c[1], lon: c[2], city: c[0] }; try { localStorage.setItem('geo_loc', JSON.stringify(GEO)); } catch (e) {} afterGeo(); }
+async function locFallback() {          // idan wayar ba ta ba da wuri: a gwada wuri na kusan ta intanet
+  if (GEO) return;
+  try { const r = await fetch('https://get.geojs.io/v1/ip/geo.json'); const j = await r.json(); const la = parseFloat(j.latitude), lo = parseFloat(j.longitude); if (isFinite(la) && isFinite(lo) && !GEO) { GEO = { lat: la, lon: lo, approx: true }; afterGeo(); } } catch (e) {}
+}
 function askLoc() {
-  if (askedLoc || !navigator.geolocation) return; askedLoc = true;
-  navigator.geolocation.getCurrentPosition(p => { GEO = { lat: p.coords.latitude, lon: p.coords.longitude }; try { localStorage.setItem('geo_loc', JSON.stringify(GEO)); } catch (e) {} homeSig = ''; if (view === 'home') tickHome(); lookupCountry(); }, () => {}, { timeout: 8000, maximumAge: 6e5 });
+  if (askedLoc) return;
+  if (!navigator.geolocation) { askedLoc = true; locFallback(); return; } askedLoc = true;
+  navigator.geolocation.getCurrentPosition(p => { GEO = { lat: p.coords.latitude, lon: p.coords.longitude }; try { localStorage.setItem('geo_loc', JSON.stringify(GEO)); } catch (e) {} afterGeo(); }, () => { locFallback(); }, { timeout: 8000, maximumAge: 6e5 });
 }
 
 // ================= PWA + NOTIFICATIONS =================
@@ -1711,7 +1776,7 @@ function qiblaKm() {
 }
 function renderSalat() {
   $('sMethod').value = PRAY.method; $('sAsr').value = String(PRAY.asr); updateRemindUi(); updateAdhanUi();
-  if (!GEO) { $('sNextBox').innerHTML = `<div class="text-sm font-bold mb-2">${t('sNoLoc')}</div><button onclick="askedLoc=false;askLoc()" class="px-4 py-2 rounded-xl bg-white/20 text-sm font-bold">${t('sAskLoc')}</button>`; $('sList').innerHTML = ''; $('qText').textContent = ''; return; }
+  if (!GEO) { $('sNextBox').innerHTML = `<div class="text-sm font-bold mb-2">${t('sNoLoc')}</div><button onclick="askedLoc=false;askLoc()" class="px-4 py-2 rounded-xl bg-white/20 text-sm font-bold">${t('sAskLoc')}</button><div class="mt-2"><select onchange="pickCity(this.value)" class="w-full px-3 py-2 rounded-xl bg-white text-slate-900 text-sm font-bold"><option value="">${LANG === 'ar' ? 'أو اختر المدينة' : LANG === 'en' ? 'Or choose your city' : 'Ko ka zaɓi garinka'}</option>${CITIES.map((c, i) => `<option value="${i}">${c[0]}</option>`).join('')}</select></div>`; $('sList').innerHTML = ''; $('qText').textContent = ''; return; }
   const now = new Date(), n = nextPrayer(now), L = prayersFor(new Date(now.getFullYear(), now.getMonth(), now.getDate())) || [];
   $('sNextBox').innerHTML = n ? `<div class="text-[11px] font-bold text-amber-200">${t('sNext')}</div><div class="text-3xl font-black">${t(n.l)} · <span class="ltr-lock inline-block">${hmOk(n.ms)}</span></div><div class="text-xs opacity-90 mt-0.5">${t('sLeft')} <span class="ltr-lock inline-block">${fmtLeft(n.ms - now.getTime())}</span></div>` : '';
   const dk = now.toDateString(), done = (PDONE[dk] || {});
