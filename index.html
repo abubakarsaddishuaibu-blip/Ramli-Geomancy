@@ -883,6 +883,7 @@ function setLang(l) {
   $('langSel').value = l; document.querySelectorAll('.langSel2').forEach(e => e.value = l);
   refreshAuthTexts(); renderMothers(); updateKeyDot();
   if (chart) renderResults(); if (view === 'dict') renderDict(); if (view === 'history') renderHistory(); if (view === 'fchats') renderChats(); homeSig = ''; if (view === 'home') tickHome(); if (view === 'salat') renderSalat();
+  try { renderCreditUi(); updatePayWall(); if (view === 'credits') loadCredits(); if (view === 'admin') renderAdmin(); } catch (e) {}
 }
 
 // ================= AUTH =================
@@ -975,7 +976,7 @@ function renderUnlCard() {
       <div class="font-black text-base text-[#F5D26B]">♾️ ${T.title}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.sub}</div>
       <button onclick="buyUnlimited()" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]">${T.up} · ₦${UNL_PRICE.toLocaleString('en-US')}</button></div>
       ${PLAN_MODE === 'credits' ? `<p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>` : ''}`;
-  } else el.innerHTML = `<div class="rounded-2xl p-4 text-center text-sm font-bold bg-amber-100 text-amber-800">${T.noprice}</div>`;
+  } else el.innerHTML = PLAN_MODE === 'once' ? `<div class="rounded-2xl p-4 text-center text-sm font-bold bg-amber-100 text-amber-800">${T.noprice}</div>` : '';
 }
 function setWallet(n) { WALLET = n; renderCreditUi(); }
 function renderCreditUi() {
@@ -1940,6 +1941,7 @@ async function loadAdmin() {
   const bn = await sb.from('bans').select('user_id'); adm.bans = new Set((bn.data || []).map(x => x.user_id));
   const wl = await sb.rpc('admin_wallets'); adm.wallets = {}; (wl.data || []).forEach(w => adm.wallets[w.user_id] = w.balance);
   const rv = await sb.rpc('admin_revenue'); adm.rev = rv.error ? null : rv.data;
+  const ul = await sb.rpc('admin_unlimited_ids'); adm.unl = new Set((ul.data || []).map(x => typeof x === 'string' ? x : Object.values(x)[0]));
   const au = await sb.rpc('admin_users'); adm.users = {}; adm.usersOk = !au.error; (au.data || []).forEach(u => adm.users[u.id] = u);
   await loadProfiles(); if (view === 'admin') renderAdmin();
 }
@@ -1973,9 +1975,21 @@ function renderAdmin() {
     const em = id => (adm.users && adm.users[id] && adm.users[id].email) || '';
     const us = Object.values(all).filter(p => p.id !== ME.id && (!q || (p.username || '').toLowerCase().includes(q) || em(p.id).toLowerCase().includes(q))).sort((a, b) => ((adm.users[b.id] && adm.users[b.id].created_at) || '').localeCompare((adm.users[a.id] && adm.users[a.id].created_at) || '') || (a.username || '').localeCompare(b.username || ''));
     $('aBody').innerHTML = us.length ? us.map(p => { const isB = adm.bans.has(p.id);
-      return `<div class="rounded-2xl p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="flex items-center gap-2.5">${avatarHtml(p.id, p.username, 'w-10 h-10')}<div class="min-w-0 flex-1"><div class="font-extrabold text-sm truncate">${esc(p.username)}</div>${em(p.id) ? `<div class="text-[11px] text-slate-500 truncate select-all">✉️ ${esc(em(p.id))}</div>` : ''}${adm.users && adm.users[p.id] ? `<div class="text-[10px] text-slate-400">${new Date(adm.users[p.id].created_at).toLocaleDateString(locale())}</div>` : ''}${isB ? `<div class="text-[11px] font-bold text-rose-600">🚫 ${t('adBanned')}</div>` : ''}</div><div class="px-2 py-1 rounded-lg bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B] text-xs font-black">🪙 ${adm.wallets[p.id] == null ? 0 : adm.wallets[p.id]}</div></div>
-        <div class="flex flex-wrap gap-1.5 mt-2">${isB ? btn('bg-slate-200 dark:bg-slate-800', `adminUnban('${p.id}')`, '✅ ' + t('adUnban')) : btn('bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300', `adminBan('${p.id}')`, '🚫 ' + t('adBan'))}${btn('bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B]', `adminGrant('${p.id}')`, '🪙 ' + t('adGrant'))}${btn('bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300', `adminPurge('${p.id}')`, '🗑 ' + t('adPurge'))}</div></div>`; }).join('') : `<p class="text-center text-sm text-slate-500 py-6">${t('adNone')}</p>`;
+      return `<div class="rounded-2xl p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="flex items-center gap-2.5">${avatarHtml(p.id, p.username, 'w-10 h-10')}<div class="min-w-0 flex-1"><div class="font-extrabold text-sm truncate">${esc(p.username)}</div>${em(p.id) ? `<div class="text-[11px] text-slate-500 truncate select-all">✉️ ${esc(em(p.id))}</div>` : ''}${adm.users && adm.users[p.id] ? `<div class="text-[10px] text-slate-400">${new Date(adm.users[p.id].created_at).toLocaleDateString(locale())}</div>` : ''}${isB ? `<div class="text-[11px] font-bold text-rose-600">🚫 ${t('adBanned')}</div>` : ''}${adm.unl && adm.unl.has(p.id) ? `<div class="text-[11px] font-bold text-emerald-600">♾️ ${UNLA[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].badge}</div>` : ''}</div><div class="px-2 py-1 rounded-lg bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B] text-xs font-black">🪙 ${adm.wallets[p.id] == null ? 0 : adm.wallets[p.id]}</div></div>
+        <div class="flex flex-wrap gap-1.5 mt-2">${isB ? btn('bg-slate-200 dark:bg-slate-800', `adminUnban('${p.id}')`, '✅ ' + t('adUnban')) : btn('bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300', `adminBan('${p.id}')`, '🚫 ' + t('adBan'))}${btn('bg-[#D4A017]/20 text-[#8a6a05] dark:text-[#F5D26B]', `adminGrant('${p.id}')`, '🪙 ' + t('adGrant'))}${btn('bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300', `adminUnl('${p.id}')`, adm.unl && adm.unl.has(p.id) ? '↩ ' + UNLA[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].off : '♾️ ' + UNLA[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].on)}${btn('bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300', `adminPurge('${p.id}')`, '🗑 ' + t('adPurge'))}</div></div>`; }).join('') : `<p class="text-center text-sm text-slate-500 py-6">${t('adNone')}</p>`;
   }
+}
+const UNLA = {
+  ha: { on: 'Buɗe ba iyaka', off: 'Cire ba iyaka', onQ: 'Ka buɗe wa wannan mutum amfani ba iyaka, ba tare da ya biya ba?', offQ: 'Ka cire masa amfani ba iyaka?', done: 'An kammala', badge: 'Amfani ba iyaka' },
+  en: { on: 'Unlock unlimited', off: 'Remove unlimited', onQ: 'Unlock unlimited use for this person without payment?', offQ: 'Remove their unlimited use?', done: 'Done', badge: 'Unlimited use' },
+  ar: { on: 'فتح غير محدود', off: 'إلغاء غير المحدود', onQ: 'هل تفتح الاستخدام غير المحدود لهذا الشخص دون دفع؟', offQ: 'هل تلغي استخدامه غير المحدود؟', done: 'تم', badge: 'استخدام غير محدود' }
+};
+async function adminUnl(uid) {
+  const L = UNLA[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'], on = !(adm.unl && adm.unl.has(uid));
+  if (!confirm(on ? L.onQ : L.offQ)) return;
+  const r = await sb.rpc('admin_set_unlimited', { target: uid, enable: on });
+  if (r.error) return toast(r.error.message);
+  adm.unl = adm.unl || new Set(); if (on) adm.unl.add(uid); else adm.unl.delete(uid); renderAdmin(); toast(L.done);
 }
 async function adminGrant(uid) {
   const v = prompt(t('adGrantAsk'), '10'); if (v == null) return;
