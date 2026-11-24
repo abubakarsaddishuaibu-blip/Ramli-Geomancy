@@ -379,12 +379,17 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
     <div id="fList" class="space-y-1.5"></div>
   </section>
 
+  <!-- PROFILE (Facebook-style) -->
+  <section id="v-profile" class="hidden flex-1 bg-white/70 dark:bg-slate-950/70">
+    <div id="pfBody" class="pb-8"></div>
+  </section>
+
   <!-- FRIENDS CONVERSATION -->
   <section id="v-fchat" class="hidden flex-1 flex flex-col">
     <div class="chtop flex items-center gap-2 px-3 py-2.5 bg-[#1F6B43] text-white">
       <button onclick="go('fchats')" class="w-9 h-9 rounded-full hover:bg-[#175434] text-lg">←</button>
-      <div id="fAv" class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-black shrink-0 overflow-hidden"></div>
-      <div class="min-w-0"><div id="fName" class="font-extrabold text-sm truncate"></div><div id="fSub" class="text-[11px] text-green-100 truncate"></div></div>
+      <div id="fAv" onclick="if(openPeer&&openPeer!=='all')openProfile(openPeer)" class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-black shrink-0 overflow-hidden cursor-pointer"></div>
+      <div class="min-w-0 cursor-pointer" onclick="if(openPeer&&openPeer!=='all')openProfile(openPeer)"><div id="fName" class="font-extrabold text-sm truncate"></div><div id="fSub" class="text-[11px] text-green-100 truncate"></div></div>
       <button id="fBlockBtn" onclick="blockUser(openPeer)" data-t="fcBlock" class="ms-auto px-2.5 py-1.5 rounded-lg bg-white/15 text-xs font-bold"></button>
     </div>
     <div id="fLog" class="flex-1 overflow-y-auto p-3 space-y-1.5 bg-white/60 dark:bg-slate-950/60" style="min-height:55vh;padding-bottom:5.5rem"></div>
@@ -405,6 +410,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
         <button onclick="go('home');closeDrawer()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">🕰️ <span data-t="navHome"></span></button>
         <button onclick="go('cast');closeDrawer()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">🏠 <span data-t="navCast"></span></button>
         <button onclick="go('fchats');closeDrawer()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">💬 <span data-t="navChats"></span></button>
+        <button onclick="closeDrawer();openProfile(ME&&ME.id)" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">👤 <span data-t="navProfile"></span></button>
         <button onclick="closeDrawer();changeName()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">✏️ <span data-t="navName"></span></button>
         <button onclick="go('salat');closeDrawer()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">🕌 <span data-t="navSalat"></span></button>
         <button onclick="closeDrawer();$('avIn').click()" class="w-full text-start px-3.5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">📷 <span data-t="navAvatar"></span></button>
@@ -472,6 +478,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
     </div>
   </div>
   <input id="avIn" type="file" accept="image/*" class="hidden" onchange="pickAvatar(this)">
+  <input id="cvIn" type="file" accept="image/*" class="hidden" onchange="pickCover(this)">
 
   <!-- Key -->
   <div id="keyModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-3">
@@ -613,7 +620,7 @@ const T = {
   tabRamli:"RAMLI", tabChog:"CHOGADIA", tabSalat:"LOKUTAN SALLAH & ALKIBLA", tabAgogo:"AGOGO", navHome:"Agogo", homeEnter:"SHIGA ZUBA ƘASA", chTitle:"Chogadiya", chDay:"Sa'o'in Rana", chNight:"Sa'o'in Dare", chLeft:"ya rage", chRise:"Fitowar rana", chSet:"Faɗuwar rana", chApprox:"Ana amfani da 6:00 da 18:00 (ba a samu wurinka ba)", chLoc:"An lissafa bisa wurinka",
   fullName:"Cikakken suna (suna da sunan uba)", needFull:"Dan Allah ka rubuta cikakken sunanka.", forgot:"Ka manta kalmar sirri?", needEmail:"Ka fara rubuta imel ɗinka a sama.", resetSent:"An aiko hanyar sabunta kalmar sirri zuwa imel ɗinka. Ka duba inbox (da spam).", newPassTitle:"Sabuwar Kalmar Sirri", newPassPh:"Sabuwar kalmar sirri (aƙalla haruffa 6)", newPassSave:"Adana", passChanged:"An canja kalmar sirri!",
   navChats:"Hira da Abokai", navName:"Canja Sunana", fcTitle:"Tattaunawa da Abokai", fcAll:"Kowa (Ƙungiya)", fcAllSub:"Saƙon da kowane mai amfani zai gani", fcSearch:"Nemi suna...", fcPh:"Rubuta saƙo...", fcEmpty:"Babu saƙo tukuna. Fara tattaunawa!", fcFail:"Ba a aika saƙon ba. Duba intanet ka sake gwadawa.", fcNamePrompt:"Rubuta sunanka da abokai za su gani:", fcSetup:"Ba a kammala saita chat ɗin ba tukuna. Ana buƙatar a gudanar da fayil ɗin supabase-chat-setup.sql a Supabase (SQL Editor).",
-  navSalat:"Lokutan Sallah", navBlocked:"Waɗanda Aka Toshe", navAvatar:"Canja Hotona", navNotif:"Sanarwa", navInstall:"Sanya a Waya", installHow:"A Safari: latsa Share, sannan 'Add to Home Screen'. A Chrome: latsa ⋮ sannan 'Install app'.", notifOn:"An kunna sanarwa.", notifOff:"An hana sanarwa a browser ɗinka. Ka kunna ta a settings.", notifNo:"Wannan browser ɗin ba ya goyon bayan sanarwa.", fcBlock:"Toshe", fcUnblock:"Cire Toshe", fcReport:"Kai Rahoto", fcDelete:"Goge", fcBlockQ:"A toshe wannan mutumin? Ba za ka ƙara ganin saƙonninsa ba.", fcDelQ:"A goge wannan saƙon?", fcReportQ:"Me ya sa kake kai rahoto? (zaɓi)", fcReported:"An aika rahoto. Na gode.", fcBlocked:"An toshe shi.", fcUnblocked:"An cire toshe.", fcNoBlocked:"Babu wanda ka toshe.", fcVoice:"🎤 Saƙon murya", fcNoMic:"Ba a samu damar makirufo ba.", fcRecording:"Ana rikodi…", fcVoiceFail:"Ba a aika saƙon murya ba.", fcPhotoDone:"An canja hoto!", fcPhotoFail:"Ba a loda hoto ba.",
+  navSalat:"Lokutan Sallah", navBlocked:"Waɗanda Aka Toshe", navAvatar:"Canja Hotona", navProfile:"Profile ɗina", navNotif:"Sanarwa", navInstall:"Sanya a Waya", installHow:"A Safari: latsa Share, sannan 'Add to Home Screen'. A Chrome: latsa ⋮ sannan 'Install app'.", notifOn:"An kunna sanarwa.", notifOff:"An hana sanarwa a browser ɗinka. Ka kunna ta a settings.", notifNo:"Wannan browser ɗin ba ya goyon bayan sanarwa.", fcBlock:"Toshe", fcUnblock:"Cire Toshe", fcReport:"Kai Rahoto", fcDelete:"Goge", fcBlockQ:"A toshe wannan mutumin? Ba za ka ƙara ganin saƙonninsa ba.", fcDelQ:"A goge wannan saƙon?", fcReportQ:"Me ya sa kake kai rahoto? (zaɓi)", fcReported:"An aika rahoto. Na gode.", fcBlocked:"An toshe shi.", fcUnblocked:"An cire toshe.", fcNoBlocked:"Babu wanda ka toshe.", fcVoice:"🎤 Saƙon murya", fcNoMic:"Ba a samu damar makirufo ba.", fcRecording:"Ana rikodi…", fcVoiceFail:"Ba a aika saƙon murya ba.", fcPhotoDone:"An canja hoto!", fcPhotoFail:"Ba a loda hoto ba.",
   sTitle:"Lokutan Sallah & Alƙibla", pFajr:"Asuba", pSun:"Fitowar rana", pDhuhr:"Azahar", pAsr:"La'asar", pMaghrib:"Magariba", pIsha:"Isha'i", sNext:"Sallah ta gaba", sLeft:"ya rage", sMethod:"Hanyar lissafi", sAsrStd:"La'asar: na al'ada", sAsrHan:"La'asar: Hanafi", sRemind:"Tunatar da ni lokacin Sallah", sNoLoc:"Ba a samu wurinka ba. Ka ba da izinin wuri don ganin lokutan Sallah.", sAskLoc:"Ba da izinin wuri", sQibla:"Alƙibla", sQiblaDeg:"Alƙibla tana digiri", sQiblaHint:"Ka riƙe wayarka a kwance ka juya har 🕋 ya nuna sama.", sCompass:"Kunna kamfas", sNoSensor:"Wayarka ba ta ba da bayanan kamfas ba.", sNote:"Ana lissafa lokutan ne a cikin wayarka bisa wurinka. Ka kwatanta da masallacin yankinka.", sRemOn:"An kunna tunatarwa.", sRemOff:"An kashe tunatarwa.", sTimeFor:"Lokacin Sallah ya yi:", homeSalat:"Lokutan Sallah da Alƙibla ›",
   imgSaved:"An ajiye hoton zane!",
   navAdmin:"Sashen Admin", adReports:"Rahotanni", adUsers:"Masu Amfani", adSearch:"Nemi suna...", adStUsers:"Masu amfani", adStMsgs:"Saƙonni", adStVoice:"Murya", adStOpen:"Rahotanni a buɗe", adStBans:"An hana", adBan:"Hana shi", adUnban:"Cire hani", adBanned:"An hana shi", adResolve:"Rufe rahoto", adDelMsg:"Goge saƙo", adPurge:"Goge saƙonnin ƙungiyarsa", adPurgeQ:"A goge duk saƙonnin da wannan mutumin ya aika a ƙungiyar Kowa?", adBanQ:"A hana wannan mutumin aika saƙo a manhajar?", adReasonQ:"Dalili (zaɓi):", adNone:"Babu komai a nan.", adGone:"(an riga an goge saƙon)", adFrom:"Mai rahoto", adAbout:"Wanda aka kai rahoton", adDone:"An yi.", adSetup:"Ba a kammala saita admin ba. Gudanar da supabase-admin-setup.sql.", fcBanned:"An hana ka aika saƙo a manhajar.",
@@ -645,7 +652,7 @@ const T = {
   tabRamli:"RAMLI", tabChog:"CHOGADIYA", tabSalat:"PRAYER TIMES & QIBLA", tabAgogo:"CLOCK", navHome:"Clock", homeEnter:"ENTER CAST", chTitle:"Chogadiya", chDay:"Day Hours", chNight:"Night Hours", chLeft:"left", chRise:"Sunrise", chSet:"Sunset", chApprox:"Using 06:00 / 18:00 (location unavailable)", chLoc:"Based on your location",
   fullName:"Full name", needFull:"Please enter your full name.", forgot:"Forgot password?", needEmail:"Enter your email above first.", resetSent:"A password reset link was sent to your email. Check your inbox (and spam).", newPassTitle:"New Password", newPassPh:"New password (at least 6 characters)", newPassSave:"Save", passChanged:"Password changed!",
   navChats:"Chat with Friends", navName:"Change My Name", fcTitle:"Chat with Friends", fcAll:"Everyone (Group)", fcAllSub:"Messages every user can see", fcSearch:"Search name...", fcPh:"Type a message...", fcEmpty:"No messages yet. Start chatting!", fcFail:"Message not sent. Check your connection and try again.", fcNamePrompt:"Enter the name your friends will see:", fcSetup:"Chat is not set up yet. Run the supabase-chat-setup.sql file in Supabase (SQL Editor).",
-  navSalat:"Prayer Times", navBlocked:"Blocked Users", navAvatar:"Change Photo", navNotif:"Notifications", navInstall:"Install App", installHow:"Safari: tap Share, then 'Add to Home Screen'. Chrome: tap ⋮ then 'Install app'.", notifOn:"Notifications enabled.", notifOff:"Notifications are blocked in your browser. Enable them in settings.", notifNo:"This browser does not support notifications.", fcBlock:"Block", fcUnblock:"Unblock", fcReport:"Report", fcDelete:"Delete", fcBlockQ:"Block this person? You will no longer see their messages.", fcDelQ:"Delete this message?", fcReportQ:"Why are you reporting this? (optional)", fcReported:"Report sent. Thank you.", fcBlocked:"Blocked.", fcUnblocked:"Unblocked.", fcNoBlocked:"You have not blocked anyone.", fcVoice:"🎤 Voice message", fcNoMic:"Microphone is not available.", fcRecording:"Recording…", fcVoiceFail:"Voice message failed.", fcPhotoDone:"Photo updated!", fcPhotoFail:"Photo upload failed.",
+  navSalat:"Prayer Times", navBlocked:"Blocked Users", navAvatar:"Change Photo", navProfile:"My Profile", navNotif:"Notifications", navInstall:"Install App", installHow:"Safari: tap Share, then 'Add to Home Screen'. Chrome: tap ⋮ then 'Install app'.", notifOn:"Notifications enabled.", notifOff:"Notifications are blocked in your browser. Enable them in settings.", notifNo:"This browser does not support notifications.", fcBlock:"Block", fcUnblock:"Unblock", fcReport:"Report", fcDelete:"Delete", fcBlockQ:"Block this person? You will no longer see their messages.", fcDelQ:"Delete this message?", fcReportQ:"Why are you reporting this? (optional)", fcReported:"Report sent. Thank you.", fcBlocked:"Blocked.", fcUnblocked:"Unblocked.", fcNoBlocked:"You have not blocked anyone.", fcVoice:"🎤 Voice message", fcNoMic:"Microphone is not available.", fcRecording:"Recording…", fcVoiceFail:"Voice message failed.", fcPhotoDone:"Photo updated!", fcPhotoFail:"Photo upload failed.",
   sTitle:"Prayer Times & Qibla", pFajr:"Fajr", pSun:"Sunrise", pDhuhr:"Dhuhr", pAsr:"Asr", pMaghrib:"Maghrib", pIsha:"Isha", sNext:"Next prayer", sLeft:"left", sMethod:"Method", sAsrStd:"Asr: standard", sAsrHan:"Asr: Hanafi", sRemind:"Remind me at prayer time", sNoLoc:"Location not available. Allow location to see prayer times.", sAskLoc:"Allow location", sQibla:"Qibla", sQiblaDeg:"Qibla is at", sQiblaHint:"Hold your phone flat and turn until 🕋 points up.", sCompass:"Start compass", sNoSensor:"Compass sensor is not available.", sNote:"Times are calculated on your phone from your location. Compare with your local mosque.", sRemOn:"Reminders on.", sRemOff:"Reminders off.", sTimeFor:"It is time for", homeSalat:"Prayer times & Qibla ›",
   imgSaved:"Chart image saved!",
   navAdmin:"Admin Panel", adReports:"Reports", adUsers:"Users", adSearch:"Search name...", adStUsers:"Users", adStMsgs:"Messages", adStVoice:"Voice", adStOpen:"Open reports", adStBans:"Banned", adBan:"Ban", adUnban:"Unban", adBanned:"Banned", adResolve:"Resolve", adDelMsg:"Delete message", adPurge:"Delete his group messages", adPurgeQ:"Delete all group messages this person sent?", adBanQ:"Ban this person from sending messages?", adReasonQ:"Reason (optional):", adNone:"Nothing here.", adGone:"(message already deleted)", adFrom:"Reporter", adAbout:"Reported", adDone:"Done.", adSetup:"Admin is not set up yet. Run supabase-admin-setup.sql.", fcBanned:"You are banned from sending messages.",
@@ -677,7 +684,7 @@ const T = {
   tabRamli:"الرمل", tabChog:"شوغاديا", tabSalat:"مواقيت الصلاة والقبلة", tabAgogo:"الساعة", navHome:"الساعة", homeEnter:"ادخل إلى الضرب", chTitle:"شوغاديا", chDay:"ساعات النهار", chNight:"ساعات الليل", chLeft:"متبقي", chRise:"الشروق", chSet:"الغروب", chApprox:"يُستخدم 6:00 و18:00 (الموقع غير متاح)", chLoc:"حسب موقعك",
   fullName:"الاسم الكامل", needFull:"من فضلك اكتب اسمك الكامل.", forgot:"نسيت كلمة المرور؟", needEmail:"اكتب بريدك الإلكتروني أعلاه أولاً.", resetSent:"أُرسل رابط إعادة تعيين كلمة المرور إلى بريدك. تحقق من الوارد (والرسائل غير المرغوبة).", newPassTitle:"كلمة مرور جديدة", newPassPh:"كلمة المرور الجديدة (6 أحرف على الأقل)", newPassSave:"حفظ", passChanged:"تم تغيير كلمة المرور!",
   navChats:"دردشة مع الأصدقاء", navName:"تغيير اسمي", fcTitle:"دردشة مع الأصدقاء", fcAll:"الجميع (مجموعة)", fcAllSub:"رسائل يراها كل مستخدم", fcSearch:"ابحث بالاسم...", fcPh:"اكتب رسالة...", fcEmpty:"لا توجد رسائل بعد. ابدأ المحادثة!", fcFail:"لم تُرسل الرسالة. تحقق من الاتصال وأعد المحاولة.", fcNamePrompt:"اكتب الاسم الذي سيراه أصدقاؤك:", fcSetup:"لم يتم إعداد الدردشة بعد. شغّل ملف supabase-chat-setup.sql في Supabase (SQL Editor).",
-  navSalat:"مواقيت الصلاة", navBlocked:"المحظورون", navAvatar:"تغيير الصورة", navNotif:"الإشعارات", navInstall:"تثبيت التطبيق", installHow:"في Safari: اضغط مشاركة ثم 'إضافة إلى الشاشة الرئيسية'. في Chrome: اضغط ⋮ ثم 'تثبيت التطبيق'.", notifOn:"تم تفعيل الإشعارات.", notifOff:"الإشعارات محظورة في المتصفح. فعّلها من الإعدادات.", notifNo:"هذا المتصفح لا يدعم الإشعارات.", fcBlock:"حظر", fcUnblock:"إلغاء الحظر", fcReport:"إبلاغ", fcDelete:"حذف", fcBlockQ:"حظر هذا الشخص؟ لن ترى رسائله بعد الآن.", fcDelQ:"حذف هذه الرسالة؟", fcReportQ:"لماذا تبلّغ؟ (اختياري)", fcReported:"تم إرسال البلاغ. شكراً.", fcBlocked:"تم الحظر.", fcUnblocked:"تم إلغاء الحظر.", fcNoBlocked:"لم تحظر أحداً.", fcVoice:"🎤 رسالة صوتية", fcNoMic:"الميكروفون غير متاح.", fcRecording:"جارٍ التسجيل…", fcVoiceFail:"فشل إرسال الرسالة الصوتية.", fcPhotoDone:"تم تحديث الصورة!", fcPhotoFail:"فشل رفع الصورة.",
+  navSalat:"مواقيت الصلاة", navBlocked:"المحظورون", navAvatar:"تغيير الصورة", navProfile:"ملفي الشخصي", navNotif:"الإشعارات", navInstall:"تثبيت التطبيق", installHow:"في Safari: اضغط مشاركة ثم 'إضافة إلى الشاشة الرئيسية'. في Chrome: اضغط ⋮ ثم 'تثبيت التطبيق'.", notifOn:"تم تفعيل الإشعارات.", notifOff:"الإشعارات محظورة في المتصفح. فعّلها من الإعدادات.", notifNo:"هذا المتصفح لا يدعم الإشعارات.", fcBlock:"حظر", fcUnblock:"إلغاء الحظر", fcReport:"إبلاغ", fcDelete:"حذف", fcBlockQ:"حظر هذا الشخص؟ لن ترى رسائله بعد الآن.", fcDelQ:"حذف هذه الرسالة؟", fcReportQ:"لماذا تبلّغ؟ (اختياري)", fcReported:"تم إرسال البلاغ. شكراً.", fcBlocked:"تم الحظر.", fcUnblocked:"تم إلغاء الحظر.", fcNoBlocked:"لم تحظر أحداً.", fcVoice:"🎤 رسالة صوتية", fcNoMic:"الميكروفون غير متاح.", fcRecording:"جارٍ التسجيل…", fcVoiceFail:"فشل إرسال الرسالة الصوتية.", fcPhotoDone:"تم تحديث الصورة!", fcPhotoFail:"فشل رفع الصورة.",
   sTitle:"مواقيت الصلاة والقبلة", pFajr:"الفجر", pSun:"الشروق", pDhuhr:"الظهر", pAsr:"العصر", pMaghrib:"المغرب", pIsha:"العشاء", sNext:"الصلاة القادمة", sLeft:"متبقي", sMethod:"طريقة الحساب", sAsrStd:"العصر: عادي", sAsrHan:"العصر: حنفي", sRemind:"ذكّرني وقت الصلاة", sNoLoc:"الموقع غير متاح. اسمح بالموقع لعرض مواقيت الصلاة.", sAskLoc:"السماح بالموقع", sQibla:"القبلة", sQiblaDeg:"القبلة عند", sQiblaHint:"أمسك هاتفك أفقياً وأدِره حتى يشير 🕋 للأعلى.", sCompass:"تشغيل البوصلة", sNoSensor:"حساس البوصلة غير متاح.", sNote:"تُحسب المواقيت على هاتفك حسب موقعك. قارنها بمسجد منطقتك.", sRemOn:"تم تفعيل التذكير.", sRemOff:"تم إيقاف التذكير.", sTimeFor:"حان وقت", homeSalat:"مواقيت الصلاة والقبلة ›",
   imgSaved:"تم حفظ صورة الشكل!",
   navAdmin:"لوحة الإدارة", adReports:"البلاغات", adUsers:"المستخدمون", adSearch:"ابحث بالاسم...", adStUsers:"المستخدمون", adStMsgs:"الرسائل", adStVoice:"صوتية", adStOpen:"بلاغات مفتوحة", adStBans:"محظورون", adBan:"منع", adUnban:"رفع المنع", adBanned:"ممنوع", adResolve:"إغلاق البلاغ", adDelMsg:"حذف الرسالة", adPurge:"حذف رسائله في المجموعة", adPurgeQ:"حذف كل رسائل هذا الشخص في المجموعة؟", adBanQ:"منع هذا الشخص من إرسال الرسائل؟", adReasonQ:"السبب (اختياري):", adNone:"لا شيء هنا.", adGone:"(الرسالة محذوفة)", adFrom:"المُبلِّغ", adAbout:"المُبلَّغ عنه", adDone:"تم.", adSetup:"لم يتم إعداد الإدارة. شغّل supabase-admin-setup.sql.", fcBanned:"أنت ممنوع من إرسال الرسائل.",
@@ -815,7 +822,7 @@ function castNow() {
   chatHist = []; $('chatLog').innerHTML = ''; renderResults(); go('results');
 }
 function go(v) {
-  view = v; ['home','cast','results','chat','history','dict','salat','admin','fchats','fchat','credits'].forEach(x => $('v-' + x).classList.toggle('hidden', x !== v));
+  view = v; ['home','cast','results','chat','history','dict','salat','admin','fchats','fchat','credits','profile'].forEach(x => $('v-' + x).classList.toggle('hidden', x !== v));
   if (v === 'home') homeTab = 'agogo'; syncTabs();
   if (v !== 'fchat') { openPeer = null; if (rec) cancelRec(); }
   if (v === 'home') startHome(); else stopHome();
@@ -1305,6 +1312,7 @@ function avatarHtml(id, name, cls) {
   return `<div class="${cls} rounded-full bg-[#1F6B43] text-white flex items-center justify-center font-black shrink-0">${esc(initial(name))}</div>`;
 }
 function updateMyAvatar() {
+  try { if (view === 'profile' && PF && ME && PF.id === ME.id) { PF.p = Object.assign({}, PF.p, profiles[ME.id] || {}, { username: ME.username, avatar_url: ME.avatar || (PF.p && PF.p.avatar_url) }); renderProfile(); } } catch (e) {}
   const e = $('dAv'); if (!e) return;
   e.innerHTML = ME && ME.avatar ? `<img src="${esc(ME.avatar)}" alt="" class="w-full h-full object-cover">` : (ME ? esc(initial(ME.username)) : '');
 }
@@ -1318,7 +1326,7 @@ function ensureProfile(session) {
       if (error) { ME = { id: uid, username: fallback, noTable: true }; return; }
       if (!data) { const r = await sb.from('profiles').insert({ id: uid, username: fallback }).select().single(); data = r.data || { id: uid, username: fallback }; }
       ME = { id: uid, username: data.username, avatar: data.avatar_url || '' };
-      updateMyAvatar(); await checkAdmin(); await loadBlocked(); subscribeRT(); await loadProfiles(); await loadRecent();
+      updateMyAvatar(); await checkAdmin(); await loadBlocked(); await loadFollows(); subscribeRT(); await loadProfiles(); await loadRecent();
     } finally { ensuring = null; }
   })();
   return ensuring;
@@ -1388,7 +1396,7 @@ function renderChats() {
     const prev = l ? ((l.m.sender_id === ME.id ? t('you') + ': ' : (x.group ? nameOf(l.m.sender_id) + ': ' : '')) + preview(l.m)) : (x.group ? t('fcAllSub') : '');
     const av = x.group ? `<div class="w-11 h-11 rounded-full bg-[#1F6B43] text-white flex items-center justify-center text-lg shrink-0">👥</div>` : avatarHtml(x.k, x.name, 'w-11 h-11 text-lg');
     return `<button type="button" onclick="openConv('${x.k}')" class="w-full flex items-center gap-3 p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-start active:scale-[.98] transition">
-      ${av}
+      ${x.group ? av : `<span onclick="event.stopPropagation();openProfile('${x.k}')" class="shrink-0 cursor-pointer">${av}</span>`}
       <div class="min-w-0 flex-1"><div class="flex justify-between gap-2"><span class="font-extrabold text-sm truncate">${esc(x.name)}</span><span class="text-[10px] text-slate-400 shrink-0">${l ? hhmm(l.m.created_at) : ''}</span></div>
       <div class="flex justify-between gap-2 items-center"><span class="text-xs text-slate-500 dark:text-slate-400 truncate">${esc(prev)}</span>${u ? `<span class="min-w-[20px] h-5 px-1.5 rounded-full bg-[#1F6B43] text-white text-[11px] font-bold flex items-center justify-center shrink-0">${u}</span>` : ''}</div></div></button>`;
   }).join('');
@@ -1419,7 +1427,7 @@ function appendMsg(m) {
   const log = $('fLog'); if (log.firstElementChild && log.firstElementChild.tagName === 'P') log.innerHTML = '';
   const mine = m.sender_id === ME.id, d = document.createElement('div'); d.dataset.id = m.id;
   d.className = 'flex ' + (mine ? 'justify-end' : 'justify-start');
-  const nm = (!mine && openPeer === 'all') ? `<div class="text-[11px] font-extrabold text-[#1F6B43] dark:text-[#7FCBA0] mb-0.5">${esc(nameOf(m.sender_id))}</div>` : '';
+  const nm = (!mine && openPeer === 'all') ? `<div onclick="event.stopPropagation();openProfile('${m.sender_id}')" class="text-[11px] font-extrabold text-[#1F6B43] dark:text-[#7FCBA0] mb-0.5 cursor-pointer underline decoration-dotted">${esc(nameOf(m.sender_id))}</div>` : '';
   const body = m.kind === 'voice'
     ? `<div class="flex items-center gap-2 min-w-[150px]"><button type="button" onclick="event.stopPropagation();playVoice(this,'${esc(m.media_path)}')" class="w-9 h-9 rounded-full font-bold ${mine ? 'bg-white/25 text-white' : 'bg-[#1F6B43] text-white'}">▶</button><div class="text-xs ltr-lock">🎤 ${fmtSecs(m.media_secs)}</div></div>`
     : `<div class="whitespace-pre-wrap break-words">${esc(m.body)}</div>`;
@@ -1517,6 +1525,102 @@ async function pickAvatar(inp) {
     const r = await sb.from('profiles').update({ avatar_url: url }).eq('id', ME.id); if (r.error) throw r.error;
     ME.avatar = url; profiles[ME.id] = Object.assign({ id: ME.id, username: ME.username }, profiles[ME.id], { avatar_url: url }); updateMyAvatar(); toast(t('fcPhotoDone'));
   } catch (e) { toast(t('fcPhotoFail')); }
+}
+
+async function setCover(url) {
+  const r = await sb.from('profiles').update({ cover_url: url }).eq('id', ME.id); if (r.error) throw r.error;
+  profiles[ME.id] = Object.assign({ id: ME.id, username: ME.username }, profiles[ME.id], { cover_url: url });
+  if (PF && PF.id === ME.id) { PF.p = Object.assign({}, PF.p, { cover_url: url }); renderProfile(); }
+}
+async function pickCover(inp) {
+  const f = inp.files && inp.files[0]; inp.value = ''; if (!f || !ME || ME.noTable) return; const L = pfl();
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(f); });
+    const W = 1200, H = 400, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    const k = Math.max(W / img.width, H / img.height), sw = W / k, sh = H / k;          // yanke zuwa 3:1 daga tsakiya
+    g.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, W, H);
+    const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.82)), path = `${ME.id}/cover.jpg`;
+    const up = await sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/jpeg' }); if (up.error) throw up.error;
+    await setCover(sb.storage.from('avatars').getPublicUrl(path).data.publicUrl + '?v=' + Date.now()); toast(L.coverDone);
+  } catch (e) { toast(L.coverFail); }
+}
+async function removeCover() { try { await setCover(null); } catch (e) { toast(pfl().coverFail); } }
+
+// ================= FOLLOW + PROFILE =================
+const PF_T = {
+  ha: { followers: 'Mabiya', following: 'Ana bi', follow: 'Bi', unfollow: 'Ana bi ✓', followsYou: 'Yana bin ka', msg: '💬 Aika saƙo', editName: '✏️ Suna', editPhoto: '📷 Hoto', editBio: '📝 Bio', joined: 'Ya shiga', noBio: 'Babu bayani tukuna.', bioQ: 'Rubuta bayani game da kai (har haruffa 200):', none: 'Babu kowa tukuna.', setup: 'Ba a kammala saita Follow ba (supabase-social.sql).', back: '←', saved: 'An adana', cover: '📷 Cover', coverDone: 'An saka hoton cover.', coverFail: 'Ba a iya saka hoton cover ba. Ka gudanar da supabase-cover.sql.' },
+  en: { followers: 'Followers', following: 'Following', follow: 'Follow', unfollow: 'Following ✓', followsYou: 'Follows you', msg: '💬 Message', editName: '✏️ Name', editPhoto: '📷 Photo', editBio: '📝 Bio', joined: 'Joined', noBio: 'No bio yet.', bioQ: 'Write something about yourself (up to 200 characters):', none: 'Nobody yet.', setup: 'Follow is not set up yet (supabase-social.sql).', back: '←', saved: 'Saved', cover: '📷 Cover', coverDone: 'Cover photo saved.', coverFail: 'Could not save the cover photo. Run supabase-cover.sql.' },
+  ar: { followers: 'المتابعون', following: 'يتابع', follow: 'متابعة', unfollow: 'تتابعه ✓', followsYou: 'يتابعك', msg: '💬 رسالة', editName: '✏️ الاسم', editPhoto: '📷 الصورة', editBio: '📝 نبذة', joined: 'انضم', noBio: 'لا توجد نبذة بعد.', bioQ: 'اكتب نبذة عنك (حتى 200 حرف):', none: 'لا أحد بعد.', setup: 'لم يتم إعداد المتابعة بعد (supabase-social.sql).', back: '→', saved: 'تم الحفظ', cover: '📷 الغلاف', coverDone: 'تم حفظ صورة الغلاف.', coverFail: 'تعذّر حفظ صورة الغلاف. شغّل supabase-cover.sql.' }
+};
+const pfl = () => PF_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'];
+let PF = null, following = new Set(), pfBack = { view: 'fchats', peer: null };
+async function loadFollows() {
+  try { const { data, error } = await sb.from('follows').select('followed_id').eq('follower_id', ME.id).limit(5000); following = new Set(error || !data ? [] : data.map(x => x.followed_id)); } catch (e) { following = new Set(); }
+}
+async function openProfile(uid) {
+  if (!ME || !uid) return;
+  if (view !== 'profile') pfBack = { view: view, peer: view === 'fchat' ? openPeer : null };
+  PF = { id: uid, p: Object.assign({ id: uid, username: nameOf(uid) }, profiles[uid] || {}), followers: 0, following: 0, followsMe: false, tab: null, list: [], ok: true, loading: true };
+  go('profile'); renderProfile();
+  let r = null;
+  for (const cols of ['id,username,avatar_url,bio,cover_url,created_at', 'id,username,avatar_url,bio,cover_url', 'id,username,avatar_url,bio', 'id,username,avatar_url']) { r = await sb.from('profiles').select(cols).eq('id', uid).maybeSingle(); if (!r.error) break; }
+  if (r.data) { PF.p = r.data; profiles[uid] = Object.assign(profiles[uid] || {}, r.data); }
+  const c1 = await sb.from('follows').select('follower_id', { count: 'exact', head: true }).eq('followed_id', uid);
+  const c2 = await sb.from('follows').select('followed_id', { count: 'exact', head: true }).eq('follower_id', uid);
+  PF.ok = !c1.error && !c2.error; PF.followers = c1.count || 0; PF.following = c2.count || 0;
+  if (uid !== ME.id && PF.ok) { const f = await sb.from('follows').select('follower_id').eq('follower_id', uid).eq('followed_id', ME.id).maybeSingle(); PF.followsMe = !!(f && f.data); }
+  PF.loading = false; if (view === 'profile' && PF.id === uid) renderProfile();
+}
+function pfBackGo() { if (pfBack.view === 'fchat' && pfBack.peer) openConv(pfBack.peer); else go(pfBack.view && pfBack.view !== 'profile' ? pfBack.view : 'fchats'); }
+function renderProfile() {
+  if (!PF || !ME) return; const L = pfl(), p = PF.p, me = PF.id === ME.id, iF = following.has(PF.id);
+  const av = p.avatar_url ? `<img src="${esc(p.avatar_url)}" alt="" class="w-full h-full object-cover">` : `<span class="text-4xl font-black text-white">${esc(initial(p.username))}</span>`;
+  const joined = p.created_at ? new Date(p.created_at).toLocaleDateString(locale(), { year: 'numeric', month: 'long' }) : '';
+  const btn = 'px-4 py-2 rounded-xl text-sm font-extrabold active:scale-95 transition';
+  const actions = me
+    ? `<button onclick="changeName()" class="${btn} bg-slate-200 dark:bg-slate-800">${L.editName}</button><button onclick="$('avIn').click()" class="${btn} bg-slate-200 dark:bg-slate-800">${L.editPhoto}</button><button onclick="editBio()" class="${btn} bg-slate-200 dark:bg-slate-800">${L.editBio}</button>`
+    : `<button onclick="toggleFollow('${PF.id}')" class="${btn} ${iF ? 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-100' : 'bg-[#1F6B43] text-white'}">${iF ? L.unfollow : L.follow}</button><button onclick="openConv('${PF.id}')" class="${btn} bg-slate-200 dark:bg-slate-800">${L.msg}</button>`;
+  const stat = (k, n, lab) => `<button onclick="pfTab('${k}')" class="flex-1 py-2 rounded-xl ${PF.tab === k ? 'bg-[#1F6B43] text-white' : 'bg-slate-100 dark:bg-slate-900'} text-center active:scale-95"><div class="text-lg font-black">${n}</div><div class="text-[11px] font-bold opacity-80">${lab}</div></button>`;
+  let list = '';
+  if (PF.tab) list = PF.list.length ? PF.list.map(id => { const q = profiles[id] || { id, username: nameOf(id) }, you = id === ME.id, f = following.has(id);
+      return `<div onclick="openProfile('${id}')" class="flex items-center gap-3 p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 cursor-pointer">${avatarHtml(id, q.username, 'w-11 h-11 text-lg')}<div class="min-w-0 flex-1 font-extrabold text-sm truncate">${esc(q.username)}</div>${you ? '' : `<button onclick="event.stopPropagation();toggleFollow('${id}')" class="px-3 py-1.5 rounded-lg text-xs font-extrabold ${f ? 'bg-slate-200 dark:bg-slate-800' : 'bg-[#1F6B43] text-white'}">${f ? L.unfollow : L.follow}</button>`}</div>`; }).join('')
+    : `<p class="text-center text-slate-500 text-sm py-4">${L.none}</p>`;
+  $('pfBody').innerHTML = `<div class="relative h-36 bg-gradient-to-br from-[#0F2E1E] via-[#1F6B43] to-[#D4A017]/80 overflow-hidden">${p.cover_url ? `<img src="${esc(p.cover_url)}" alt="" class="absolute inset-0 w-full h-full object-cover">` : ''}<button onclick="pfBackGo()" class="absolute top-3 start-3 w-10 h-10 rounded-full bg-black/35 text-white text-lg font-bold">${L.back}</button>${me ? `<div class="absolute bottom-2 end-2 flex gap-1.5"><button onclick="$('cvIn').click()" class="px-3 py-1.5 rounded-lg bg-black/45 text-white text-xs font-bold">${L.cover}</button>${p.cover_url ? `<button onclick="removeCover()" class="px-2.5 py-1.5 rounded-lg bg-black/45 text-white text-xs font-bold">🗑</button>` : ''}</div>` : ''}</div>
+  <div class="px-4"><div class="relative z-10 -mt-12 w-24 h-24 rounded-full border-4 border-white dark:border-slate-950 bg-[#1F6B43] overflow-hidden flex items-center justify-center shadow-lg">${av}</div>
+    <div class="mt-2 flex items-center gap-2 flex-wrap"><h2 class="text-xl font-black">${esc(p.username)}</h2>${(!me && PF.followsMe) ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800">${L.followsYou}</span>` : ''}</div>
+    <p class="text-sm mt-1 whitespace-pre-wrap break-words ${p.bio ? '' : 'text-slate-500'}">${esc(p.bio || L.noBio)}</p>
+    ${joined ? `<p class="text-[11px] text-slate-500 mt-1">📅 ${L.joined}: ${esc(joined)}</p>` : ''}
+    <div class="flex gap-2 mt-3 flex-wrap">${actions}</div>
+    ${PF.ok ? `<div class="flex gap-2 mt-3">${stat('followers', PF.followers, L.followers)}${stat('following', PF.following, L.following)}</div>` : `<p class="text-xs text-amber-700 mt-3">${L.setup}</p>`}
+    <div class="space-y-1.5 mt-3">${list}</div></div>`;
+}
+async function pfTab(k) {
+  if (!PF) return; if (PF.tab === k) { PF.tab = null; PF.list = []; return renderProfile(); }
+  PF.tab = k; PF.list = []; renderProfile();
+  const q = k === 'followers' ? sb.from('follows').select('follower_id').eq('followed_id', PF.id) : sb.from('follows').select('followed_id').eq('follower_id', PF.id);
+  const { data } = await q.order('created_at', { ascending: false }).limit(300);
+  if (PF && PF.tab === k) { PF.list = (data || []).map(x => x.follower_id || x.followed_id); const miss = PF.list.filter(id => !profiles[id]); if (miss.length) await loadProfiles(); renderProfile(); }
+}
+async function toggleFollow(uid) {
+  if (!ME || uid === ME.id) return; const on = !following.has(uid);
+  if (on) following.add(uid); else following.delete(uid);
+  if (PF && PF.id === uid) PF.followers = Math.max(0, PF.followers + (on ? 1 : -1));
+  if (PF && PF.id === ME.id) PF.following = Math.max(0, PF.following + (on ? 1 : -1));
+  renderProfile();
+  const r = on ? await sb.from('follows').insert({ follower_id: ME.id, followed_id: uid }) : await sb.from('follows').delete().eq('follower_id', ME.id).eq('followed_id', uid);
+  if (r.error && !/duplicate/i.test(r.error.message || '')) {
+    if (on) following.delete(uid); else following.add(uid);
+    if (PF && PF.id === uid) PF.followers = Math.max(0, PF.followers + (on ? -1 : 1));
+    if (PF && PF.id === ME.id) PF.following = Math.max(0, PF.following + (on ? -1 : 1));
+    renderProfile(); toast(r.error.message);
+  }
+}
+async function editBio() {
+  if (!ME || ME.noTable) return toast(t('fcSetup')); const L = pfl();
+  const v = prompt(L.bioQ, (PF && PF.p && PF.p.bio) || ''); if (v === null) return;
+  const bio = v.trim().slice(0, 200), { error } = await sb.from('profiles').update({ bio }).eq('id', ME.id);
+  if (error) return toast(error.message);
+  PF.p = Object.assign({}, PF.p, { bio }); profiles[ME.id] = Object.assign({}, profiles[ME.id], { bio }); renderProfile(); toast(L.saved);
 }
 async function changeName() {
   if (!ME || ME.noTable) return toast(t('fcSetup'));
