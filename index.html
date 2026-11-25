@@ -150,7 +150,7 @@ html.dark #v-history>.ptop,html.dark #v-dict>.ptop,html.dark #v-credits>.ptop,ht
 #v-results>.rwrap{padding-bottom:5.5rem}
 #v-results .rsubj{position:sticky;top:var(--hdrh,68px);z-index:20;box-shadow:0 6px 10px -6px rgba(0,0,0,.6)}
 #v-results .rfix{position:fixed;left:.75rem;right:.75rem;max-width:26.5rem;margin:0 auto;bottom:calc(var(--navh,0px) + .5rem);z-index:24;box-shadow:0 4px 14px rgba(0,0,0,.45)}
-body.plan-once #v-credits [data-t="credPkgs"],body.plan-once #credPkgs,body.plan-once #v-credits [data-t="credHist"],body.plan-once #credHist,body.plan-once #credCostInfo,body.plan-once #credMsg:empty{display:none}
+body.plan-once #v-credits [data-t="credPkgs"],body.plan-once #credPkgs,body.plan-once #credRef,body.plan-once #v-credits [data-t="credHist"],body.plan-once #credHist,body.plan-once #credCostInfo,body.plan-once #credMsg:empty{display:none}
 #v-fchat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 auto;width:100%;max-width:28rem;bottom:var(--navh,0px);z-index:24}
 body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 auto;width:100%;max-width:28rem;bottom:var(--navh,0px);z-index:24}
 #navTabs,#navTabs button,h2,h3{font-family:'Tajawal',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif}
@@ -200,6 +200,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
       <div id="hSalatT" class="text-xs text-slate-300 mt-1"></div>
       <div data-t="homeSalat" class="text-[11px] text-emerald-300 mt-1.5 font-bold"></div>
     </button>
+    <div id="adHome"></div>
     </div>
     <div class="hp-c hidden flex flex-col gap-3">
     <div class="bg-[#0B132B]/85 text-white rounded-3xl overflow-hidden border border-slate-700">
@@ -318,6 +319,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
     <div id="credUnl"></div>
     <h3 class="font-extrabold text-sm pt-1" data-t="credPkgs"></h3>
     <div id="credPkgs" class="grid gap-2"></div>
+    <div id="credRef"></div>
     <p class="text-[11px] text-slate-500 text-center" data-t="credSecure"></p>
     <h3 class="font-extrabold text-sm pt-2" data-t="credHist"></h3>
     <div id="credHist" class="space-y-1.5"></div>
@@ -326,9 +328,10 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
   <section id="v-admin" class="hidden flex-1 p-3 space-y-3 bg-white/70 dark:bg-slate-950/70">
     <div class="ptop flex items-center justify-between"><h2 class="text-lg font-extrabold">🛡️ <span data-t="navAdmin"></span></h2><button onclick="go('home')" class="px-3 py-2 rounded-xl bg-[#1F6B43] text-white text-xs font-bold" data-t="back"></button></div>
     <div id="aStats" class="grid grid-cols-3 gap-2"></div>
-    <div class="grid grid-cols-2 gap-2">
+    <div class="grid grid-cols-3 gap-2">
       <button id="aTabR" onclick="setAdminTab('reports')" data-t="adReports" class="py-2.5 rounded-xl text-sm font-bold"></button>
       <button id="aTabU" onclick="setAdminTab('users')" data-t="adUsers" class="py-2.5 rounded-xl text-sm font-bold"></button>
+      <button id="aTabA" onclick="setAdminTab('ads')" class="py-2.5 rounded-xl text-sm font-bold">📢 Talla</button>
     </div>
     <input id="aSearch" oninput="renderAdmin()" data-ph="adSearch" class="hidden w-full px-4 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm">
     <div id="aBody" class="space-y-2"></div>
@@ -338,6 +341,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
   <section id="v-salat" class="hidden flex-1 p-4 space-y-3 bg-white/70 dark:bg-slate-950/70">
     <div class="ptop flex items-center justify-between"><h2 data-t="sTitle" class="text-lg font-extrabold"></h2><button onclick="go('home')" class="px-3 py-2 rounded-xl bg-[#1F6B43] text-white text-xs font-bold" data-t="back"></button></div>
     <div id="sNextBox" class="rounded-3xl p-4 text-center text-white bg-[#1F6B43] shadow-lg"></div>
+    <div id="adSalat"></div>
     <div id="sList" class="space-y-1.5"></div>
     <div class="grid grid-cols-2 gap-2">
       <select id="sMethod" onchange="setPrayOpts()" class="px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold"><option value="MWL">Muslim World League</option><option value="Egypt">Egyptian</option><option value="Karachi">Karachi</option><option value="ISNA">ISNA</option><option value="Makkah">Umm al-Qura</option></select>
@@ -931,14 +935,15 @@ async function checkSession() {
   $('authModal').classList.toggle('hidden', !!session);
   $('userMail').textContent = session ? session.user.email : '';
   if (session) { ensureProfile(session); loadWallet(); handlePayReturn(); if (view === 'home') askLoc(); }
-  else { ME = null; WALLET = null; UNL = false; PLAN_LOADED = false; renderCreditUi(); $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
+  else { ME = null; WALLET = null; UNL = false; LIFE = false; UNL_UNTIL = null; PLAN_LOADED = false; renderCreditUi(); $('navAdmin').classList.add('hidden'); profiles = {}; fmsgs.clear(); if (rtChan) { try { sb.removeChannel(rtChan); } catch (e) {} rtChan = null; } updateChatDot(); }
 }
 async function logout() { if (sb) await sb.auth.signOut(); closeDrawer(); checkSession(); }
 
 // ================= CREDITS (kiredit) =================
 const FN_URL = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/geo';
 const COST = { first: 3, next: 1 };
-let UNL = false, UNL_PRICE = 0, PLAN_LOADED = false;   // amfani ba iyaka (biyan sau ɗaya)
+let UNL = false, UNL_PRICE = 0, PLAN_LOADED = false, LIFE = false, UNL_UNTIL = null, MONTHLY_PRICE = 0;
+const lang3 = () => LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha';   // amfani ba iyaka (biyan sau ɗaya)
 let WALLET = null, creditBack = 'home', walletBusy = false;
 const PAY_PARAMS = (() => { try { const q = new URLSearchParams(location.search); return q.get('reference') || q.get('trxref') || ''; } catch (e) { return ''; } })();
 if (PAY_PARAMS) { try { sessionStorage.setItem('geo_pay_ref', PAY_PARAMS); } catch (e) {} }
@@ -962,9 +967,9 @@ async function fn(action, body) {
   return d;
 }
 const UNL_T = {
-  ha: { title: 'Haɓaka: biya sau ɗaya, amfani ba iyaka', sub: 'Idan kana sayen kiredit akai-akai, ka haɓaka sau ɗaya kawai ka daina sayen kiredit har abada.', up: 'Haɓaka', active: '✅ Kana da amfani ba iyaka. Ba sai ka sayi kiredit ba.', paid: 'An kunna amfani ba iyaka. Alhamdulillah!', or: 'Ko ka sayi kiredit kamar yadda kake so:', pwTitle: 'Maraba! Ka biya sau ɗaya don buɗe manhajar', pwSub: 'Ka biya sau ɗaya kawai yanzu, sannan manhajar ta buɗe maka har abada, ba tare da ka sake sayen komai ba.', pwBtn: 'Biya yanzu', pwOut: 'Fita', need: 'Ka biya sau ɗaya don amfani da AI, ba tare da sayen kiredit ba.', noprice: 'Ba a saka farashin biyan sau ɗaya tukuna ba.' },
-  en: { title: 'Upgrade: pay once, unlimited use', sub: 'If you keep buying credits, upgrade once and stop buying credits for good.', up: 'Upgrade', active: '✅ You have unlimited use. No need to buy credits.', paid: 'Unlimited use activated. Alhamdulillah!', or: 'Or buy credits as you like:', pwTitle: 'Welcome! Pay once to unlock the app', pwSub: 'Pay just once now and the app opens for you forever, with nothing more to buy.', pwBtn: 'Pay now', pwOut: 'Log out', need: 'Pay once to use the AI, with no credits to buy.', noprice: 'The one-time price has not been set yet.' },
-  ar: { title: 'ترقية: دفعة واحدة، استخدام غير محدود', sub: 'إن كنت تشتري الرصيد باستمرار فارتقِ مرة واحدة وتوقف عن الشراء إلى الأبد.', up: 'ترقية', active: '✅ لديك استخدام غير محدود. لا حاجة لشراء رصيد.', paid: 'تم تفعيل الاستخدام غير المحدود. الحمد لله!', or: 'أو اشترِ رصيدًا كما تشاء:', pwTitle: 'أهلًا بك! ادفع مرة واحدة لفتح التطبيق', pwSub: 'ادفع مرة واحدة الآن ويُفتح التطبيق لك إلى الأبد دون شراء أي شيء آخر.', pwBtn: 'ادفع الآن', pwOut: 'تسجيل الخروج', need: 'ادفع مرة واحدة لاستخدام الذكاء الاصطناعي دون شراء رصيد.', noprice: 'لم يُحدد سعر الدفعة الواحدة بعد.' }
+  ha: { title: 'Haɓaka: biya sau ɗaya, amfani ba iyaka', sub: 'Idan kana sayen kiredit akai-akai, ka haɓaka sau ɗaya kawai ka daina sayen kiredit har abada.', up: 'Haɓaka', active: '✅ Kana da amfani ba iyaka. Ba sai ka sayi kiredit ba.', paid: 'An kunna amfani ba iyaka. Alhamdulillah!', or: 'Ko ka sayi kiredit kamar yadda kake so:', until: 'Yana aiki har', mTitle: 'Wata ɗaya, amfani ba iyaka', mSub: 'Ka biya kowane wata ka yi amfani da AI ba tare da sayen kiredit ba. Ba a sabunta shi kai tsaye, sai ka sake biya.', mBtn: 'Biya wata ɗaya', renew: 'Ƙara wata ɗaya', pwTitle: 'Maraba! Ka biya sau ɗaya don buɗe manhajar', pwSub: 'Ka biya sau ɗaya kawai yanzu, sannan manhajar ta buɗe maka har abada, ba tare da ka sake sayen komai ba.', pwBtn: 'Biya yanzu', pwOut: 'Fita', need: 'Ka biya sau ɗaya don amfani da AI, ba tare da sayen kiredit ba.', noprice: 'Ba a saka farashin biyan sau ɗaya tukuna ba.' },
+  en: { title: 'Upgrade: pay once, unlimited use', sub: 'If you keep buying credits, upgrade once and stop buying credits for good.', up: 'Upgrade', active: '✅ You have unlimited use. No need to buy credits.', paid: 'Unlimited use activated. Alhamdulillah!', or: 'Or buy credits as you like:', until: 'Active until', mTitle: 'One month, unlimited use', mSub: 'Pay monthly and use the AI without buying credits. It does not renew by itself; pay again to extend.', mBtn: 'Pay for one month', renew: 'Add one month', pwTitle: 'Welcome! Pay once to unlock the app', pwSub: 'Pay just once now and the app opens for you forever, with nothing more to buy.', pwBtn: 'Pay now', pwOut: 'Log out', need: 'Pay once to use the AI, with no credits to buy.', noprice: 'The one-time price has not been set yet.' },
+  ar: { title: 'ترقية: دفعة واحدة، استخدام غير محدود', sub: 'إن كنت تشتري الرصيد باستمرار فارتقِ مرة واحدة وتوقف عن الشراء إلى الأبد.', up: 'ترقية', active: '✅ لديك استخدام غير محدود. لا حاجة لشراء رصيد.', paid: 'تم تفعيل الاستخدام غير المحدود. الحمد لله!', or: 'أو اشترِ رصيدًا كما تشاء:', until: 'ساري حتى', mTitle: 'شهر واحد، استخدام غير محدود', mSub: 'ادفع شهريًا واستخدم الذكاء الاصطناعي دون شراء رصيد. لا يتجدد تلقائيًا؛ ادفع مرة أخرى للتمديد.', mBtn: 'ادفع لشهر واحد', renew: 'أضف شهرًا', pwTitle: 'أهلًا بك! ادفع مرة واحدة لفتح التطبيق', pwSub: 'ادفع مرة واحدة الآن ويُفتح التطبيق لك إلى الأبد دون شراء أي شيء آخر.', pwBtn: 'ادفع الآن', pwOut: 'تسجيل الخروج', need: 'ادفع مرة واحدة لاستخدام الذكاء الاصطناعي دون شراء رصيد.', noprice: 'لم يُحدد سعر الدفعة الواحدة بعد.' }
 };
 function updatePayWall() {
   const w = $('payWall'); if (!w) return;
@@ -976,14 +981,22 @@ function updatePayWall() {
   $('pwBtn').classList.toggle('hidden', !(UNL_PRICE > 0)); if (!(UNL_PRICE > 0)) $('pwMsg').textContent = T.noprice;
 }
 function renderUnlCard() {
-  const el = $('credUnl'); if (!el) return; const T = UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'];
-  if (UNL) { el.innerHTML = `<div class="rounded-2xl p-4 text-center font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300/60">${T.active}</div>`; }
-  else if (UNL_PRICE > 0) {
-    el.innerHTML = `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#3A2C05] to-[#7A5C0B] text-white border border-[#D4A017] shadow space-y-2">
+  const el = $('credUnl'); if (!el) return; const T = UNL_T[lang3()], money = n => '₦' + Number(n).toLocaleString('en-US');
+  let h = '';
+  if (UNL) {
+    const exp = (!LIFE && UNL_UNTIL) ? `<div class="text-xs font-bold mt-1">${T.until}: ${esc(new Date(UNL_UNTIL).toLocaleDateString(locale(), { day: 'numeric', month: 'long', year: 'numeric' }))}</div>` : '';
+    h += `<div class="rounded-2xl p-4 text-center font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300/60">${T.active}${exp}</div>`;
+  }
+  if (!LIFE && PLAN_MODE === 'credits' && MONTHLY_PRICE > 0) {
+    h += `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#0F2E1E] to-[#1F6B43] text-white border border-[#5DB887]/60 shadow space-y-2"><div class="font-black text-base text-[#BFEBD0]">📅 ${T.mTitle}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.mSub}</div><button onclick="buyPlan('monthly')" class="w-full py-3 rounded-xl bg-[#5DB887] text-[#06210F] font-black text-base active:scale-[.98]">${UNL ? T.renew : T.mBtn} · ${money(MONTHLY_PRICE)}</button></div>`;
+  }
+  if (!LIFE && UNL_PRICE > 0) {
+    h += `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#3A2C05] to-[#7A5C0B] text-white border border-[#D4A017] shadow space-y-2">
       <div class="font-black text-base text-[#F5D26B]">♾️ ${T.title}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.sub}</div>
-      <button onclick="buyUnlimited()" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]">${T.up} · ₦${UNL_PRICE.toLocaleString('en-US')}</button></div>
-      ${PLAN_MODE === 'credits' ? `<p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>` : ''}`;
-  } else el.innerHTML = PLAN_MODE === 'once' ? `<div class="rounded-2xl p-4 text-center text-sm font-bold bg-amber-100 text-amber-800">${T.noprice}</div>` : '';
+      <button onclick="buyPlan('unlimited')" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]">${T.up} · ${money(UNL_PRICE)}</button></div>`;
+  } else if (!UNL && PLAN_MODE === 'once') h += `<div class="rounded-2xl p-4 text-center text-sm font-bold bg-amber-100 text-amber-800">${T.noprice}</div>`;
+  if (!UNL && PLAN_MODE === 'credits' && h) h += `<p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>`;
+  el.innerHTML = h;
 }
 function setWallet(n) { WALLET = n; renderCreditUi(); }
 function renderCreditUi() {
@@ -991,13 +1004,13 @@ function renderCreditUi() {
   document.querySelectorAll('.credBal').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : (WALLET == null ? '–' : WALLET));
   document.querySelectorAll('.costFirst').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : COST.first);
   document.querySelectorAll('.costNext').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : COST.next);
-  renderUnlCard(); try { updatePayWall(); } catch (e) {}
+  renderUnlCard(); try { renderAds(); } catch (e) {} try { updatePayWall(); } catch (e) {}
   const ci = $('credCostInfo'); if (ci) ci.textContent = t('credCostInfo');
 }
 async function loadWallet() {
   if (!sb || walletBusy) return; walletBusy = true;
   try { const { data, error } = await sb.rpc('get_my_wallet'); if (!error && typeof data === 'number') setWallet(data); } catch (e) {}
-  try { const { data } = await sb.rpc('get_my_plan'); if (data && !data.error) { UNL = !!data.unlimited; UNL_PRICE = data.price || 0; PLAN_LOADED = true; if (typeof data.balance === 'number') WALLET = data.balance; renderCreditUi(); } } catch (e) {}
+  try { const { data } = await sb.rpc('get_my_plan'); if (data && !data.error) { UNL = !!data.unlimited; LIFE = !!data.lifetime; UNL_UNTIL = data.until || null; MONTHLY_PRICE = data.monthly_price || 0; UNL_PRICE = data.price || 0; PLAN_LOADED = true; if (typeof data.balance === 'number') WALLET = data.balance; renderCreditUi(); } } catch (e) {}
   walletBusy = false;
   try {
     const { data } = await sb.from('credit_settings').select('key,value');
@@ -1038,14 +1051,15 @@ async function buyPackage(id) {
     location.href = d.authorization_url;
   } catch (e) { creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credPayFail'), false); buying = false; }
 }
-async function buyUnlimited() {
+async function buyPlan(plan) {
   if (buying) return; buying = true; creditMsg(t('credBuying'), true);
   try {
-    const d = await fn('init', { plan: 'unlimited', return_url: location.origin + location.pathname });
+    const d = await fn('init', { plan, return_url: location.origin + location.pathname });
     try { sessionStorage.setItem('geo_pay_ref', d.reference); localStorage.setItem('geo_pay_ref', d.reference); } catch (e) {}
     location.href = d.authorization_url;
   } catch (e) { creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credPayFail'), false); buying = false; }
 }
+async function buyUnlimited() { return buyPlan('unlimited'); }
 let verifying = false;
 async function handlePayReturn() {
   let ref = ''; try { ref = sessionStorage.getItem('geo_pay_ref') || localStorage.getItem('geo_pay_ref') || ''; } catch (e) {}
@@ -1056,7 +1070,7 @@ async function handlePayReturn() {
   creditMsg(t('credChecking'), true);
   try {
     const d = await fn('verify', { reference: ref });
-    if (d.status === 'success') { clear(); if (typeof d.balance === 'number') setWallet(d.balance); if (d.unlimited) { UNL = true; renderCreditUi(); creditMsg(UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].paid, true); } else creditMsg(d.already ? t('credAlready') : t('credAdded') + ': +' + d.credits, true); }
+    if (d.status === 'success') { clear(); if (typeof d.balance === 'number') setWallet(d.balance); if (d.unlimited) { UNL = true; renderCreditUi(); loadWallet(); creditMsg(UNL_T[LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha'].paid, true); } else creditMsg(d.already ? t('credAlready') : t('credAdded') + ': +' + d.credits, true); }
     else if (d.status === 'abandoned' || d.status === 'failed') { clear(); creditMsg(t('credNotPaid'), false); }
     else creditMsg(t('credNotPaid'), false);
   } catch (e) { if (e.code === 'NO_PAYMENT' || e.code === 'NOT_YOURS' || e.code === 'AMOUNT_MISMATCH') clear(); creditMsg(e.code === 'AUTH' ? t('errAuth') : t('credNotPaid'), false); }
@@ -1326,7 +1340,7 @@ function ensureProfile(session) {
       if (error) { ME = { id: uid, username: fallback, noTable: true }; return; }
       if (!data) { const r = await sb.from('profiles').insert({ id: uid, username: fallback }).select().single(); data = r.data || { id: uid, username: fallback }; }
       ME = { id: uid, username: data.username, avatar: data.avatar_url || '' };
-      updateMyAvatar(); await checkAdmin(); await loadBlocked(); await loadFollows(); subscribeRT(); await loadProfiles(); await loadRecent();
+      updateMyAvatar(); await checkAdmin(); await loadBlocked(); await loadFollows(); loadBanners(); claimRef().then(loadReferral); subscribeRT(); await loadProfiles(); await loadRecent();
     } finally { ensuring = null; }
   })();
   return ensuring;
@@ -1545,6 +1559,81 @@ async function pickCover(inp) {
   } catch (e) { toast(L.coverFail); }
 }
 async function removeCover() { try { await setCover(null); } catch (e) { toast(pfl().coverFail); } }
+
+
+// ================= TALLA, GAYYATA =================
+const ADS_FOR_PREMIUM = false;   // true = masu biya ma suna ganin talla
+let BANNERS = [], adIdx = { home: 0, salat: 0 }, adSeen = new Set(), adTimer = null, REF = null;
+async function loadBanners() {
+  try { const { data, error } = await sb.from('banners').select('*').eq('active', true); const now = new Date();
+    BANNERS = error ? [] : (data || []).filter(b => (!b.starts_at || new Date(b.starts_at) <= now) && (!b.ends_at || new Date(b.ends_at) >= now)); } catch (e) { BANNERS = []; }
+  renderAds(); if (!adTimer) adTimer = setInterval(() => { adIdx.home++; adIdx.salat++; renderAds(); }, 12000);
+}
+function adFor(place) { const l = BANNERS.filter(b => b.placement === 'all' || b.placement === place); return l.length ? l[adIdx[place] % l.length] : null; }
+function renderAds() {
+  [['home', 'adHome'], ['salat', 'adSalat']].forEach(([pl, id]) => {
+    const el = $(id); if (!el) return; const b = (UNL && !ADS_FOR_PREMIUM) ? null : adFor(pl);
+    if (!b) { el.innerHTML = ''; return; }
+    if (!adSeen.has(b.id)) { adSeen.add(b.id); try { sb.rpc('banner_hit', { bid: b.id, kind: 'view' }); } catch (e) {} }
+    el.innerHTML = `<div onclick="bannerClick(${b.id})" class="relative rounded-2xl overflow-hidden border border-slate-700 cursor-pointer active:scale-[.99]"><img src="${esc(b.image_url)}" alt="${esc(b.title || '')}" class="w-full aspect-[3/1] object-cover"><span class="absolute top-1 end-1 text-[9px] px-1.5 py-0.5 rounded bg-black/55 text-white">${LANG === 'ar' ? 'إعلان' : LANG === 'en' ? 'Ad' : 'Talla'}</span></div>`;
+  });
+}
+function bannerClick(id) { const b = BANNERS.find(x => x.id === id); if (!b) return; try { sb.rpc('banner_hit', { bid: id, kind: 'click' }); } catch (e) {} if (b.link_url) window.open(b.link_url, '_blank'); }
+async function imgCropBlob(file, W, H) {
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const k = Math.max(W / img.width, H / img.height), sw = W / k, sh = H / k;
+  cv.getContext('2d').drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, W, H);
+  return new Promise(r => cv.toBlob(r, 'image/jpeg', 0.82));
+}
+async function adminLoadBanners() { try { const r = await sb.from('banners').select('*').order('created_at', { ascending: false }); adm.banners = r.error ? [] : (r.data || []); adm.bannersErr = !!r.error; } catch (e) { adm.banners = []; adm.bannersErr = true; } }
+function renderAdminAds() {
+  const B = adm.banners || [], inp = 'w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm', sm = 'px-2.5 py-1.5 rounded-lg text-xs font-bold ';
+  const form = `<div class="rounded-2xl p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2"><div class="font-extrabold text-sm">➕ Ƙara talla</div>
+    <input id="adT" placeholder="Suna (don kanka kawai)" class="${inp}"><input id="adL" placeholder="Mahaɗi (https://...)" class="${inp} ltr-lock">
+    <div class="flex gap-2"><select id="adP" class="${inp}"><option value="all">Duka wurare</option><option value="home">Shafin gida</option><option value="salat">Lokutan Sallah</option></select><input id="adE" type="date" class="${inp}"></div>
+    <input id="adF" type="file" accept="image/*" class="w-full text-xs"><button onclick="adminAddBanner()" class="w-full py-2.5 rounded-xl bg-[#1F6B43] text-white font-extrabold text-sm">Ƙara</button>
+    <p class="text-[11px] text-slate-500">Ana yanke hoton zuwa fasalin faɗi 3:1. Ranar ƙarewa zaɓi ce.</p></div>`;
+  const list = B.map(b => { const ctr = b.impressions ? (b.clicks / b.impressions * 100).toFixed(1) : '0.0';
+    return `<div class="rounded-2xl p-2.5 bg-white dark:bg-slate-900 border ${b.active ? 'border-emerald-300' : 'border-slate-200 dark:border-slate-800 opacity-60'} flex gap-2"><img src="${esc(b.image_url)}" alt="" class="w-24 h-9 object-cover rounded-lg shrink-0"><div class="min-w-0 flex-1"><div class="text-sm font-extrabold truncate">${esc(b.title || '—')}</div><div class="text-[11px] text-slate-500">${esc(b.placement)} · 👁 ${b.impressions} · 👆 ${b.clicks} (${ctr}%)${b.ends_at ? ' · ⏳ ' + new Date(b.ends_at).toLocaleDateString(locale()) : ''}</div><div class="flex gap-1.5 mt-1.5"><button onclick="adminToggleBanner(${b.id})" class="${sm}bg-slate-200 dark:bg-slate-800">${b.active ? '⏸ Dakatar' : '▶ Kunna'}</button><button onclick="adminDelBanner(${b.id})" class="${sm}bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300">🗑 Goge</button></div></div></div>`; }).join('');
+  $('aBody').innerHTML = (adm.bannersErr ? `<p class="text-xs text-amber-700">Ba a kammala saita Talla ba (supabase-growth.sql).</p>` : '') + form + (list || '<p class="text-center text-sm text-slate-500 py-4">Babu talla tukuna.</p>');
+}
+async function adminAddBanner() {
+  const f = $('adF').files[0]; if (!f) return toast('Zaɓi hoto tukuna');
+  try {
+    const blob = await imgCropBlob(f, 1200, 400), path = `${ME.id}/banner-${Date.now()}.jpg`;
+    const up = await sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/jpeg' }); if (up.error) throw up.error;
+    const url = sb.storage.from('avatars').getPublicUrl(path).data.publicUrl, d = $('adE').value;
+    const r = await sb.from('banners').insert({ title: $('adT').value.trim() || null, image_url: url, link_url: $('adL').value.trim() || null, placement: $('adP').value, ends_at: d ? new Date(d + 'T23:59:59').toISOString() : null });
+    if (r.error) throw r.error; toast('An ƙara talla'); await adminLoadBanners(); renderAdmin(); loadBanners();
+  } catch (e) { toast(e.message || 'Kuskure'); }
+}
+async function adminToggleBanner(id) { const b = (adm.banners || []).find(x => x.id === id); if (!b) return; const r = await sb.from('banners').update({ active: !b.active }).eq('id', id); if (r.error) return toast(r.error.message); b.active = !b.active; renderAdmin(); loadBanners(); }
+async function adminDelBanner(id) { if (!confirm('Goge wannan talla?')) return; const r = await sb.from('banners').delete().eq('id', id); if (r.error) return toast(r.error.message); adm.banners = adm.banners.filter(x => x.id !== id); renderAdmin(); loadBanners(); }
+
+const REF_T = {
+  ha: { title: 'Gayyaci abokai, ku samu kiredit', sub: 'Idan abokinka ya yi rajista ta mahaɗinka, kai za ka sami kiredit {a}, shi kuma ya sami {b}.', copy: 'Kwafa', copied: 'An kwafa', stats: 'Abokan da ka gayyata: {n} · Kiredit da ka samu: {c}', msg: 'Ka shiga wannan manhajar Ramli da lokutan sallah, ka yi rajista ta wannan mahaɗi:', welcome: 'An ƙara maka kiredit {n} saboda gayyata. Maraba!' },
+  en: { title: 'Invite friends, earn credits', sub: 'When a friend signs up with your link, you get {a} credits and they get {b}.', copy: 'Copy', copied: 'Copied', stats: 'Friends invited: {n} · Credits earned: {c}', msg: 'Join this Ramli and prayer-times app with my link:', welcome: '{n} credits added for the invitation. Welcome!' },
+  ar: { title: 'ادعُ أصدقاءك واكسب رصيدًا', sub: 'عندما يسجّل صديقك عبر رابطك تحصل على {a} رصيدًا ويحصل هو على {b}.', copy: 'نسخ', copied: 'تم النسخ', stats: 'الأصدقاء المدعوون: {n} · الرصيد المكتسب: {c}', msg: 'انضم إلى تطبيق الرمل ومواقيت الصلاة عبر رابطي:', welcome: 'تمت إضافة {n} رصيدًا بسبب الدعوة. أهلًا بك!' }
+};
+try { const r0 = new URLSearchParams(location.search).get('ref'); if (r0) localStorage.setItem('geo_ref', r0.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12)); } catch (e) {}
+const refLink = () => location.origin + location.pathname + '?ref=' + (REF ? REF.code : '');
+async function loadReferral() { try { const { data, error } = await sb.rpc('my_referral'); REF = (error || !data || data.error) ? null : data; } catch (e) { REF = null; } renderRefCard(); }
+function renderRefCard() {
+  const el = $('credRef'); if (!el) return; if (!REF) { el.innerHTML = ''; return; } const T = REF_T[lang3()];
+  el.innerHTML = `<div class="rounded-2xl p-4 bg-white dark:bg-slate-900 border border-[#1F6B43]/40 space-y-2"><div class="font-black text-[#1F6B43] dark:text-[#7FCBA0]">🎁 ${T.title}</div>
+    <div class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">${T.sub.replace('{a}', REF.bonus_referrer).replace('{b}', REF.bonus_new)}</div>
+    <div class="flex items-center gap-2"><input readonly value="${esc(refLink())}" class="flex-1 min-w-0 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] ltr-lock"><button onclick="copyRef()" class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-xs font-bold">${T.copy}</button></div>
+    <button onclick="shareRef()" class="w-full py-2.5 rounded-xl bg-[#25D366] text-white font-extrabold text-sm">WhatsApp</button>
+    <div class="text-[11px] text-slate-500">${T.stats.replace('{n}', REF.count).replace('{c}', REF.earned)}</div></div>`;
+}
+function copyRef() { const T = REF_T[lang3()]; try { navigator.clipboard.writeText(refLink()).then(() => toast(T.copied)).catch(() => prompt('Link', refLink())); } catch (e) { prompt('Link', refLink()); } }
+function shareRef() { window.open('https://wa.me/?text=' + encodeURIComponent(REF_T[lang3()].msg + ' ' + refLink()), '_blank'); }
+async function claimRef() {
+  let c = ''; try { c = localStorage.getItem('geo_ref') || ''; } catch (e) {} if (!c) return;
+  try { const { data, error } = await sb.rpc('claim_referral', { p_code: c }); if (error) return;
+    try { localStorage.removeItem('geo_ref'); } catch (e) {}
+    if (data && data.ok) { toast(REF_T[lang3()].welcome.replace('{n}', data.bonus)); loadWallet(); } } catch (e) {}
+}
 
 // ================= FOLLOW + PROFILE =================
 const PF_T = {
@@ -2047,16 +2136,17 @@ async function loadAdmin() {
   const rv = await sb.rpc('admin_revenue'); adm.rev = rv.error ? null : rv.data;
   const ul = await sb.rpc('admin_unlimited_ids'); adm.unl = new Set((ul.data || []).map(x => typeof x === 'string' ? x : Object.values(x)[0]));
   const au = await sb.rpc('admin_users'); adm.users = {}; adm.usersOk = !au.error; (au.data || []).forEach(u => adm.users[u.id] = u);
-  await loadProfiles(); if (view === 'admin') renderAdmin();
+  await adminLoadBanners(); await loadProfiles(); if (view === 'admin') renderAdmin();
 }
 function renderAdmin() {
   const R = adminTab === 'reports';
-  $('aTabR').className = 'py-2.5 rounded-xl text-sm font-bold ' + (R ? 'bg-[#1F6B43] text-white' : 'bg-slate-200 dark:bg-slate-800');
-  $('aTabU').className = 'py-2.5 rounded-xl text-sm font-bold ' + (!R ? 'bg-[#1F6B43] text-white' : 'bg-slate-200 dark:bg-slate-800');
-  $('aSearch').classList.toggle('hidden', R);
+  const A = adminTab === 'ads', tabc = on => 'py-2.5 rounded-xl text-sm font-bold ' + (on ? 'bg-[#1F6B43] text-white' : 'bg-slate-200 dark:bg-slate-800');
+  $('aTabR').className = tabc(R); $('aTabU').className = tabc(!R && !A); $('aTabA').className = tabc(A);
+  $('aSearch').classList.toggle('hidden', R || A);
   const S = adm.stats, box = (n, l) => `<div class="rounded-2xl p-2.5 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"><div class="text-xl font-black text-[#1F6B43] dark:text-[#7FCBA0]">${n == null ? '–' : n}</div><div class="text-[10px] font-bold text-slate-500">${l}</div></div>`;
   $('aStats').innerHTML = box(S && S.users, t('adStUsers')) + box(S && S.messages, t('adStMsgs')) + box(S && S.voice, t('adStVoice')) + box(S && S.open_reports, t('adStOpen')) + box(S && S.bans, t('adStBans')) + box(adm.rev ? Number(adm.rev.total_ngn).toLocaleString('en-US') : null, t('adStRev'));
   if (adm.err) { $('aBody').innerHTML = `<p class="text-center text-sm text-slate-600 dark:text-slate-300 py-4">${t('adSetup')}</p>`; return; }
+  if (A) { renderAdminAds(); return; }
   const bt = 'px-2.5 py-1.5 rounded-lg text-xs font-bold ', btn = (c, fn, txt) => `<button onclick="${fn}" class="${bt}${c}">${txt}</button>`;
   if (R) {
     const list = adm.reports.slice().sort((a, b) => (a.resolved - b.resolved) || (new Date(b.created_at) - new Date(a.created_at)));
