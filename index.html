@@ -180,6 +180,7 @@ body.has-bnav #v-chat>.sticky.bottom-0{position:fixed;left:0;right:0;margin:0 au
 
   <!-- HOME (clock + chaughadiya) -->
   <main id="v-home" class="flex-1 px-4 pt-4 pb-8 flex flex-col gap-3">
+    <div id="expHome"></div>
     <div class="hp-a flex flex-col gap-3">
     <div class="bg-[#0B132B]/85 text-white rounded-3xl p-4 text-center shadow-lg border border-slate-700">
       <svg id="clk" viewBox="0 0 200 200" class="w-52 h-52 mx-auto">
@@ -942,7 +943,7 @@ async function logout() { if (sb) await sb.auth.signOut(); closeDrawer(); checkS
 // ================= CREDITS (kiredit) =================
 const FN_URL = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/geo';
 const COST = { first: 3, next: 1 };
-let UNL = false, UNL_PRICE = 0, PLAN_LOADED = false, LIFE = false, UNL_UNTIL = null, MONTHLY_PRICE = 0;
+let UNL = false, UNL_PRICE = 0, PLAN_LOADED = false, LIFE = false, UNL_UNTIL = null, MONTHLY_PRICE = 0, PLANS = {};
 const lang3 = () => LANG === 'ar' ? 'ar' : LANG === 'en' ? 'en' : 'ha';   // amfani ba iyaka (biyan sau ɗaya)
 let WALLET = null, creditBack = 'home', walletBusy = false;
 const PAY_PARAMS = (() => { try { const q = new URLSearchParams(location.search); return q.get('reference') || q.get('trxref') || ''; } catch (e) { return ''; } })();
@@ -967,9 +968,9 @@ async function fn(action, body) {
   return d;
 }
 const UNL_T = {
-  ha: { title: 'Haɓaka: biya sau ɗaya, amfani ba iyaka', sub: 'Idan kana sayen kiredit akai-akai, ka haɓaka sau ɗaya kawai ka daina sayen kiredit har abada.', up: 'Haɓaka', active: '✅ Kana da amfani ba iyaka. Ba sai ka sayi kiredit ba.', paid: 'An kunna amfani ba iyaka. Alhamdulillah!', or: 'Ko ka sayi kiredit kamar yadda kake so:', until: 'Yana aiki har', mTitle: 'Wata ɗaya, amfani ba iyaka', mSub: 'Ka biya kowane wata ka yi amfani da AI ba tare da sayen kiredit ba. Ba a sabunta shi kai tsaye, sai ka sake biya.', mBtn: 'Biya wata ɗaya', renew: 'Ƙara wata ɗaya', pwTitle: 'Maraba! Ka biya sau ɗaya don buɗe manhajar', pwSub: 'Ka biya sau ɗaya kawai yanzu, sannan manhajar ta buɗe maka har abada, ba tare da ka sake sayen komai ba.', pwBtn: 'Biya yanzu', pwOut: 'Fita', need: 'Ka biya sau ɗaya don amfani da AI, ba tare da sayen kiredit ba.', noprice: 'Ba a saka farashin biyan sau ɗaya tukuna ba.' },
-  en: { title: 'Upgrade: pay once, unlimited use', sub: 'If you keep buying credits, upgrade once and stop buying credits for good.', up: 'Upgrade', active: '✅ You have unlimited use. No need to buy credits.', paid: 'Unlimited use activated. Alhamdulillah!', or: 'Or buy credits as you like:', until: 'Active until', mTitle: 'One month, unlimited use', mSub: 'Pay monthly and use the AI without buying credits. It does not renew by itself; pay again to extend.', mBtn: 'Pay for one month', renew: 'Add one month', pwTitle: 'Welcome! Pay once to unlock the app', pwSub: 'Pay just once now and the app opens for you forever, with nothing more to buy.', pwBtn: 'Pay now', pwOut: 'Log out', need: 'Pay once to use the AI, with no credits to buy.', noprice: 'The one-time price has not been set yet.' },
-  ar: { title: 'ترقية: دفعة واحدة، استخدام غير محدود', sub: 'إن كنت تشتري الرصيد باستمرار فارتقِ مرة واحدة وتوقف عن الشراء إلى الأبد.', up: 'ترقية', active: '✅ لديك استخدام غير محدود. لا حاجة لشراء رصيد.', paid: 'تم تفعيل الاستخدام غير المحدود. الحمد لله!', or: 'أو اشترِ رصيدًا كما تشاء:', until: 'ساري حتى', mTitle: 'شهر واحد، استخدام غير محدود', mSub: 'ادفع شهريًا واستخدم الذكاء الاصطناعي دون شراء رصيد. لا يتجدد تلقائيًا؛ ادفع مرة أخرى للتمديد.', mBtn: 'ادفع لشهر واحد', renew: 'أضف شهرًا', pwTitle: 'أهلًا بك! ادفع مرة واحدة لفتح التطبيق', pwSub: 'ادفع مرة واحدة الآن ويُفتح التطبيق لك إلى الأبد دون شراء أي شيء آخر.', pwBtn: 'ادفع الآن', pwOut: 'تسجيل الخروج', need: 'ادفع مرة واحدة لاستخدام الذكاء الاصطناعي دون شراء رصيد.', noprice: 'لم يُحدد سعر الدفعة الواحدة بعد.' }
+  ha: { title: 'Haɓaka: biya sau ɗaya, amfani ba iyaka', sub: 'Idan kana sayen kiredit akai-akai, ka haɓaka sau ɗaya kawai ka daina sayen kiredit har abada.', up: 'Haɓaka', active: '✅ Kana da amfani ba iyaka. Ba sai ka sayi kiredit ba.', paid: 'An kunna amfani ba iyaka. Alhamdulillah!', or: 'Ko ka sayi kiredit kamar yadda kake so:', until: 'Yana aiki har', plTitle: 'Biyan lokaci: amfani ba iyaka', plRenew: 'Ƙara lokaci', plSub: 'Ka zaɓi tsawon lokaci, ka biya, ka yi amfani da AI ba tare da sayen kiredit ba. Kana iya ƙara lokaci a kowane lokaci.', save: 'Ka tara', m1: 'Wata 1', m3: 'Wata 3', m6: 'Wata 6', m12: 'Shekara 1', mTitle: 'Wata ɗaya, amfani ba iyaka', mSub: 'Ka biya kowane wata ka yi amfani da AI ba tare da sayen kiredit ba. Ba a sabunta shi kai tsaye, sai ka sake biya.', mBtn: 'Biya wata ɗaya', renew: 'Ƙara wata ɗaya', pwTitle: 'Maraba! Ka biya sau ɗaya don buɗe manhajar', pwSub: 'Ka biya sau ɗaya kawai yanzu, sannan manhajar ta buɗe maka har abada, ba tare da ka sake sayen komai ba.', pwBtn: 'Biya yanzu', pwOut: 'Fita', need: 'Ka biya sau ɗaya don amfani da AI, ba tare da sayen kiredit ba.', noprice: 'Ba a saka farashin biyan sau ɗaya tukuna ba.' },
+  en: { title: 'Upgrade: pay once, unlimited use', sub: 'If you keep buying credits, upgrade once and stop buying credits for good.', up: 'Upgrade', active: '✅ You have unlimited use. No need to buy credits.', paid: 'Unlimited use activated. Alhamdulillah!', or: 'Or buy credits as you like:', until: 'Active until', plTitle: 'Time plans: unlimited use', plRenew: 'Add more time', plSub: 'Pick a period, pay, and use the AI without buying credits. You can add time at any point.', save: 'You save', m1: '1 month', m3: '3 months', m6: '6 months', m12: '1 year', mTitle: 'One month, unlimited use', mSub: 'Pay monthly and use the AI without buying credits. It does not renew by itself; pay again to extend.', mBtn: 'Pay for one month', renew: 'Add one month', pwTitle: 'Welcome! Pay once to unlock the app', pwSub: 'Pay just once now and the app opens for you forever, with nothing more to buy.', pwBtn: 'Pay now', pwOut: 'Log out', need: 'Pay once to use the AI, with no credits to buy.', noprice: 'The one-time price has not been set yet.' },
+  ar: { title: 'ترقية: دفعة واحدة، استخدام غير محدود', sub: 'إن كنت تشتري الرصيد باستمرار فارتقِ مرة واحدة وتوقف عن الشراء إلى الأبد.', up: 'ترقية', active: '✅ لديك استخدام غير محدود. لا حاجة لشراء رصيد.', paid: 'تم تفعيل الاستخدام غير المحدود. الحمد لله!', or: 'أو اشترِ رصيدًا كما تشاء:', until: 'ساري حتى', plTitle: 'باقات زمنية: استخدام غير محدود', plRenew: 'أضف مدة', plSub: 'اختر المدة وادفع واستخدم الذكاء الاصطناعي دون شراء رصيد. يمكنك إضافة مدة في أي وقت.', save: 'توفّر', m1: 'شهر', m3: '3 أشهر', m6: '6 أشهر', m12: 'سنة', mTitle: 'شهر واحد، استخدام غير محدود', mSub: 'ادفع شهريًا واستخدم الذكاء الاصطناعي دون شراء رصيد. لا يتجدد تلقائيًا؛ ادفع مرة أخرى للتمديد.', mBtn: 'ادفع لشهر واحد', renew: 'أضف شهرًا', pwTitle: 'أهلًا بك! ادفع مرة واحدة لفتح التطبيق', pwSub: 'ادفع مرة واحدة الآن ويُفتح التطبيق لك إلى الأبد دون شراء أي شيء آخر.', pwBtn: 'ادفع الآن', pwOut: 'تسجيل الخروج', need: 'ادفع مرة واحدة لاستخدام الذكاء الاصطناعي دون شراء رصيد.', noprice: 'لم يُحدد سعر الدفعة الواحدة بعد.' }
 };
 function updatePayWall() {
   const w = $('payWall'); if (!w) return;
@@ -980,22 +981,34 @@ function updatePayWall() {
   $('pwPrice').textContent = UNL_PRICE > 0 ? '₦' + UNL_PRICE.toLocaleString('en-US') : ''; $('pwBtn').textContent = T.pwBtn;
   $('pwBtn').classList.toggle('hidden', !(UNL_PRICE > 0)); if (!(UNL_PRICE > 0)) $('pwMsg').textContent = T.noprice;
 }
+const EXP_T = {
+  ha: { left: 'Lokacinka na amfani ba iyaka ya kusa ƙarewa: saura kwana {d}.', today: 'Lokacinka na amfani ba iyaka zai ƙare yau.', btn: 'Ƙara lokaci' },
+  en: { left: 'Your unlimited time is about to end: {d} days left.', today: 'Your unlimited time ends today.', btn: 'Add time' },
+  ar: { left: 'مدتك غير المحدودة توشك على الانتهاء: بقي {d} أيام.', today: 'تنتهي مدتك غير المحدودة اليوم.', btn: 'أضف مدة' }
+};
+let expToast = false;
+function daysLeft() { if (!UNL || LIFE || !UNL_UNTIL) return null; return Math.max(0, Math.ceil((new Date(UNL_UNTIL).getTime() - Date.now()) / 86400000)); }
+function renderExpiry() {
+  const el = $('expHome'); if (!el) return; const d = daysLeft();
+  if (d === null || d > 5) { el.innerHTML = ''; return; }
+  const T = EXP_T[lang3()], msg = d <= 0 ? T.today : T.left.replace('{d}', d);
+  el.innerHTML = `<div class="rounded-2xl p-3 bg-amber-100 text-amber-900 border border-amber-400 flex items-center justify-between gap-2"><span class="text-sm font-extrabold">⏳ ${msg}</span><button onclick="openCredits()" class="px-3 py-1.5 rounded-lg bg-amber-500 text-white text-xs font-black shrink-0">${T.btn}</button></div>`;
+  if (!expToast) { expToast = true; toast('⏳ ' + msg); }
+}
 function renderUnlCard() {
   const el = $('credUnl'); if (!el) return; const T = UNL_T[lang3()], money = n => '₦' + Number(n).toLocaleString('en-US');
-  let h = '';
+  let h = ''; const dl = daysLeft(), warn = UNL && !LIFE && dl !== null && dl <= 5;
   if (UNL) {
     const exp = (!LIFE && UNL_UNTIL) ? `<div class="text-xs font-bold mt-1">${T.until}: ${esc(new Date(UNL_UNTIL).toLocaleDateString(locale(), { day: 'numeric', month: 'long', year: 'numeric' }))}</div>` : '';
-    h += `<div class="rounded-2xl p-4 text-center font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300/60">${T.active}${exp}</div>`;
+    h += `<div class="rounded-2xl p-4 text-center font-extrabold ${warn ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200 border border-amber-400' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300/60'}">${T.active}${exp}</div>`;
   }
-  if (!LIFE && PLAN_MODE === 'credits' && MONTHLY_PRICE > 0) {
-    h += `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#0F2E1E] to-[#1F6B43] text-white border border-[#5DB887]/60 shadow space-y-2"><div class="font-black text-base text-[#BFEBD0]">📅 ${T.mTitle}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.mSub}</div><button onclick="buyPlan('monthly')" class="w-full py-3 rounded-xl bg-[#5DB887] text-[#06210F] font-black text-base active:scale-[.98]">${UNL ? T.renew : T.mBtn} · ${money(MONTHLY_PRICE)}</button></div>`;
+  const months = { m1: 1, m3: 3, m6: 6, m12: 12 }, keys = ['m1', 'm3', 'm6', 'm12'].filter(k => (PLANS[k] || 0) > 0);
+  if (!LIFE && keys.length) {
+    const rows = keys.map(k => { const sv = (PLANS.m1 > 0 && k !== 'm1') ? PLANS.m1 * months[k] - PLANS[k] : 0;
+      return `<button onclick="buyPlan('${k}')" class="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-white/15 hover:bg-white/25 active:scale-[.98] text-start"><span class="font-extrabold">${T[k]}${sv > 0 ? `<span class="block text-[11px] font-bold text-[#BFEBD0]">${T.save} ${money(sv)}</span>` : ''}</span><span class="font-black text-lg">${money(PLANS[k])}</span></button>`; }).join('');
+    h += `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#0F2E1E] to-[#1F6B43] text-white border border-[#5DB887]/60 shadow space-y-2"><div class="font-black text-base text-[#BFEBD0]">📅 ${UNL ? T.plRenew : T.plTitle}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.plSub}</div><div class="space-y-2">${rows}</div></div>`;
+    if (!UNL) h += `<p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>`;
   }
-  if (!LIFE && UNL_PRICE > 0) {
-    h += `<div class="rounded-2xl p-4 bg-gradient-to-br from-[#3A2C05] to-[#7A5C0B] text-white border border-[#D4A017] shadow space-y-2">
-      <div class="font-black text-base text-[#F5D26B]">♾️ ${T.title}</div><div class="text-[12px] opacity-90 leading-relaxed">${T.sub}</div>
-      <button onclick="buyPlan('unlimited')" class="w-full py-3 rounded-xl bg-[#D4A017] text-[#0B132B] font-black text-base active:scale-[.98]">${T.up} · ${money(UNL_PRICE)}</button></div>`;
-  } else if (!UNL && PLAN_MODE === 'once') h += `<div class="rounded-2xl p-4 text-center text-sm font-bold bg-amber-100 text-amber-800">${T.noprice}</div>`;
-  if (!UNL && PLAN_MODE === 'credits' && h) h += `<p class="text-[11px] text-slate-500 text-center pt-2">${T.or}</p>`;
   el.innerHTML = h;
 }
 function setWallet(n) { WALLET = n; renderCreditUi(); }
@@ -1004,13 +1017,13 @@ function renderCreditUi() {
   document.querySelectorAll('.credBal').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : (WALLET == null ? '–' : WALLET));
   document.querySelectorAll('.costFirst').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : COST.first);
   document.querySelectorAll('.costNext').forEach(e => e.textContent = UNL ? '∞' : lock ? '🔒' : COST.next);
-  renderUnlCard(); try { renderAds(); } catch (e) {} try { updatePayWall(); } catch (e) {}
+  renderUnlCard(); try { renderExpiry(); } catch (e) {} try { renderAds(); } catch (e) {} try { updatePayWall(); } catch (e) {}
   const ci = $('credCostInfo'); if (ci) ci.textContent = t('credCostInfo');
 }
 async function loadWallet() {
   if (!sb || walletBusy) return; walletBusy = true;
   try { const { data, error } = await sb.rpc('get_my_wallet'); if (!error && typeof data === 'number') setWallet(data); } catch (e) {}
-  try { const { data } = await sb.rpc('get_my_plan'); if (data && !data.error) { UNL = !!data.unlimited; LIFE = !!data.lifetime; UNL_UNTIL = data.until || null; MONTHLY_PRICE = data.monthly_price || 0; UNL_PRICE = data.price || 0; PLAN_LOADED = true; if (typeof data.balance === 'number') WALLET = data.balance; renderCreditUi(); } } catch (e) {}
+  try { const { data } = await sb.rpc('get_my_plan'); if (data && !data.error) { UNL = !!data.unlimited; LIFE = !!data.lifetime; UNL_UNTIL = data.until || null; PLANS = data.plans || {}; MONTHLY_PRICE = 0; UNL_PRICE = 0; PLAN_LOADED = true; if (typeof data.balance === 'number') WALLET = data.balance; renderCreditUi(); } } catch (e) {}
   walletBusy = false;
   try {
     const { data } = await sb.from('credit_settings').select('key,value');
@@ -1611,9 +1624,9 @@ async function adminToggleBanner(id) { const b = (adm.banners || []).find(x => x
 async function adminDelBanner(id) { if (!confirm('Goge wannan talla?')) return; const r = await sb.from('banners').delete().eq('id', id); if (r.error) return toast(r.error.message); adm.banners = adm.banners.filter(x => x.id !== id); renderAdmin(); loadBanners(); }
 
 const REF_T = {
-  ha: { title: 'Gayyaci abokai, ku samu kiredit', sub: 'Idan abokinka ya yi rajista ta mahaɗinka, kai za ka sami kiredit {a}, shi kuma ya sami {b}.', copy: 'Kwafa', copied: 'An kwafa', stats: 'Abokan da ka gayyata: {n} · Kiredit da ka samu: {c}', msg: 'Ka shiga wannan manhajar Ramli da lokutan sallah, ka yi rajista ta wannan mahaɗi:', welcome: 'An ƙara maka kiredit {n} saboda gayyata. Maraba!' },
-  en: { title: 'Invite friends, earn credits', sub: 'When a friend signs up with your link, you get {a} credits and they get {b}.', copy: 'Copy', copied: 'Copied', stats: 'Friends invited: {n} · Credits earned: {c}', msg: 'Join this Ramli and prayer-times app with my link:', welcome: '{n} credits added for the invitation. Welcome!' },
-  ar: { title: 'ادعُ أصدقاءك واكسب رصيدًا', sub: 'عندما يسجّل صديقك عبر رابطك تحصل على {a} رصيدًا ويحصل هو على {b}.', copy: 'نسخ', copied: 'تم النسخ', stats: 'الأصدقاء المدعوون: {n} · الرصيد المكتسب: {c}', msg: 'انضم إلى تطبيق الرمل ومواقيت الصلاة عبر رابطي:', welcome: 'تمت إضافة {n} رصيدًا بسبب الدعوة. أهلًا بك!' }
+  ha: { title: 'Gayyaci abokai, ku samu kiredit', sub: 'Idan abokinka ya yi rajista ta mahaɗinka, shi zai sami kiredit {b} nan take. Kai kuma za ka sami {a} idan ya yi fassararsa ta farko ko ya sayi kiredit ko lokaci.', copy: 'Kwafa', copied: 'An kwafa', stats: 'Sun yi rajista: {n} · Sun kammala: {k} · Kiredit da ka samu: {c}', msg: 'Ka shiga wannan manhajar Ramli da lokutan sallah, ka yi rajista ta wannan mahaɗi:', welcome: 'An ƙara maka kiredit {n} saboda gayyata. Maraba!' },
+  en: { title: 'Invite friends, earn credits', sub: 'When a friend signs up with your link they get {b} credits at once. You get {a} credits once they make their first interpretation or buy credits or time.', copy: 'Copy', copied: 'Copied', stats: 'Signed up: {n} · Completed: {k} · Credits earned: {c}', msg: 'Join this Ramli and prayer-times app with my link:', welcome: '{n} credits added for the invitation. Welcome!' },
+  ar: { title: 'ادعُ أصدقاءك واكسب رصيدًا', sub: 'عندما يسجّل صديقك عبر رابطك يحصل على {b} رصيدًا فورًا. وتحصل أنت على {a} بعد أول تفسير له أو بعد شرائه رصيدًا أو مدة.', copy: 'نسخ', copied: 'تم النسخ', stats: 'سجّلوا: {n} · أكملوا: {k} · الرصيد المكتسب: {c}', msg: 'انضم إلى تطبيق الرمل ومواقيت الصلاة عبر رابطي:', welcome: 'تمت إضافة {n} رصيدًا بسبب الدعوة. أهلًا بك!' }
 };
 try { const r0 = new URLSearchParams(location.search).get('ref'); if (r0) localStorage.setItem('geo_ref', r0.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12)); } catch (e) {}
 const refLink = () => location.origin + location.pathname + '?ref=' + (REF ? REF.code : '');
@@ -1624,7 +1637,7 @@ function renderRefCard() {
     <div class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">${T.sub.replace('{a}', REF.bonus_referrer).replace('{b}', REF.bonus_new)}</div>
     <div class="flex items-center gap-2"><input readonly value="${esc(refLink())}" class="flex-1 min-w-0 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] ltr-lock"><button onclick="copyRef()" class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-xs font-bold">${T.copy}</button></div>
     <button onclick="shareRef()" class="w-full py-2.5 rounded-xl bg-[#25D366] text-white font-extrabold text-sm">WhatsApp</button>
-    <div class="text-[11px] text-slate-500">${T.stats.replace('{n}', REF.count).replace('{c}', REF.earned)}</div></div>`;
+    <div class="text-[11px] text-slate-500">${T.stats.replace('{n}', REF.count).replace('{k}', REF.done || 0).replace('{c}', REF.earned)}</div></div>`;
 }
 function copyRef() { const T = REF_T[lang3()]; try { navigator.clipboard.writeText(refLink()).then(() => toast(T.copied)).catch(() => prompt('Link', refLink())); } catch (e) { prompt('Link', refLink()); } }
 function shareRef() { window.open('https://wa.me/?text=' + encodeURIComponent(REF_T[lang3()].msg + ' ' + refLink()), '_blank'); }
